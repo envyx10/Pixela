@@ -1,7 +1,6 @@
-# Pixela
-Repositorio para proyecto fin de grado, basado en pixela ft Ruyi &amp;&amp; Pablo | 2 º DAW
-
 # Pixela.io
+
+Repositorio para proyecto fin de grado, basado en pixela ft Ruyi &amp;&amp; Pablo | 2 º DAW
 
 **Pixela.io** es una plataforma interactiva que permite a los usuarios explorar series populares, agregar reseñas, puntuarlas y administrar su experiencia personal. El proyecto está desarrollado en PHP y utiliza una base de datos para gestionar usuarios, series y reseñas.
 
