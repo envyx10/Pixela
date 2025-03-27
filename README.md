@@ -1,7 +1,6 @@
 # Pixela.io
 
-Repositorio para proyecto fin de grado, basado en pixela
-
+Repositorio para proyecto fin de grado.
 Autores: Ruyi & Pablo | 2ºDAW
 
 Pixela.io es una plataforma interactiva diseñada para que los usuarios puedan descubrir y explorar sus series y películas favoritas. Permite agregar reseñas, calificar contenidos y gestionar una experiencia completamente personalizada.
