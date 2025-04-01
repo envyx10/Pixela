@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('user_rating', 3, 1);
             $table->timestamp('review_date');
 
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
             $table->foreignId('series_id')->constrained('series', 'series_id')->onDelete('cascade');
 
         });

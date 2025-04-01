@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
         User::insert([
             [
                 'user_name' => 'Pablo',
-                'email' => 'pablo@pixela.com',
+                'email' => 'Pablo@pixela.com',
                 'password' => Hash::make('pixela123'),
                 'is_admin' => true,
                 'registration_date' => now()
