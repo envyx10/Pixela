@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Review extends Model
 {
@@ -11,13 +12,15 @@ class Review extends Model
 
     protected $primaryKey = 'review_id';
     protected $table = 'reviews';
+    public $timestamps = false;
 
     protected $fillable = [
         'review',
         'user_rating',
         'review_date',
         'user_id',
-        'series_id'
+        'series_id',
+        'movie_id'
     ];
 
     protected $casts = [
@@ -27,21 +30,25 @@ class Review extends Model
 
     /**
      * Relación con usuario
-     *
-     * @return void
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
      * Relación con serie
-     *
-     * @return void
      */
-    public function series()
+    public function series(): BelongsTo
     {
         return $this->belongsTo(Series::class, 'series_id');
+    }
+
+    /**
+     * Relación con película
+     */
+    public function movie(): BelongsTo
+    {
+        return $this->belongsTo(Movie::class, 'movie_id');
     }
 } 
