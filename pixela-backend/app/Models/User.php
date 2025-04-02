@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -52,22 +54,25 @@ class User extends Authenticatable
 
     /**
      * Relación con reviews
-     *
-     * @return void
      */
-    public function reviews()
+    public function reviews(): HasMany
     {
         return $this->hasMany(Review::class, 'user_id');
     }
 
     /**
      * Relación con series favoritas
-     *
-     * @return void
      */
-    public function favoriteSeries()
+    public function favoriteSeries(): BelongsToMany
     {
-        return $this->belongsToMany(Series::class, 'favorites', 'user_id', 'series_id')
-                    ->withTimestamps();
+        return $this->belongsToMany(Series::class, 'series_favorites', 'user_id', 'series_id');
+    }
+
+    /**
+     * Relación con películas favoritas
+     */
+    public function favoriteMovies(): BelongsToMany
+    {
+        return $this->belongsToMany(Movie::class, 'movie_favorites', 'user_id', 'movie_id');
     }
 }

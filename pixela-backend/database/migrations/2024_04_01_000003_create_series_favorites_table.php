@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('favorites', function (Blueprint $table) {
+        Schema::create('series_favorites', function (Blueprint $table) {
             $table->id('user_series_id');
+
+            $table->unsignedBigInteger('tmbd_id');
 
             $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
             $table->foreignId('series_id')->constrained('series', 'series_id')->onDelete('cascade');
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('favorites');
+        Schema::dropIfExists('series_favorites');
     }
 }; 

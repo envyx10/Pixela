@@ -38,7 +38,7 @@ class Series extends Model
      */
     public function favoriteByUsers()
     {
-        return $this->belongsToMany(User::class, 'favorites', 'series_id', 'user_id')
+        return $this->belongsToMany(User::class, 'series_favorites', 'series_id', 'user_id')
                     ->withTimestamps();
     }
 } 
