@@ -11,8 +11,8 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 // Rutas de películas
 Route::get('/movie/{movieId}', [MovieController::class, 'getMovieDetails']); #http GET http://localhost/api/movie/550
-Route::get('/movies', [MovieController::class, 'getAllMovies']); #http GET http://localhost/api/movies
+Route::get('/movies', [MovieController::class, 'getAllPopularMovies']); #http GET http://localhost/api/movies
 
 // Rutas de series
 Route::get('/series/{seriesId}', [SeriesController::class, 'getSeriesDetails']); #http GET http://localhost/api/series/108978
-Route::get('/series', [SeriesController::class, 'getAllSeries']); #http GET http://localhost/api/series
+Route::get('/series', [SeriesController::class, 'getAllPopularSeries']); #http GET http://localhost/api/series
