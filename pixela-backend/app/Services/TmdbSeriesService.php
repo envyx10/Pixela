@@ -57,4 +57,34 @@ class TmdbSeriesService
         }
     }
 
+    /**
+     * Obtiene todas las series populares
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getAllPopularSeries(): array
+    {
+        try {
+            $response = $this->client->get("{$this->baseUrl}/tv/popular", [
+                'query' => [
+                    'api_key' => $this->apiKey,
+                    'language' => self::DEFAULT_LANGUAGE,
+                ],
+                'timeout' => self::TIMEOUT,
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new Exception('Error decoding TMDB API response');
+            }
+
+            return $data;
+
+        } catch (GuzzleException $e) {
+            throw new Exception('Error fetching series from TMDB: ' . $e->getMessage());
+        }
+    }            
+
 } 

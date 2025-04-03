@@ -48,4 +48,42 @@ class MovieController extends Controller
         }
     }
 
+    /**
+     * Obtiene todas las películas populares
+     *
+     * @return JsonResponse
+     */
+    public function getAllPopularMovies(): JsonResponse
+    {
+        try {
+            $movies = $this->tmdbMovieService->getAllPopularMovies();
+            $movies = $movies['results'];
+
+            $movies = array_map(function($movie) {
+                return [
+                    'id' => $movie['id'],
+                    'title' => $movie['title'],
+                    'poster_path' => $movie['poster_path'],
+                    'release_date' => $movie['release_date'],
+                    'vote_average' => $movie['vote_average'],
+                    'vote_count' => $movie['vote_count'],
+                    'overview' => $movie['overview'],
+                    'genres' => $movie['genre_ids']
+                ];
+            }, $movies);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $movies
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+
+        }   
+    }
+
 }

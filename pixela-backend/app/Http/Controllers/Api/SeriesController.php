@@ -48,5 +48,42 @@ class SeriesController extends Controller
         }
     }
 
-}
+    /**
+     * Obtiene todas las series populares
+     *
+     * @return JsonResponse
+     */
+    public function getAllPopularSeries(): JsonResponse
+    {
+        try {
+            $series = $this->tmdbSeriesService->getAllPopularSeries();
+            $series = $series['results'];   
 
+            $series = array_map(function($series) {
+                return [
+                    'id' => $series['id'],
+                    'title' => $series['name'],
+                    'poster_path' => $series['poster_path'],
+                    'first_air_date' => $series['first_air_date'],
+                    'vote_average' => $series['vote_average'],
+                    'vote_count' => $series['vote_count'],
+                    'overview' => $series['overview'],
+                    'genres' => $series['genre_ids']
+                ];
+            }, $series);
+        
+            return response()->json([
+                'success' => true,
+                'data' => $series
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+
+        }
+    }
+
+}
