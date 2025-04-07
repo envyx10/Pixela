@@ -65,8 +65,20 @@ services:
             retries: 3
             timeout: 5s
     # Servicio para Next.js
-    
-            
+    nextjs:
+        build:
+            context: '../pixela-frontend'
+            dockerfile: Dockerfile
+        ports:
+            - "3000:3000"
+        volumes:
+            - '../pixela-frontend:/usr/src/app'
+        command: npm run dev
+        networks:
+            - sail
+        depends_on:
+            - laravel.test
+
 networks:
     sail:
         driver: bridge
