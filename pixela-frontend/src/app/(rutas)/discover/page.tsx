@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const DiscoverPage = () => {
+const DiscoverPage = () => {
   return (
     <h1>Discover Page</h1>
   )
