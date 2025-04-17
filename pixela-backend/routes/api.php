@@ -33,7 +33,7 @@ Route::group([
     'prefix' => 'series'], function () {
 
     Route::get('/{seriesId}', 'getSeriesDetails')->where('seriesId', '[0-9]+'); #http GET http://localhost/api/series/108978
-    Route::get('/popular', 'getAllPopularSeries'); #http GET http://localhost/api/series/popular
+    Route::get('/trending', 'getTrendingSeries'); #http GET http://localhost/api/series/trending
     Route::get('/genre/{genreId}', 'getSeriesByGenre'); #http GET http://localhost/api/series/genre/10759
     Route::get('/on-the-air', 'getSeriesOnTheAir'); #http GET http://localhost/api/series/on-the-air
     Route::get('/top-rated', 'getTopRatedSeries'); #http GET http://localhost/api/series/top-rated

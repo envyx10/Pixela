@@ -70,16 +70,15 @@ class TmdbSeriesService
         return $this->makeRequest("/tv/{$id}");
     }
 
+
     /**
-     * Obtiene todas las series populares
+     * Undocumented function
      *
      * @return array
-     * @throws Exception
      */
-    public function getAllPopularSeries(): array
-    {
-        return $this->makeRequest("/tv/popular");
-    } 
+    public function getTrendingSeries(): array{
+        return $this->makeRequest("/trending/tv/week?with_watch_providers=8|384|119|9|337&watch_region=ES");
+    }
 
     /**
      * Obtiene las series mejor valoradas

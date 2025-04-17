@@ -10,7 +10,6 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
   --font-outfit: var(--font-outfit);
   --font-roboto: var(--font-roboto);
 }
@@ -25,7 +24,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-outfit), system-ui, -apple-system, sans-serif;
 }
 
 /* Clase para añadir efecto de ruido de película */

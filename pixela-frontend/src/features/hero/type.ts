@@ -15,14 +15,16 @@ export interface HeroState {
     fadeIn: boolean;
     isPlaying: boolean;
     progress: number;
+    imagesLength: number;
   
     setCurrentImageIndex: (index: number) => void;
     setFadeIn: (state: boolean) => void;
     setIsPlaying: (state: boolean) => void;
     setProgress: (progress: number | ((prev: number) => number)) => void;
+    setImagesLength: (length: number) => void;
   
-    prevImage: (imagesLength: number) => void;
-    nextImage: (imagesLength: number) => void;
+    prevImage: () => void;
+    nextImage: () => void;
     handleSlideChange: (index: number) => void;
     resetProgress: () => void;
   }

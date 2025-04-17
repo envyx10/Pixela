@@ -23,12 +23,24 @@ export const HeroSection = ({
   ctaLink = ""
 }: HeroSectionProps) => {
 
-  const { currentImageIndex, isPlaying, setProgress, nextImage, resetProgress} = useHeroStore();
+  const { 
+    currentImageIndex, 
+    isPlaying, 
+    setProgress, 
+    nextImage, 
+    resetProgress,
+    setImagesLength
+  } = useHeroStore();
+
+  // Configurar la longitud de imágenes en el store cuando cambia
+  useEffect(() => {
+    setImagesLength(images.length);
+  }, [images.length, setImagesLength]);
 
   // Funcion para avanzar a la siguiente imagen
   const handleNextImage = useCallback(() => {
-    nextImage(images.length);
-  }, [nextImage, images.length]);
+    nextImage();
+  }, [nextImage]);
   
   // Efecto para el carrusel automático
   useEffect(() => {
@@ -69,11 +81,9 @@ export const HeroSection = ({
   
   return (
     <div className="relative w-full h-screen overflow-hidden">
-
       <ImageCarousel images={images} />
-      <NavigationControls imagesLength={images.length}/>
+      <NavigationControls />
       <ProgressIndicator images={images}/>
-  
       <ContentSection 
         title={title} 
         accentTitle={accentTitle}

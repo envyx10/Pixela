@@ -29,7 +29,7 @@ class SeriesController extends Controller
     {
         try {
             $seriesDetails = $this->tmdbSeriesService->getSeriesById($seriesId);
-            
+
             if (!$seriesDetails) {
                 return response()->json([
                     'success' => false,
@@ -50,30 +50,30 @@ class SeriesController extends Controller
     }
 
     /**
-     * Obtiene todas las series populares
+     * Obtiene todas las series trending
      *
      * @return JsonResponse
      */
-    public function getAllPopularSeries(): JsonResponse
+    public function getTrendingSeries(): JsonResponse
     {
-        try {
-            $series = $this->tmdbSeriesService->getAllPopularSeries();
-            $series = $series['results'];   
-            $series = SeriesTransformer::transformCollection($series);
-        
-            return response()->json([
-                'success' => true,
-                'data' => $series
-            ]);
 
+        try {
+
+            $series = $this->tmdbSeriesService->getTrendingSeries();
+            $series = $series['results'];
+            $series = SeriesTransformer::transformCollection($series);
+            return response()->json(['success' => true, 'data' => $series]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
-
         }
     }
+
+
+
+
 
     /**
      * Obtiene las series mejor valoradas
@@ -91,7 +91,6 @@ class SeriesController extends Controller
                 'success' => true,
                 'data' => $series
             ]);
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -107,7 +106,7 @@ class SeriesController extends Controller
      */
     public function getSeriesOnTheAir(): JsonResponse
     {
-            try {
+        try {
             $series = $this->tmdbSeriesService->getSeriesOnTheAir();
             $series = $series['results'];
             $series = SeriesTransformer::transformCollection($series);
@@ -116,7 +115,6 @@ class SeriesController extends Controller
                 'success' => true,
                 'data' => $series
             ]);
-            
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -142,13 +140,11 @@ class SeriesController extends Controller
                 'success' => true,
                 'data' => $series
             ]);
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
         }
-    }   
-
+    }
 }

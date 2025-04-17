@@ -10,11 +10,11 @@ const roboto = Roboto({
   variable: "--font-roboto",
 });
 
-/* Fuente sans para la interfaz */
-const inter = Inter({
+/* Fuente Outfit con peso black */
+const outfit = Outfit({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-sans",
+  weight: ["400", "500", "700", "900"],
+  variable: "--font-outfit",
 });
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${roboto.variable} ${inter.variable}`}>
+    <html lang="en" className={`${roboto.variable} ${outfit.variable}`}>
       <body className="bg-pixela-dark">
         <Navbar />
         <main className="flex-grow">{children}</main>

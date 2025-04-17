@@ -7,8 +7,14 @@ interface ProgressIndicatorProps {
 }
 
 export const ProgressIndicator = ({ images }: ProgressIndicatorProps) => {
-
-  const { setIsPlaying, handleSlideChange, currentImageIndex, isPlaying, progress } = useHeroStore();
+  const { 
+    setIsPlaying, 
+    handleSlideChange, 
+    currentImageIndex, 
+    isPlaying, 
+    progress,
+    imagesLength 
+  } = useHeroStore();
 
   return (
     <div className="absolute bottom-28 left-1/2 transform -translate-x-1/2 z-20 w-full max-w-xl">
@@ -33,7 +39,8 @@ export const ProgressIndicator = ({ images }: ProgressIndicatorProps) => {
           
           {/* Indicador de slides (pequeños puntos) */}
           <div className="flex space-x-2">
-            {images.map((_, index) => (
+            {/* Generar indicadores basados en la longitud de imágenes */}
+            {Array.from({ length: imagesLength }).map((_, index) => (
               <button
                 key={index}
                 onClick={() => handleSlideChange(index)}
@@ -48,7 +55,7 @@ export const ProgressIndicator = ({ images }: ProgressIndicatorProps) => {
           
           {/* Contador de imágenes */}
           <div className="text-pixela-light/70 text-sm font-medium">
-            {currentImageIndex + 1}/{images.length}
+            {currentImageIndex + 1}/{imagesLength}
           </div>
         </div>
       </div>

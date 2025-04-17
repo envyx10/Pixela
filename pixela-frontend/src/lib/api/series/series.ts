@@ -1,4 +1,4 @@
-import { SeriesResponse, Series } from "@/lib/interface/series/trending-series";
+import { SeriesResponse, Series } from "@/features/trending/type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://laravel.test/api';
 
@@ -24,6 +24,7 @@ export async function getTopRatedSeries(limit = 20, offset = 0): Promise<Series[
         throw error;
     }
 }
+
 
 /**
  * Busca series por título

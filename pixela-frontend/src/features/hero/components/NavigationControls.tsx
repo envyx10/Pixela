@@ -1,35 +1,27 @@
 import { useHeroStore } from "../store";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { SliderNavButton } from "@/shared/components/SliderNavButton";
 
-interface NavigationControlsProps {
-  imagesLength: number;
-}
-
-export const NavigationControls = ({ imagesLength }: NavigationControlsProps) => {
-
+export const NavigationControls = () => {
   const { prevImage, nextImage } = useHeroStore();
 
   return (
     <>
-      <div className="absolute top-1/2 left-4 transform -translate-y-1/2 z-20">
-        <button 
-          onClick={() => prevImage(imagesLength)}
-          className="p-2 rounded-full bg-pixela-dark/40 backdrop-blur-sm text-pixela-light hover:text-pixela-accent hover:bg-pixela-dark/60 transition-all duration-300"
-          aria-label="Imagen anterior"
-        >
-          <FiChevronLeft className="h-8 w-8" />
-        </button>
-      </div>
+      <SliderNavButton 
+        direction="prev"
+        onClick={prevImage}
+        ariaLabel="Imagen anterior"
+        icon={<FiChevronLeft className="h-7 w-7" />}
+        className="left-4"
+      />
       
-      <div className="absolute top-1/2 right-4 transform -translate-y-1/2 z-20">
-        <button 
-          onClick={() => nextImage(imagesLength)}
-          className="p-2 rounded-full bg-pixela-dark/40 backdrop-blur-sm text-pixela-light hover:text-pixela-accent hover:bg-pixela-dark/60 transition-all duration-300"
-          aria-label="Imagen siguiente"
-        >
-          <FiChevronRight className="h-8 w-8" />
-        </button>
-      </div>
+      <SliderNavButton 
+        direction="next"
+        onClick={nextImage}
+        ariaLabel="Imagen siguiente"
+        icon={<FiChevronRight className="h-7 w-7" />}
+        className="right-4"
+      />
     </>
   );
 }; 
