@@ -1,7 +1,31 @@
+'use client';
+
 import Link from "next/link"
+import { useState, useRef, useEffect } from "react"
 import { mainNavLinks } from "@/data/links/navigation"
+import { MdLogout } from "react-icons/md"
 
 export const Navbar = () => {
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  // Cerrar el menú al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    // TODO: Implementar lógica de logout
+    console.log('Logout clicked');
+  };
+
   return (
     <div className="w-full fixed top-0 left-0 z-50 mt-5">
       <div className="max-w-[83.333%] mx-auto flex items-center p-4 bg-dark-opacity backdrop-blur-sm rounded-[36px]">
@@ -20,8 +44,14 @@ export const Navbar = () => {
             ))}
           </div>
         </div>
-        <div className="mx-10 w-[85px]">
-          {/* Espacio reservado para equilibrar el diseño */}
+        <div className="mx-10">
+          <button 
+            onClick={handleLogout}
+            className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300"
+            title="Cerrar sesión"
+          >
+            <MdLogout className="h-6 w-6" />
+          </button>
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 //* Este documento tiene el objetivo de tener los enlaces de las navegaciones de la aplicacion
 //* para centrarlizar la logica de las navegaciones
 
@@ -22,12 +21,6 @@ export const mainNavLinks: NavLink[] = [
     href: "/discover",
     label: "Discover",
   },
-  {
-    href: "/profile",
-    label: "Perfil",
-  },
 ];
-
-
 
 //TODO: Agregar los enlaces de la barra de navegación del footer o necesarios para la aplicacion
