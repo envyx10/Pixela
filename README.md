@@ -9,7 +9,8 @@ El proyecto será desarrollado utilizando React para la interfaz de usuario (fro
 
 Ante proyecto: [www.notion.es](https://sphenoid-stone-975.notion.site/ANTEPROYECTO-PIXELA-1c2bccfbf6a4800c8945f8c8dfb77095) <br/>
 Historial de commits y pull requests: [Historial ruyi y pablo](https://docs.google.com/document/d/1tCagftMIyK-YbXul7YxGf_HXpOOPHqtqO7swChsxbao/edit?tab=t.0) <br/>
-Historial del repositorio de commits: [Historial github](https://github.com/envyx10/Pixela/commits/main/)
+Historial del repositorio de commits: [Historial github](https://github.com/envyx10/Pixela/commits/main/) <br/>
+Historial de ramas de pixela [Ramas pixela](https://github.com/envyx10/Pixela/branches/active) <br/>
 
 
 ![datos_1](https://github.com/user-attachments/assets/9809f359-e4a4-4c77-8144-7fc5a4b55a58)
