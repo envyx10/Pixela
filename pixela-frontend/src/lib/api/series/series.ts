@@ -1,6 +1,5 @@
 import { SeriesResponse, Series } from "@/lib/interface/series/trending-series";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://laravel.test/api';
+import { API_BASE_URL } from "@/config/api";
 
 /**
  * Obtiene las series mejor valoradas
@@ -10,7 +9,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://laravel.test/api';
  */
 export async function getTopRatedSeries(limit = 20, offset = 0): Promise<Series[]> {
     try {
-        const response = await fetch(`${API_URL}/series/top-rated?limit=${limit}&offset=${offset}`);
+        const response = await fetch(`${API_BASE_URL}/api/series/top-rated?limit=${limit}&offset=${offset}`);
         
         if (!response.ok) {
             throw new Error(`Error de API: ${response.status} ${response.statusText}`);
@@ -33,7 +32,7 @@ export async function getTopRatedSeries(limit = 20, offset = 0): Promise<Series[
  */
 export async function searchSeries(query: string, limit = 20): Promise<Series[]> {
     try {
-        const response = await fetch(`${API_URL}/series/search?query=${encodeURIComponent(query)}&limit=${limit}`);
+        const response = await fetch(`${API_BASE_URL}/api/series/search?query=${encodeURIComponent(query)}&limit=${limit}`);
         
         if (!response.ok) {
             throw new Error(`Error de API: ${response.status} ${response.statusText}`);

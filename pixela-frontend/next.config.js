@@ -9,7 +9,13 @@ const nextConfig = {
         ];
     },
     images: {
-        domains: ['image.tmdb.org'],
+        domains: [
+            'image.tmdb.org', 
+            'via.placeholder.com', 
+            'img.youtube.com',
+            'laravel.test',
+            'localhost'
+        ],
     },
 };
 
