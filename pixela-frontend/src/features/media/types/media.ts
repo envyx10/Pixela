@@ -15,6 +15,13 @@ export interface Trailer {
   tipo: string;
 }
 
+export interface WatchProvider {
+  id: string;
+  nombre: string;
+  logo: string;
+  tipo?: 'flatrate' | 'rent' | 'buy';
+}
+
 export interface Media {
   id: string;
   titulo: string;
@@ -27,11 +34,19 @@ export interface Media {
   tipo: MediaType;
   actores: Actor[];
   trailers: Trailer[];
+  proveedores?: WatchProvider[];
+}
+
+export interface Creator {
+  id: string;
+  nombre: string;
+  foto: string;
 }
 
 export interface Serie extends Media {
   temporadas: number;
   episodios: number;
+  creadores?: Creator[];
 }
 
 export interface Pelicula extends Media {

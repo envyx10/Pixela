@@ -11,6 +11,9 @@ export const API_ENDPOINTS = {
   SERIES: {
     GET_BY_ID: (id: string) => `${API_BASE_URL}/api/series/${id}`,
     LIST: `${API_BASE_URL}/api/series`,
+    GET_CAST: (id: string) => `${API_BASE_URL}/api/series/${id}/cast`,
+    GET_VIDEOS: (id: string) => `${API_BASE_URL}/api/series/${id}/videos`,
+    GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/api/series/${id}/watch-providers`,
   },
   
   // Películas

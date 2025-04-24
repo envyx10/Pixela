@@ -1,5 +1,5 @@
 import { getPeliculaById } from '@/api/peliculas/peliculas';
-import { MediaDetail } from '@/features/media/components/MediaDetail';
+import { MediaPage } from '@/features/media/pages/MediaPage';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -50,7 +50,7 @@ export default async function PeliculaPage(
     
     return (
       <section className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 min-h-screen pb-12">
-        <MediaDetail media={pelicula} />
+        <MediaPage media={pelicula} />
       </section>
     );
   } catch (error) {

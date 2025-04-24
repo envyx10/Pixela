@@ -37,5 +37,8 @@ Route::group([
     Route::get('/genre/{genreId}', 'getSeriesByGenre'); #http GET http://localhost/api/series/genre/10759
     Route::get('/on-the-air', 'getSeriesOnTheAir'); #http GET http://localhost/api/series/on-the-air
     Route::get('/top-rated', 'getTopRatedSeries'); #http GET http://localhost/api/series/top-rated
+    Route::get('/{seriesId}/cast', 'getSeriesCast')->where('seriesId', '[0-9]+'); #http GET http://localhost/api/series/108978/cast
+    Route::get('/{seriesId}/videos', 'getSeriesVideos')->where('seriesId', '[0-9]+'); #http GET http://localhost/api/series/108978/videos
+    Route::get('/{seriesId}/watch-providers', 'getSeriesWatchProviders')->where('seriesId', '[0-9]+'); #http GET http://localhost/api/series/108978/watch-providers
     
 });
