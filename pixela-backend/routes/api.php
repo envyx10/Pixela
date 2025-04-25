@@ -24,6 +24,11 @@ Route::group([
     Route::get('/genre/{genreId}', 'getMovieByGenre'); #http GET http://localhost/api/movies/genre/28
     Route::get('/now-playing', 'getMovieNowPlaying'); #http GET http://localhost/api/movies/now-playing
     Route::get('/top-rated', 'getTopRatedMovies'); #http GET http://localhost/api/movies/top-rated
+    Route::get('/{movieId}/cast', 'getMovieCast')->where('movieId', '[0-9]+'); #http GET http://localhost/api/movies/550/cast
+    Route::get('/{movieId}/videos', 'getMovieVideos')->where('movieId', '[0-9]+'); #http GET http://localhost/api/movies/550/videos
+    Route::get('/{movieId}/watch-providers', 'getMovieWatchProviders')->where('movieId', '[0-9]+'); #http GET http://localhost/api/movies/550/watch-providers
+    Route::get('/{movieId}/creator', 'getMovieCreator')->where('movieId', '[0-9]+'); #http GET http://localhost/api/movies/550/creator
+    Route::get('/{movieId}/images', 'getMovieImages')->where('movieId', '[0-9]+'); #http GET http://localhost/api/movies/550/images
 
 });
 

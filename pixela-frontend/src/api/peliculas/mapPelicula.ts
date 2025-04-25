@@ -8,7 +8,7 @@ const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
  * @param path
  * @returns 
  */
-const formatImageUrl = (path: string): string =>
+export const formatImageUrl = (path: string): string =>
   path?.startsWith('/') ? `${TMDB_IMAGE_BASE_URL}${path}` : path || '';
 
 /**
@@ -63,6 +63,11 @@ export function mapPeliculaFromApi(movieData: any): Pelicula {
     tipo: 'pelicula',
     duracion: parseInt(movieData.duracion || movieData.runtime) || 0,
     actores: movieData.actores?.map(mapActor) || [],
-    trailers: movieData.trailers?.map(mapTrailer) || []
+    trailers: movieData.trailers?.map(mapTrailer) || [],
+    creador: movieData.creador ? {
+      id: movieData.creador.id.toString(),
+      nombre: movieData.creador.nombre || movieData.creador.name,
+      foto: formatImageUrl(movieData.creador.foto || movieData.creador.profile_path)
+    } : undefined
   };
 } 

@@ -1,7 +1,8 @@
 'use client';
 import Image from "next/image";
+import Link from "next/link";
 import { TrendingSerie, TrendingMovie } from "@/features/trending/type";
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Badge } from "@/shared/components/Badge";
 import { ActionButtons } from "@/shared/components/ActionButtons";
 import { MediaInfoDetails } from "./MediaInfoDetails";
@@ -11,16 +12,11 @@ interface TrendingMediaCardProps {
   type: 'series' | 'movies';
 }
 
-export const TrendingMediaCard = ({ media, type }: TrendingMediaCardProps) => {
+export const TrendingMediaCard = memo(({ media, type }: TrendingMediaCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   
   // Determinar si hay una puntuación alta (más de 7.5)
   const isHighRated = media.vote_average && media.vote_average >= 7.5;
-
-  //TODO: Implementar la funcionalidad de los botones
-  const handleDetailsClick = () => {
-    console.log("Ver detalles de", media.title);
-  };
 
   const handleFollowClick = () => {
     console.log("Seguir", type === 'series' ? 'serie' : 'película', media.title);
@@ -55,15 +51,14 @@ export const TrendingMediaCard = ({ media, type }: TrendingMediaCardProps) => {
                      flex flex-col justify-end p-5 transition-opacity duration-300 
                      ${isHovered ? 'opacity-100' : 'opacity-0'}`}
         >
-
           {/* Información sobre el contenido */}
           <MediaInfoDetails media={media} type={type} />
 
           {/* Botones de acción para información y seguimiento */}
           <ActionButtons 
-            onDetailsClick={handleDetailsClick}
             onFollowClick={handleFollowClick}
             onReviewsClick={handleReviewsClick}
+            detailsHref={`/${type}/${media.id}`}
           />
         </div>
         
@@ -75,9 +70,9 @@ export const TrendingMediaCard = ({ media, type }: TrendingMediaCardProps) => {
             variant="primary"
           />
         )}
-        
       </div>
-    
     </div>
   );
-}; 
+});
+
+TrendingMediaCard.displayName = 'TrendingMediaCard'; 

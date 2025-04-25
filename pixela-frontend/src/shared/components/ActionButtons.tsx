@@ -1,6 +1,7 @@
 'use client';
 
 import { FaInfoCircle, FaBookmark, FaRegComments } from "react-icons/fa";
+import Link from "next/link";
 
 interface ActionButtonsProps {
   onInfoClick?: () => void;
@@ -14,6 +15,7 @@ interface ActionButtonsProps {
   detailsLabel?: string;
   followTitle?: string;
   reviewsTitle?: string;
+  detailsHref?: string;
 }
 
 export const ActionButtons = ({
@@ -27,7 +29,8 @@ export const ActionButtons = ({
   onDetailsClick,
   detailsLabel,
   followTitle,
-  reviewsTitle
+  reviewsTitle,
+  detailsHref
 }: ActionButtonsProps) => {
   
   const handleInfoClick = onInfoClick || onDetailsClick || (() => {});
@@ -45,15 +48,24 @@ export const ActionButtons = ({
     ? "flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md backdrop-blur-sm transition-all duration-300 text-sm font-medium"
     : "w-12 h-12 flex items-center justify-center bg-pixela-dark hover:bg-pixela-dark/80 rounded text-pixela-light transition-colors border border-pixela-accent/40";
   
+  const InfoButton = detailsHref ? (
+    <Link href={detailsHref} className={primaryBtnClass}>
+      <FaInfoCircle className={isHero ? "h-3 w-3" : "w-4 h-4"} />
+      {isHero && <span>{finalInfoLabel}</span>}
+    </Link>
+  ) : (
+    <button 
+      className={primaryBtnClass}
+      onClick={handleInfoClick}
+    >
+      <FaInfoCircle className={isHero ? "h-3 w-3" : "w-4 h-4"} />
+      {isHero && <span>{finalInfoLabel}</span>}
+    </button>
+  );
+  
   return (
     <div className="flex gap-2 flex-wrap">
-      <button 
-        className={primaryBtnClass}
-        onClick={handleInfoClick}
-      >
-        <FaInfoCircle className={isHero ? "h-3 w-3" : "w-4 h-4"} />
-        {isHero && <span>{finalInfoLabel}</span>}
-      </button>
+      {InfoButton}
       <button 
         className={secondaryBtnClass}
         onClick={handleFollowClick}

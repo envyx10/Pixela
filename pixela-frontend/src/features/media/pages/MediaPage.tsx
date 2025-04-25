@@ -1,8 +1,8 @@
 "use client";
 
 import { Media, Serie } from '../types/media';
-import { useState } from 'react';
-import { FaBookmark, FaPen, FaTimes } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { FaBookmark, FaPen, FaTimes, FaDownload } from 'react-icons/fa';
 
 interface MediaPageProps {
   media: Media;
@@ -11,6 +11,8 @@ interface MediaPageProps {
 export const MediaPage = ({ media }: MediaPageProps) => {
   const isSerie = media.tipo === 'serie';
   const serie = media as Serie;
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showPosterModal, setShowPosterModal] = useState(false);
   
   // Filtrar solo trailers de YouTube válidos
   const youtubeTrailers = media.trailers
@@ -20,10 +22,26 @@ export const MediaPage = ({ media }: MediaPageProps) => {
     );
   
   const [selectedTrailer, setSelectedTrailer] = useState(youtubeTrailers[0]?.key || '');
-  const [showPosterModal, setShowPosterModal] = useState(false);
 
   console.log('Actores:', media.actores);
   console.log('Creadores:', isSerie ? serie.creadores : 'No es serie');
+
+  const handleDownload = async (url: string, nombre: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${media.titulo}-${nombre}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error('Error al descargar la imagen:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0F0F0F]">
@@ -102,29 +120,51 @@ export const MediaPage = ({ media }: MediaPageProps) => {
                     <span>{(media as Serie).episodios} Episodios</span>
                   </>
                 ) : (
-                  <span>2h 30min</span>
+                  <>
+                    <span>{media.duracion} minutos</span>
+                    <span>•</span>
+                    <span>Película</span>
+                  </>
                 )}
               </div>
 
-              {/* Información de creadores para series */}
-              {isSerie && serie.creadores && serie.creadores.length > 0 && (
+              {/* Información de creadores para series y películas */}
+              {(isSerie ? (serie.creadores?.length ?? 0) > 0 : media.creador) && (
                 <div className="mb-4">
                   <h3 className="text-gray-300 text-sm font-medium mb-2">
-                    {serie.creadores.length > 1 ? 'Creadores' : 'Creador'}
+                    {isSerie 
+                      ? ((serie.creadores?.length ?? 0) > 1 ? 'Creadores' : 'Creador')
+                      : 'Director'
+                    }
                   </h3>
                   <div className="flex flex-wrap gap-4">
-                    {serie.creadores.map((creador) => (
-                      <div key={creador.id} className="flex items-center gap-2">
-                        {creador.foto && (
-                          <img 
-                            src={creador.foto} 
-                            alt={creador.nombre}
-                            className="w-10 h-10 rounded-full object-cover border-2 border-red-600/30"
-                          />
-                        )}
-                        <span className="text-white font-medium">{creador.nombre}</span>
-                      </div>
-                    ))}
+                    {isSerie ? (
+                      (serie.creadores ?? []).map((creador) => (
+                        <div key={creador.id} className="flex items-center gap-2">
+                          {creador.foto && (
+                            <img 
+                              src={creador.foto} 
+                              alt={creador.nombre}
+                              className="w-10 h-10 rounded-full object-cover border-2 border-red-600/30"
+                            />
+                          )}
+                          <span className="text-white font-medium">{creador.nombre}</span>
+                        </div>
+                      ))
+                    ) : (
+                      media.creador && (
+                        <div className="flex items-center gap-2">
+                          {media.creador.foto && (
+                            <img 
+                              src={media.creador.foto} 
+                              alt={media.creador.nombre}
+                              className="w-10 h-10 rounded-full object-cover border-2 border-red-600/30"
+                            />
+                          )}
+                          <span className="text-white font-medium">{media.creador.nombre}</span>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               )}
@@ -274,6 +314,33 @@ export const MediaPage = ({ media }: MediaPageProps) => {
               </div>
             </div>
           )}
+
+            {/* Galería de Imágenes */}
+          {media.imagenes && media.imagenes.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-white mb-6">Galería</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {media.imagenes.map((img) => (
+                  <div
+                    key={img.id}
+                    className="relative group cursor-pointer"
+                    onClick={() => setSelectedImage(img.url)}
+                  >
+                    <img
+                      src={img.url}
+                      alt={`${media.titulo} - ${img.tipo}`}
+                      className="w-full h-auto object-cover rounded-lg shadow-md group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-white text-sm font-medium">
+                      Ampliar
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+   
         </div>
       </div>
     </div>

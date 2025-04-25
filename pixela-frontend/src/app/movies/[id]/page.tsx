@@ -3,7 +3,7 @@ import { MediaPage } from '@/features/media/pages/MediaPage';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-interface PeliculaPageProps {
+interface MoviePageProps {
   params: {
     id: string;
   };
@@ -11,13 +11,10 @@ interface PeliculaPageProps {
 
 // En Next.js, se recomienda usar esta estructura para metadatos dinámicos
 export async function generateMetadata(
-  { params }: PeliculaPageProps
+  { params }: MoviePageProps
 ): Promise<Metadata> {
-  // Asegurarnos de que el id se trata como un string
-  const id = String(params.id);
-  
   try {
-    const pelicula = await getPeliculaById(id);
+    const pelicula = await getPeliculaById(params.id);
     
     return {
       title: `${pelicula.titulo} | Pixela`,
@@ -37,15 +34,12 @@ export async function generateMetadata(
   }
 }
 
-export default async function PeliculaPage(
-  { params }: PeliculaPageProps
+export default async function MoviePage(
+  { params }: MoviePageProps
 ) {
-  // Asegurarnos de que el id se trata como un string
-  const id = String(params.id);
-  
   try {
-    console.log(`Intentando obtener información de la película con ID: ${id}`);
-    const pelicula = await getPeliculaById(id);
+    console.log(`Intentando obtener información de la película con ID: ${params.id}`);
+    const pelicula = await getPeliculaById(params.id);
     console.log(`Película obtenida: ${pelicula.titulo}`);
     
     return (
@@ -54,7 +48,7 @@ export default async function PeliculaPage(
       </section>
     );
   } catch (error) {
-    console.error(`Error al cargar la película con ID ${id}:`, error);
+    console.error(`Error al cargar la película con ID ${params.id}:`, error);
     notFound();
   }
 } 

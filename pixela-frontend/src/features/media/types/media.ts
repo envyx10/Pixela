@@ -35,6 +35,12 @@ export interface Media {
   actores: Actor[];
   trailers: Trailer[];
   proveedores?: WatchProvider[];
+  duracion?: number;
+  creador?: {
+    id: number;
+    nombre: string;
+    foto: string;
+  };
 }
 
 export interface Creator {

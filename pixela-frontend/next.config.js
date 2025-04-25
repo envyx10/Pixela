@@ -6,6 +6,10 @@ const nextConfig = {
                 source: '/api/series/:path*',
                 destination: 'http://laravel.test/api/series/:path*',
             },
+            {
+                source: '/api/movies/:path*',
+                destination: 'http://laravel.test/api/movies/:path*',
+            },
         ];
     },
     images: {

@@ -13,13 +13,18 @@ export const API_ENDPOINTS = {
     LIST: `${API_BASE_URL}/api/series`,
     GET_CAST: (id: string) => `${API_BASE_URL}/api/series/${id}/cast`,
     GET_VIDEOS: (id: string) => `${API_BASE_URL}/api/series/${id}/videos`,
+    GET_IMAGES: (id: string) => `${API_BASE_URL}/api/series/${id}/images`, // ✅ añadido
     GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/api/series/${id}/watch-providers`,
   },
   
   // Películas
   PELICULAS: {
-    GET_BY_ID: (id: string) => `${API_BASE_URL}/api/peliculas/${id}`,
-    LIST: `${API_BASE_URL}/api/peliculas`,
+    GET_BY_ID: (id: string) => `${API_BASE_URL}/api/movies/${id}`,
+    LIST: `${API_BASE_URL}/api/movies`,
+    GET_CAST: (id: string) => `${API_BASE_URL}/api/movies/${id}/cast`,
+    GET_VIDEOS: (id: string) => `${API_BASE_URL}/api/movies/${id}/videos`,
+    GET_IMAGES: (id: string) => `${API_BASE_URL}/api/movies/${id}/images`, // ✅ añadido
+    GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/api/movies/${id}/watch-providers`,
   },
 };
 
