@@ -3,8 +3,6 @@
 import { Outfit, Roboto } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "../shared/components/Navbar";
-import { useAuthStore } from "../store/auth.store";
-import { useEffect } from "react";
 
 /* Fuentes para el texto */
 const roboto = Roboto({
