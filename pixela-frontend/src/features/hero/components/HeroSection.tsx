@@ -20,8 +20,6 @@ export const HeroSection = ({
   description,
   secondaryButtonText,
   images = [],
-  ctaText = "",
-  ctaLink = ""
 }: HeroSectionProps) => {
 
   const { currentImageIndex, isPlaying, setProgress, nextImage, resetProgress} = useHeroStore();
