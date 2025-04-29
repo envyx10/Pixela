@@ -1,0 +1,63 @@
+.profile-input {
+  position: relative;
+  width: 100%;
+  margin-bottom: $spacing-md;
+
+  &__label {
+    display: block;
+    font-size: $font-size-small;
+    color: $text-secondary;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__icon {
+    position: absolute;
+    left: $spacing-md;
+    color: rgba($text-primary, 0.5);
+    font-size: $font-size-medium;
+    pointer-events: none;
+  }
+
+  &__field {
+    width: 100%;
+    padding: $spacing-md $spacing-md $spacing-md $spacing-xxl;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: $border-radius-md;
+    color: $text-primary;
+    font-size: $font-size-normal;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: rgba($text-primary, 0.3);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: rgba(#ec1b69, 0.5);
+      box-shadow: 0 0 0 2px rgba(#ec1b69, 0.1);
+    }
+
+    &--error {
+      border-color: rgba(#ec1b69, 0.5);
+    }
+  }
+
+  &__error {
+    color: #ec1b69;
+    font-size: $font-size-small;
+    margin-top: $spacing-xs;
+  }
+
+  &__helper {
+    color: $text-secondary;
+    font-size: $font-size-small;
+    margin-top: $spacing-xs;
+  }
+} 
