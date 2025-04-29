@@ -7,9 +7,16 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    /**
+     * Método para autenticar al usuario
+     *
+     * @param Request $request
+     * @return void
+     */
     public function login(Request $request)
     {
         $request->validate([
@@ -20,29 +27,106 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+            if ($request->expectsJson()) {
+                throw ValidationException::withMessages([
+                    'email' => ['The provided credentials are incorrect.'],
+                ]);
+            }
+            return back()->withErrors([
+                'email' => 'Las credenciales proporcionadas son incorrectas.',
             ]);
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        // Autenticar al usuario usando el sistema de sesiones de Laravel
+        Auth::login($user);
 
-        return response()->json([
-            'token' => $token,
-            'user' => $user,
-            'is_admin' => $user->is_admin,
-        ]);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'user' => $user,
+                'is_admin' => $user->is_admin,
+            ]);
+        }
+
+        // Para solicitudes de formulario HTML, redireccionar al frontend
+        return redirect()->away(env('FRONTEND_URL'));
     }
 
+    /**
+     * Método para cerrar la sesión del usuario
+     *
+     * @param Request $request
+     * @return void
+     */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        // Cerrar la sesión
+        Auth::logout();
+        
+        // Invalidar la sesión y regenerar el token CSRF
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        return response()->json(['message' => 'Logged out successfully']);
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Logged out successfully']);
+        }
+
+        // Para solicitudes de formulario HTML
+        return redirect()->away(env('FRONTEND_URL'));
     }
 
+    /**
+     * Método para obtener el usuario autenticado
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function user(Request $request)
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            return response()->json([
+                'user' => $user,
+                'is_admin' => $user->is_admin
+            ]);
+        }
+        
+        return response()->json(['message' => 'Unauthenticated'], 401);
+    }
+
+    /**
+     * Método para verificar si el usuario es administrador
+     *
+     * @param Request $request
+     * @return void
+     */
     public function isAdmin(Request $request)
     {
-        return response()->json(['is_admin' => $request->user()->is_admin]);
+        if (Auth::check()) {
+            return response()->json(['is_admin' => Auth::user()->is_admin]);
+        }
+        
+        return response()->json(['message' => 'Unauthenticated'], 401);
+    }
+
+    /**
+     * Método específico para manejar logout desde el frontend con redirección web
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function webLogout(Request $request)
+    {
+        // Cerrar la sesión
+        Auth::guard('web')->logout();
+        
+        // Invalidar la sesión y regenerar el token CSRF
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        // Redirigir al login de Laravel con cabeceras para evitar caché
+        return redirect('/login')
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 } 

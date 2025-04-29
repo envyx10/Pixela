@@ -11,12 +11,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const checkAuth = useAuthStore((state) => state.checkAuth);
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
   return (
     <html lang="en" className={`${roboto.variable} ${outfit.variable}`}>
       <body className="bg-pixela-dark antialiased">

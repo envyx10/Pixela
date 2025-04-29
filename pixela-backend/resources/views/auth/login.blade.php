@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}" class="py-4 space-y-6 max-w-md">
+    <form method="POST" action="{{ env('APP_URL') }}/api/auth/login" class="py-4 space-y-6 max-w-md">
         @csrf
 
         <!-- Titulo del Login -->
@@ -51,7 +51,7 @@
 
         <!-- Iniciar button -->
         <div class="mb-6">
-            <x-rounded-button class="w-full h-11 text-base">
+            <x-rounded-button type="submit" class="w-full h-11 text-base">
                 Iniciar
             </x-rounded-button>
         </div>

@@ -14,7 +14,6 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
     
     protected $primaryKey = 'user_id';
-    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
@@ -25,7 +24,6 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
-        'last_login_date',
     ];
 
     /**
@@ -47,8 +45,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_admin' => 'boolean',
-        'registration_date' => 'datetime',
-        'last_login_date' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function favorites()

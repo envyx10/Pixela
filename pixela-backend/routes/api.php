@@ -3,17 +3,15 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MovieController;
 use App\Http\Controllers\Api\SeriesController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Rutas de autenticación
-Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
+// Rutas de autenticación del usuario
+Route::prefix('auth')->group(function(){
+    Route::post('login',   [AuthController::class,'login']);
+    Route::post('logout',  [AuthController::class,'logout'])->middleware('auth:sanctum');
+    Route::get('user',     [AuthController::class,'user'])->middleware('auth:sanctum');
+  });
+  
 // Rutas de películas
 Route::group([
     'controller' => MovieController::class, 
