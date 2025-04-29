@@ -1,6 +1,5 @@
 import { SeriesResponse, MoviesResponse, TrendingSerie, TrendingMovie } from "@/features/trending/type";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://laravel.test/api';
+import { API_BASE_URL } from "@/config/api";
 
 /**
  * Obtiene las series en tendencia
@@ -10,7 +9,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://laravel.test/api';
  */
 export async function getTrendingSeries(limit = 20, offset = 0): Promise<TrendingSerie[]> {
     try {
-        const response = await fetch(`${API_URL}/series/trending?limit=${limit}&offset=${offset}`);
+        const response = await fetch(`${API_BASE_URL}/api/series/trending?limit=${limit}&offset=${offset}`);
         
         if (!response.ok) {
             throw new Error(`Error de API: ${response.status} ${response.statusText}`);
@@ -34,7 +33,7 @@ export async function getTrendingSeries(limit = 20, offset = 0): Promise<Trendin
  */
 export async function getTrendingMovies(limit = 20, offset = 0): Promise<TrendingMovie[]> {
     try {
-        const response = await fetch(`${API_URL}/movies/trending?limit=${limit}&offset=${offset}`);
+        const response = await fetch(`${API_BASE_URL}/api/movies/trending?limit=${limit}&offset=${offset}`);
         
         if (!response.ok) {
             throw new Error(`Error de API: ${response.status} ${response.statusText}`);

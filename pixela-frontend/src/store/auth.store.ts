@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { API_BASE_URL } from '@/config/api';
 
 interface User {
   id: number;
@@ -21,7 +22,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   checkAuth: async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/user', {
+      const response = await fetch(`${API_BASE_URL}/api/user`, {
         credentials: 'include',
       });
       
@@ -38,7 +39,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     try {
-      await fetch('http://localhost:8000/api/auth/logout', {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include',
       });

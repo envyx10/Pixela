@@ -151,4 +151,89 @@ class SeriesController extends Controller
         }
     }   
 
+    /**
+     * Obtiene los actores de una serie por su ID
+     *
+     * @param int $seriesId ID de la serie
+     * @return JsonResponse
+     */
+    public function getSeriesCast(int $seriesId): JsonResponse
+    {
+        try {
+            $castData = $this->tmdbSeriesService->getSeriesCast($seriesId); 
+            
+            return response()->json([
+                'success' => true,
+                'data' => $castData 
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtiene los videos (trailers) de una serie por su ID
+     *
+     * @param int $seriesId ID de la serie
+     * @return JsonResponse
+     */
+    public function getSeriesVideos(int $seriesId): JsonResponse
+    {
+        try {
+            $videos = $this->tmdbSeriesService->getSeriesVideos($seriesId);
+            
+            if (!$videos) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No videos found for this series'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $videos
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtiene las plataformas de streaming donde se puede ver una serie
+     *
+     * @param int $seriesId ID de la serie
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getSeriesWatchProviders(int $seriesId, Request $request): JsonResponse
+    {
+        try {
+            $region = $request->get('region', 'ES');
+            $providers = $this->tmdbSeriesService->getSeriesWatchProviders($seriesId, $region);
+            
+            if (!$providers || empty($providers['results'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No streaming providers found for this series'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $providers
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
