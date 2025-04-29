@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class FavoriteController extends Controller
 {
     /**
-     * Agrega una película o serie a los favoritos del usuario
+     * Add a movie or series to the user's favorites
      * 
      * @param Request $request
      * @return JsonResponse
@@ -46,7 +46,7 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Elimina una película o serie de los favoritos del usuario
+     * Remove a movie or series from the user's favorites
      * 
      * @param Request $request
      * @return JsonResponse
@@ -88,7 +88,7 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Obtiene todos los favoritos del usuario
+     * Obtain all favorites of the user
      * 
      * @return JsonResponse
      */
@@ -113,7 +113,7 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Obtiene todos los favoritos del usuario por tipo
+     * Obtain all favorites of a specific type (movie or series)
      * 
      * @param string $itemType
      * @param int $tmdbId

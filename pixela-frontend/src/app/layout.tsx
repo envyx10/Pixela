@@ -2,7 +2,7 @@
 
 import "./globals.css";
 import { Navbar } from "../shared/components/Navbar";
-import { useAuthStore } from "../store/auth.store";
+import { useAuthStore } from "../stores/useAuthStore";
 import { useEffect } from "react";
 import { outfit, roboto } from "./ui/fonts";
 

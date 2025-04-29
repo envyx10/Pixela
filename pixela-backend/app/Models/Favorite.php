@@ -10,7 +10,6 @@ class Favorite extends Model
     use HasFactory;
 
     protected $primaryKey = 'favorite_id';
-    public $timestamps = false;
 
     protected $fillable = [
         'user_id',
@@ -22,9 +21,14 @@ class Favorite extends Model
         'tmdb_id' => 'integer',
     ];
 
-    // Relación con usuario
+    /**
+     * Relation with the table users
+     *
+     * @return void
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
 }

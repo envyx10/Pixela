@@ -2,131 +2,117 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
     /**
-     * Método para autenticar al usuario
+     * Registers a new user and issues a token.
      *
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
-    public function login(Request $request)
+    public function register(Request $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        $data = $request->validate([
+            'name'     => ['required', 'string', 'max:255'],
+            'surname'  => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::create([
+            'name'     => $data['name'],
+            'surname'  => $data['surname'],
+            'email'    => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            if ($request->expectsJson()) {
-                throw ValidationException::withMessages([
-                    'email' => ['The provided credentials are incorrect.'],
-                ]);
-            }
-            return back()->withErrors([
-                'email' => 'Las credenciales proporcionadas son incorrectas.',
-            ]);
-        }
+        $user->generateEmailVerificationToken();
+        $user->sendEmailVerificationNotification();
 
-        // Autenticar al usuario usando el sistema de sesiones de Laravel
-        Auth::login($user);
+        $plainTextToken = $user->createToken('auth_token')->plainTextToken;
 
-        if ($request->expectsJson()) {
-            return response()->json([
-                'user' => $user,
-                'is_admin' => $user->is_admin,
-            ]);
-        }
-
-        // Para solicitudes de formulario HTML, redireccionar al frontend
-        return redirect()->away(env('FRONTEND_URL'));
+        return response()->json([
+            'data' => [
+                'message' => 'User registered successfully. Please verify your email.',
+                'token'   => $plainTextToken,
+            ],
+            'meta' => [
+                'timestamp' => now(),
+            ],
+        ], 201);
     }
 
     /**
-     * Método para cerrar la sesión del usuario
+     * Login: authenticates the user and issues a token.
      *
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
-    public function logout(Request $request)
+    public function login(Request $request): JsonResponse
     {
-        // Cerrar la sesión
-        Auth::logout();
-        
-        // Invalidar la sesión y regenerar el token CSRF
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $credentials = $request->validate([
+            'email'    => ['bail', 'required', 'email', 'exists:users,email'],
+            'password' => ['required', 'string'],
+        ], [
+            'email.exists' => __('auth.failed'),
+        ]);
 
-        if ($request->expectsJson()) {
-            return response()->json(['message' => 'Logged out successfully']);
+        if (! Auth::attempt($credentials)) {
+            throw ValidationException::withMessages([
+                'email' => [__('auth.failed')],
+            ]);
         }
 
-        // Para solicitudes de formulario HTML
-        return redirect()->away(env('FRONTEND_URL'));
+        $user = Auth::user();
+        $user->tokens()->delete();
+        $plainTextToken = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'data' => [
+                'message' => __('auth.login_success'),
+                'token'   => $plainTextToken,
+            ],
+            'meta' => [
+                'timestamp' => now(),
+            ],
+        ], 200);
     }
 
     /**
-     * Método para obtener el usuario autenticado
+     * Get the authenticated user.
      *
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
     public function user(Request $request)
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            return response()->json([
-                'user' => $user,
-                'is_admin' => $user->is_admin
-            ]);
-        }
-        
-        return response()->json(['message' => 'Unauthenticated'], 401);
+        return response()->json($request->user());
     }
 
     /**
-     * Método para verificar si el usuario es administrador
+     * Logout: revokes the API token and invalidates the session.
      *
      * @param Request $request
-     * @return void
+     * @return JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function isAdmin(Request $request)
+    public function logout(Request $request)
     {
-        if (Auth::check()) {
-            return response()->json(['is_admin' => Auth::user()->is_admin]);
-        }
-        
-        return response()->json(['message' => 'Unauthenticated'], 401);
+        $request->user()->tokens()->delete();
+
+        return response()->json([
+            'data' => ['message' => 'Sesión cerrada'],
+            'meta' => ['timestamp' => now()],
+        ]);
+
     }
 
-    /**
-     * Método específico para manejar logout desde el frontend con redirección web
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function webLogout(Request $request)
-    {
-        // Cerrar la sesión
-        Auth::guard('web')->logout();
-        
-        // Invalidar la sesión y regenerar el token CSRF
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        
-        // Redirigir al login de Laravel con cabeceras para evitar caché
-        return redirect('/login')
-            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-            ->header('Pragma', 'no-cache')
-            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
-    }
-} 
+}

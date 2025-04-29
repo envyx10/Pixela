@@ -1,18 +1,33 @@
 'use client';
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { mainNavLinks } from "@/data/links/navigation"
-import { MdLogout } from "react-icons/md"
-import { FiUser } from "react-icons/fi"
-import { useAuthStore } from "@/store/auth.store"
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { MdLogout } from 'react-icons/md';
+import { FiUser } from 'react-icons/fi';
+import { mainNavLinks } from '@/data/links/navigation';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useRef, useEffect, useState } from 'react';
 
 export const Navbar = () => {
   const router = useRouter();
-  const { logout } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleLogout = () => {
-    logout();
+  const handleProfile = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (user) {
+      router.push('/profile');
+    } else {
+      window.location.replace(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`);
+    }
+  };
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    await logout();
+    router.push('/');
   };
 
   return (
@@ -37,13 +52,13 @@ export const Navbar = () => {
         </div>
 
         <div className="mx-10 flex items-center space-x-4">
-          <Link
-            href="/profile"
+          <button
+            onClick={handleProfile}
             className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
             aria-label="Perfil"
           >
             <FiUser className="h-6 w-6" />
-          </Link>
+          </button>
           
           <button 
             onClick={handleLogout}
@@ -55,8 +70,5 @@ export const Navbar = () => {
         </div>
       </div>
     </nav>
-  )
-}
-
-
- 
+  );
+};

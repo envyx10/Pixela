@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -29,8 +30,27 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Redirigir al frontend usando FRONTEND_URL
-        return redirect()->away(env('FRONTEND_URL'));
+        // Obtener el token del usuario
+        $user = Auth::user();
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Redirigir al frontend con el token en una cookie segura
+        $response = redirect()->away(env('FRONTEND_URL'));
+        
+        // Configurar la cookie con el token
+        $response->withCookie(cookie(
+            'auth_token',
+            $token,
+            config('sanctum.expiration', 60 * 24 * 7), // 7 días por defecto
+            '/',
+            null,
+            false, // Solo HTTPS
+            false, // HttpOnly
+            false,
+            'Strict'
+        ));
+
+        return $response;
     }
 
     /**
@@ -43,6 +63,15 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->away(env('FRONTEND_URL'));
+        // Eliminar el token del usuario
+        if ($request->user()) {
+            $request->user()->tokens()->delete();
+        }
+
+        // Redirigir al frontend y eliminar la cookie
+        $response = redirect()->away(env('FRONTEND_URL'));
+        $response->withCookie(Cookie::forget('auth_token'));
+
+        return $response;
     }
 }

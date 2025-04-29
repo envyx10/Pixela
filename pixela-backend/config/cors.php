@@ -19,10 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    /*
-     * Orígenes permitidos para CORS
-     */
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['http://localhost:3000', 'http://laravel.test'],
 
     /*
      * Patrones de orígenes permitidos

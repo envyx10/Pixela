@@ -2,25 +2,34 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+
 use App\Models\User;
 
 class UserTableSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
         # Poblamos la tabla users con los usuarios que son admin
         $admins = [
             [
-                'user_name' => 'Pablo',
+                'name' => 'Pablo',
+                'surname' => 'Gil',
                 'email' => 'pablo@pixela.com',
+                'email_verified_at' => now(),
                 'password' => Hash::make('admin123'),
                 'is_admin' => true,
             ],
             [
-                'user_name' => 'Ruyi',
+                'name' => 'Ruyi',
+                'surname' => 'Xia',
                 'email' => 'ruyi@pixela.com',
+                'email_verified_at' => now(),
                 'password' => Hash::make('admin123'),
                 'is_admin' => true,
             ]
@@ -30,4 +39,4 @@ class UserTableSeeder extends Seeder
             User::create($admin);
         }
     }
-} 
+}

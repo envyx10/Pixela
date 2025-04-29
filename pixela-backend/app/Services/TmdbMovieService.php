@@ -29,7 +29,7 @@ class TmdbMovieService
     }
 
     /**
-     * Realiza peticiones a la API de TMDb.
+     * Make a request to the TMDB API
      *
      * @param string $endpoint
      * @return array
@@ -59,7 +59,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene información detallada de una película por su ID
+     * Obtains details of a movie by its ID
      *
      * @param int $id ID de la película
      * @return array
@@ -71,7 +71,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene todas las películas populares
+     * Obtains all trending movies
      *
      * @return array
      * @throws Exception
@@ -82,7 +82,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene las películas mejor valoradas
+     * Obtains top rated movies
      *
      * @return array
      * @throws Exception
@@ -93,7 +93,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene las películas que se están estrenando en cines
+     * Obtains now playing movies
      *
      * @return array
      * @throws Exception
@@ -104,7 +104,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene todas las películas de un género
+     * Obtains all movies by genre
      *
      * @param int $genreId ID del género
      * @return array

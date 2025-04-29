@@ -5,7 +5,7 @@
     <form method="POST" action="{{ env('APP_URL') }}/api/auth/login" class="py-4 space-y-6 max-w-md">
         @csrf
 
-        <!-- Titulo del Login -->
+        <!-- Title -->
         <h2 class="text-[24px] font-['Outfit'] text-white font-bold mb-8">Bienvenido a Pixela | <span class="text-gray-500">Iniciar sesión</span></h2>
 
         <!-- Email Address -->

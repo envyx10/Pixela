@@ -30,7 +30,7 @@ class TmdbSeriesService
     }
 
     /**
-     * Realiza peticiones a la API de TMDb.
+     * Make a request to the TMDB API
      *
      * @param string $endpoint
      * @return array
@@ -60,7 +60,7 @@ class TmdbSeriesService
     }
 
     /**
-     * Obtiene información detallada de una serie por su ID
+     * Obtains details of a series by its ID
      *
      * @param int $id ID de la serie
      * @return array
@@ -72,7 +72,7 @@ class TmdbSeriesService
     }
 
     /**
-     * Obtiene todas las series populares
+     * Obtains the list of popular series
      *
      * @return array
      * @throws Exception
@@ -83,7 +83,7 @@ class TmdbSeriesService
     } 
 
     /**
-     * Obtiene las series mejor valoradas
+     * Obtains top rated series
      *
      * @return array
      * @throws Exception
@@ -94,7 +94,7 @@ class TmdbSeriesService
     }
     
     /**
-    * Obtiene las series que estan en emisión
+    * Obtains the list of series currently airing
      *
      * @return array
      * @throws Exception
@@ -105,7 +105,7 @@ class TmdbSeriesService
     }
 
     /**
-     * Obtiene todas las series de un género
+     * Obtains the list of series by genre
      *
      * @param int $genreId ID del género
      * @return array

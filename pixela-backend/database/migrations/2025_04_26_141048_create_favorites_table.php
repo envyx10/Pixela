@@ -6,12 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('favorites', function (Blueprint $table) {
+
             $table->id('favorite_id');
+
             $table->enum('item_type', ['movie', 'series']);
             $table->unsignedBigInteger('tmdb_id');
+            $table->timestamps();
             
             $table->index('tmdb_id');
             $table->index('item_type');
@@ -23,11 +29,15 @@ return new class extends Migration
                 ->onUpdate('cascade');
 
             $table->unique(['user_id', 'item_type', 'tmdb_id'], 'favorites_unique_item');
+
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::dropIfExists('favorites');
     }
-}; 
+};
