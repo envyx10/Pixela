@@ -18,7 +18,6 @@ const VisualOverlays = () => (
   </>
 );
 
-
 export const ImageCarousel = ({ images }: ImageCarouselProps) => {
   const { currentImageIndex, fadeIn } = useHeroStore();
 
@@ -33,6 +32,12 @@ export const ImageCarousel = ({ images }: ImageCarouselProps) => {
         aria-hidden="true"
         role="presentation"
       >
+
+        //TODO: REVISAR LA RELACIÓN ASPECTO DE LAS IMAGENES
+        //TODO: MODIFICAR LAS IMAGENES PARA TRAERLAS DESDE LA API CON MEJOR CALIDAD Y EVITAR USO DE SUBIR IMAGENES A LA CARPETA PUBLIC
+        //INFO WIDTH Y HEIGHT EN IMAGE NO ES PARA PONER EL ASPECTO QUE QUERAMOS, ES PARA PONER EL ASPECTO DE LA IMAGEN QUE QUEREMOS QUE SE MUESTRE
+        //INFO: https://nextjs.org/learn/dashboard-app/optimizing-fonts-images
+
         <Image
           src={images[currentImageIndex]}
           alt={`Hero background image ${currentImageIndex + 1}`}

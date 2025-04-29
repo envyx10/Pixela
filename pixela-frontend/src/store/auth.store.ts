@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { API_BASE_URL } from '@/config/api';
 
 interface User {
   id: number;
