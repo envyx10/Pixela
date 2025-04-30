@@ -26,9 +26,23 @@ Video dia 30/04/2025 | checkIn:
 | [REACT](https://es.react.dev/learn)               | [LARAVEL (Auth)](https://laravel.com/docs/12.x/authentication#authenticating-users) |
 | [REACT WIKI](https://www.reactjs.wiki/)           | [MEDIUM](https://rezakhademix.medium.com/laravel-11-no-http-kernel-no-casts-no-console-kernel-721c62adb6ef) |
 | [TAILWINDCSS](https://tailwindcss.com/)           | [LARACASTS](https://laracasts.com/)                                    |
-| [FRONTEND MASTERS](https://frontendmasters.com/)  | [LARAVEL 12](https://laravel.com/docs/12.x/installation)                                                                       |
-| [DEVTALLES](https://cursos.devtalles.com/)        | [LARAVEL REDIS](https://laravel.com/docs/12.x/redis)                                                                        |
+| [FRONTEND MASTERS](https://frontendmasters.com/)  | [LARAVEL 12](https://laravel.com/docs/12.x/installation)               |
+| [DEVTALLES](https://cursos.devtalles.com/)        | [LARAVEL REDIS](https://laravel.com/docs/12.x/redis)                   |
                      
+# Tecnologías y herramientas usadas en Pixela  <br/>
+
+| 🧩 Frontend                                 | 🧩 Backend                                                   |
+|--------------------------------------------|--------------------------------------------------------------|
+| Next.js 15 – App Router y Server Components | Laravel 12 – API REST desacoplada                            |
+| React 19 – UI con componentes               | Sanctum – Autenticación con tokens                           |
+| TypeScript – Tipado estricto                | Laravel CORS – Permite consumo desde el frontend             |
+| Tailwind CSS – Utilidades de estilos        | Redis – Cache y mejora de rendimiento                        |
+| Sass (SCSS) – Preprocesador CSS             |                                                              |
+| Zustand – Estado global                     |                                                              |
+| React Hook Form – Formularios eficientes    |                                                              |
+| fetch API – Consumo de API REST             |                                                              |
+
+
 
 
 ![datos_1](https://github.com/user-attachments/assets/9809f359-e4a4-4c77-8144-7fc5a4b55a58)
