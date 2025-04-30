@@ -1,4 +1,4 @@
-import { Serie, WatchProvider } from '@/features/media/types/media';
+import { Serie, WatchProvider } from '../../features/media/types';
 
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
 

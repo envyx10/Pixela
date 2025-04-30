@@ -1,3 +1,5 @@
+'use client';
+
 import { User } from '@/features/profile/types/user';
 import { FiUser, FiUsers, FiMail, FiCalendar, FiShield, FiEdit } from 'react-icons/fi';
 

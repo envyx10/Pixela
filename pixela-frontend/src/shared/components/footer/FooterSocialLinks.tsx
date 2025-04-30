@@ -1,5 +1,7 @@
+'use client';
+
 import Link from 'next/link';
-import { FaInstagram, FaXTwitter, FaDiscord, FaTiktok, FaYoutube } from "react-icons/fa6";
+import { FaInstagram, FaXTwitter, FaYoutube } from "react-icons/fa6";
 
 // Definición del tipo de red social
 type SocialLink = {

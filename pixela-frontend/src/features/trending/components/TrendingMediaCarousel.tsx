@@ -10,10 +10,20 @@ interface TrendingMediaCarouselProps {
 
 export const TrendingMediaCarousel = ({ content, type }: TrendingMediaCarouselProps) => {
   return (
-    <MediaCarousel>
+    <MediaCarousel
+      className="trending-carousel"
+      slidesClassName="flex gap-0"
+    >
       {content.map((item, index) => (
-        <div key={`${item.id}-${index}`} className="relative min-w-[375px] max-w-[375px] w-[375px] flex-none pb-16">
-          <TrendingMediaCard media={item} type={type} />
+        <div 
+          key={item.id} 
+          className="relative min-w-[375px] max-w-[375px] w-[375px] flex-none"
+        >
+          <TrendingMediaCard 
+            media={item} 
+            type={type} 
+            index={index}
+          />
         </div>
       ))}
     </MediaCarousel>

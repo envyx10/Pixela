@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { FiUser } from 'react-icons/fi';
 
@@ -27,6 +29,8 @@ export const UserAvatar = ({
             className="user-avatar__image"
             width={160}
             height={160}
+            priority
+            loading="eager"
           />
         ) : (
           <div className="user-avatar__placeholder">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User } from '@/features/profile/types/user';
 import { ProfileFormData } from '@/features/profile/types/profileTypes';
 
@@ -20,30 +20,14 @@ import '@/styles/profile/main.scss';
 // Definimos el tipo para las pestañas
 type TabType = 'profile' | 'history' | 'watchlist' | 'favorites';
 
-export default function ProfilePage() {
-  
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+// Componente del cliente que maneja la edición y navegación de pestañas
+const ProfileClient = ({ user }: { user: User }) => {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  // Añadimos efecto de scroll para la animación, solo en el cliente
   useEffect(() => {
-    //TODO Aquí iría la lógica para obtener los datos del usuario
-    //INFO Por ahora, simulamos datos de ejemplo
-    setTimeout(() => {
-      setUser({
-        id: 1,
-        name: 'Usuario Ejemplo',
-        email: 'usuario@ejemplo.com',
-        created_at: new Date().toISOString(),
-        is_admin: false,
-        profile_image: undefined
-      });
-      setLoading(false);
-    }, 1000);
-    
-    // Añadimos efecto de scroll para la animación
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setScrolled(true);
@@ -77,14 +61,6 @@ export default function ProfilePage() {
     // Aquí iría la lógica para actualizar el perfil en el backend
     setIsEditing(false);
   };
-
-  if (loading) {
-    return <ProfileLoader />;
-  }
-
-  if (!user) {
-    return <ProfileError />;
-  }
 
   return (
     <main className="profile-page">
@@ -164,4 +140,55 @@ export default function ProfilePage() {
       </div>
     </main>
   );
+};
+
+// Función para obtener datos de usuario (simulada pero preparada para fetch real)
+async function getUserData(): Promise<User> {
+  // En producción, esto sería un fetch real con next/cache
+  // const res = await fetch('/api/user', { next: { revalidate: 60 } });
+  // return res.json();
+  
+  // Por ahora simulamos la data
+  return {
+    id: 1,
+    name: 'Usuario Ejemplo',
+    email: 'usuario@ejemplo.com',
+    created_at: new Date().toISOString(),
+    is_admin: false,
+    profile_image: undefined
+  };
+}
+
+// No podemos usar async/await en componentes con la directiva 'use client'
+// por lo que necesitamos otra estructura
+export default function ProfilePage() {
+  // La función getUserData se llama en el cliente
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Utilizamos useEffect para cargar los datos en el cliente
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userData = await getUserData();
+        setUser(userData);
+      } catch (error) {
+        console.error("Error al cargar datos de usuario:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <ProfileLoader />;
+  }
+
+  if (!user) {
+    return <ProfileError />;
+  }
+
+  return <ProfileClient user={user} />;
 } 

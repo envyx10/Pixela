@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { ImageCarousel, NavigationControls, ProgressIndicator, ContentSection} from "../components";
 import { useHeroStore } from "../store";
 
@@ -23,16 +23,19 @@ export const HeroSection = ({
 
   const { currentImageIndex, isPlaying, setProgress, nextImage, resetProgress} = useHeroStore();
 
-  // Funcion para avanzar a la siguiente imagen
+  // Memoizar la longitud del array de imágenes para evitar recreaciones
+  const imagesLength = useMemo(() => images.length, [images]);
+
+  // Funcion para avanzar a la siguiente imagen con useCallback
   const handleNextImage = useCallback(() => {
-    nextImage(images.length);
-  }, [nextImage, images.length]);
+    nextImage(imagesLength);
+  }, [nextImage, imagesLength]);
   
   // Efecto para el carrusel automático
   useEffect(() => {
     let interval: NodeJS.Timeout;
     
-    if (isPlaying) {
+    if (isPlaying && imagesLength > 0) {
       // Intervalo para la presentación de diapositivas
       interval = setInterval(() => {
         handleNextImage();
@@ -41,34 +44,32 @@ export const HeroSection = ({
     return () => {
       clearInterval(interval);
     };
-  }, [isPlaying, handleNextImage]);
+  }, [isPlaying, handleNextImage, imagesLength]);
 
   // Efecto separado para la barra de progreso
   useEffect(() => {
-    let progressInterval: NodeJS.Timeout;
-    
     if (isPlaying) {
       // Resetear el progreso cuando cambia la imagen
       resetProgress();
       
       // Intervalo para la barra de progreso
-      progressInterval = setInterval(() => {
+      const progressInterval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 100) return 0;
-          return prev + 0.5; 
+          return prev + 0.5;
         });
       }, 25);
+      
+      return () => {
+        clearInterval(progressInterval);
+      };
     }
-    
-    return () => {
-      clearInterval(progressInterval);
-    };
   }, [isPlaying, currentImageIndex, setProgress, resetProgress]);
   
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <ImageCarousel images={images} />
-      <NavigationControls imagesLength={images.length}/>
+      <NavigationControls imagesLength={imagesLength}/>
       <ProgressIndicator images={images}/>
   
       <ContentSection 

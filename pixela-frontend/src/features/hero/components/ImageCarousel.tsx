@@ -32,12 +32,12 @@ export const ImageCarousel = ({ images }: ImageCarouselProps) => {
         aria-hidden="true"
         role="presentation"
       >
-
-        //TODO: REVISAR LA RELACIÓN ASPECTO DE LAS IMAGENES
-        //TODO: MODIFICAR LAS IMAGENES PARA TRAERLAS DESDE LA API CON MEJOR CALIDAD Y EVITAR USO DE SUBIR IMAGENES A LA CARPETA PUBLIC
-        //INFO WIDTH Y HEIGHT EN IMAGE NO ES PARA PONER EL ASPECTO QUE QUERAMOS, ES PARA PONER EL ASPECTO DE LA IMAGEN QUE QUEREMOS QUE SE MUESTRE
-        //INFO: https://nextjs.org/learn/dashboard-app/optimizing-fonts-images
-
+        {/* 
+          Imagen optimizada para LCP (Largest Contentful Paint)
+          - priority: garantiza precarga
+          - quality: calidad óptima para imágenes hero
+          - sizes: responde a diferentes tamaños de viewport
+        */}
         <Image
           src={images[currentImageIndex]}
           alt={`Hero background image ${currentImageIndex + 1}`}
@@ -45,6 +45,10 @@ export const ImageCarousel = ({ images }: ImageCarouselProps) => {
           width={1920}
           height={1080}
           priority
+          quality={90}
+          sizes="100vw"
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAEDQIHq4C7ygAAAABJRU5ErkJggg=="
         />
       </div>
 

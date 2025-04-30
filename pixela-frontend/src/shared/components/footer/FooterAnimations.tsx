@@ -1,8 +1,19 @@
+import React from 'react';
 
 // Componente de animaciones CSS para el footer
 export const FooterAnimations = () => {
   return (
     <style jsx global>{`
+      /* Optimizamos animaciones con will-change para mejor rendimiento */
+      .footer-animated-element {
+        will-change: transform, opacity;
+      }
+
+      /* Usamos translateZ(0) para forzar aceleración por hardware */
+      .footer-gpu-accelerated {
+        transform: translateZ(0);
+      }
+
       @keyframes pixelPulse {
         0% { opacity: 0.05; }
         50% { opacity: 0.12; }
@@ -10,49 +21,50 @@ export const FooterAnimations = () => {
       }
       
       @keyframes floatParticle {
-        0%, 100% { transform: translateY(0) translateX(0); }
-        25% { transform: translateY(-20px) translateX(10px); }
-        50% { transform: translateY(-10px) translateX(-15px); }
-        75% { transform: translateY(-25px) translateX(5px); }
+        0%, 100% { transform: translateY(0) translateX(0) translateZ(0); }
+        25% { transform: translateY(-20px) translateX(10px) translateZ(0); }
+        50% { transform: translateY(-10px) translateX(-15px) translateZ(0); }
+        75% { transform: translateY(-25px) translateX(5px) translateZ(0); }
       }
       
       @keyframes pulseAndFloat {
-        0%, 100% { transform: translateY(0) scale(1); opacity: 0.2; }
-        50% { transform: translateY(-20px) translateX(15px) scale(1.2); opacity: 0.5; }
+        0%, 100% { transform: translateY(0) scale(1) translateZ(0); opacity: 0.2; }
+        50% { transform: translateY(-20px) translateX(15px) scale(1.2) translateZ(0); opacity: 0.5; }
       }
       
       @keyframes glowAndFloat {
-        0%, 100% { transform: translateY(0) scale(1); filter: blur(1px); }
-        50% { transform: translateY(-30px) translateX(10px) scale(1.5); filter: blur(2px); }
+        0%, 100% { transform: translateY(0) scale(1) translateZ(0); filter: blur(1px); }
+        50% { transform: translateY(-30px) translateX(10px) scale(1.5) translateZ(0); filter: blur(2px); }
       }
       
       @keyframes pixelFloat {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        33% { transform: translateY(-15px) translateX(10px) rotate(45deg); }
-        66% { transform: translateY(-25px) translateX(-15px) rotate(-45deg); }
+        0%, 100% { transform: translateY(0) rotate(0deg) translateZ(0); }
+        33% { transform: translateY(-15px) translateX(10px) rotate(45deg) translateZ(0); }
+        66% { transform: translateY(-25px) translateX(-15px) rotate(-45deg) translateZ(0); }
       }
       
       @keyframes spinFloat {
-        0% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(180deg); }
-        100% { transform: translateY(0) rotate(360deg); }
+        0% { transform: translateY(0) rotate(0deg) translateZ(0); }
+        50% { transform: translateY(-20px) rotate(180deg) translateZ(0); }
+        100% { transform: translateY(0) rotate(360deg) translateZ(0); }
       }
       
       @keyframes flowLine {
-        0% { transform: translateX(0) rotate(0deg); opacity: 0; width: 10%; }
+        0% { transform: translateX(0) rotate(0deg) translateZ(0); opacity: 0; width: 10%; }
         50% { opacity: 0.3; width: 25%; }
-        100% { transform: translateX(50px) rotate(0deg); opacity: 0; width: 10%; }
+        100% { transform: translateX(50px) rotate(0deg) translateZ(0); opacity: 0; width: 10%; }
       }
       
       @keyframes riseUp {
-        0% { transform: translateY(20px); opacity: 0; }
+        0% { transform: translateY(20px) translateZ(0); opacity: 0; }
         25% { opacity: 0.6; }
         75% { opacity: 0.3; }
-        100% { transform: translateY(-50px); opacity: 0; }
+        100% { transform: translateY(-50px) translateZ(0); opacity: 0; }
       }
       
       .animate-pulse-slow {
         animation: pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        will-change: opacity;
       }
       
       .animation-delay-1000 {

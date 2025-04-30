@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import FooterNewsletter from './FooterNewsletter';
 import FooterSocialLinks from './FooterSocialLinks';

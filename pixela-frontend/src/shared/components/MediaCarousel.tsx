@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, ReactNode } from 'react';
+import { useCallback, useEffect, useState, ReactNode, useMemo } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { SliderNavButton } from '@/shared/components/SliderNavButton';
@@ -12,6 +12,7 @@ interface MediaCarouselProps {
   autoplayInterval?: number;
   slidesClassName?: string;
   className?: string;
+  initialIndex?: number;
 }
 
 export const MediaCarousel = ({ 
@@ -19,52 +20,78 @@ export const MediaCarousel = ({
   autoplay = true, 
   autoplayInterval = 6000,
   slidesClassName = '',
-  className = ''
+  className = '',
+  initialIndex = 0
 }: MediaCarouselProps) => {
   const [isDragging, setIsDragging] = useState(false);
   
-  const [emblaRef, emblaApi] = useEmblaCarousel({
+  // Memoizar opciones del carrusel para evitar recreaciones
+  const carouselOptions = useMemo(() => ({
     loop: true,
-    align: 'start',
+    align: 'start' as const,
     skipSnaps: false,
     dragFree: true,
-    containScroll: 'trimSnaps',
+    containScroll: 'trimSnaps' as const,
     slidesToScroll: 1,
-    duration: 50
-  });
+    duration: 50,
+    startIndex: initialIndex
+  }), [initialIndex]);
   
+  const [emblaRef, emblaApi] = useEmblaCarousel(carouselOptions);
+  
+  // Gestión optimizada de eventos de arrastre
   useEffect(() => {
-    if (emblaApi) {
-      const onDragStart = () => setIsDragging(true);
-      const onDragEnd = () => setIsDragging(false);
-      
-      emblaApi.on('pointerDown', onDragStart);
-      emblaApi.on('pointerUp', onDragEnd);
-      
-      return () => {
-        emblaApi.off('pointerDown', onDragStart);
-        emblaApi.off('pointerUp', onDragEnd);
-      };
-    }
+    if (!emblaApi) return;
+    
+    const onDragStart = () => setIsDragging(true);
+    const onDragEnd = () => setIsDragging(false);
+    
+    emblaApi.on('pointerDown', onDragStart);
+    emblaApi.on('pointerUp', onDragEnd);
+    
+    return () => {
+      emblaApi.off('pointerDown', onDragStart);
+      emblaApi.off('pointerUp', onDragEnd);
+    };
   }, [emblaApi]);
   
+  // Autoplay con retraso adaptativo
   useEffect(() => {
-    if (emblaApi && autoplay) {
-      const intervalId = setInterval(() => {
-        emblaApi.scrollNext();
+    if (!emblaApi || !autoplay) return;
+    
+    let intervalId: NodeJS.Timeout;
+    
+    const startAutoplay = () => {
+      clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        if (!document.hidden) {
+          emblaApi.scrollNext();
+        }
       }, autoplayInterval);
-      
-      return () => clearInterval(intervalId);
-    }
+    };
+    
+    // Iniciar autoplay
+    startAutoplay();
+    
+    // Reiniciar autoplay después de interacción
+    emblaApi.on('pointerUp', startAutoplay);
+    
+    // Pausar cuando la pestaña no está visible
+    document.addEventListener('visibilitychange', startAutoplay);
+    
+    return () => {
+      clearInterval(intervalId);
+      emblaApi.off('pointerUp', startAutoplay);
+      document.removeEventListener('visibilitychange', startAutoplay);
+    };
   }, [emblaApi, autoplay, autoplayInterval]);
   
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
+  // Funciones de navegación memoizadas
+  const scrollPrev = useCallback(() => 
+    emblaApi?.scrollPrev(), [emblaApi]);
   
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
+  const scrollNext = useCallback(() => 
+    emblaApi?.scrollNext(), [emblaApi]);
 
   return (
     <div className={clsx("relative", className)}>

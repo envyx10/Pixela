@@ -1,11 +1,8 @@
-'use client';
-
 import "./globals.css";
 import { Navbar } from "../shared/components/Navbar";
 import Footer from "../shared/components/Footer";
-import { useAuthStore } from "../store/auth.store";
-import { useEffect } from "react";
 import { outfit, roboto } from "./ui/fonts";
+import Script from 'next/script';
 
 export default function RootLayout({
   children,
@@ -14,6 +11,30 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${roboto.variable} ${outfit.variable}`}>
+      <head>
+        {/* Script para manejar atributos añadidos por extensiones del navegador */}
+        <Script id="handle-body-attributes" strategy="afterInteractive">
+          {`
+            (function() {
+              // Solución para manejar atributos como cz-shortcut-listen añadidos por extensiones
+              if (typeof window !== 'undefined') {
+                const observer = new MutationObserver((mutations) => {
+                  const bodyElement = document.querySelector('body');
+                  if (bodyElement && bodyElement.hasAttribute('cz-shortcut-listen')) {
+                    bodyElement.removeAttribute('cz-shortcut-listen');
+                  }
+                });
+                
+                observer.observe(document.body || document.documentElement, {
+                  attributes: true,
+                  childList: false,
+                  subtree: false
+                });
+              }
+            })();
+          `}
+        </Script>
+      </head>
       <body className="bg-pixela-dark antialiased">
         <div className="min-h-screen">
           <Navbar />

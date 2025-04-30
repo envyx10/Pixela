@@ -1,3 +1,5 @@
+'use client';
+
 import { IoIosArrowUp } from "react-icons/io";
 
 type ScrollTopButtonProps = {

@@ -62,7 +62,8 @@ export const FooterParticles = () => {
               left: `${particle.left}%`,
               opacity: particle.opacity,
               animation: `floatParticle ${particle.duration}s infinite ease-in-out`,
-              animationDelay: `${particle.delay}s`
+              animationDelay: `${particle.delay}s`,
+              willChange: 'transform, opacity'
             }}
           />
         ))}
@@ -79,7 +80,8 @@ export const FooterParticles = () => {
               left: `${particle.left}%`,
               opacity: particle.opacity,
               animation: `pulseAndFloat ${particle.duration}s infinite ease-in-out`,
-              animationDelay: `${particle.delay}s`
+              animationDelay: `${particle.delay}s`,
+              willChange: 'transform, opacity, scale'
             }}
           />
         ))}
@@ -98,7 +100,8 @@ export const FooterParticles = () => {
               background: 'radial-gradient(circle, rgba(255,0,127,0.8) 0%, rgba(255,0,127,0) 70%)',
               filter: 'blur(1px)',
               animation: `glowAndFloat ${particle.duration}s infinite ease-in-out`,
-              animationDelay: `${particle.delay}s`
+              animationDelay: `${particle.delay}s`,
+              willChange: 'transform, filter, scale'
             }}
           />
         ))}
