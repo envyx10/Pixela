@@ -97,6 +97,14 @@ class AuthController extends Controller
             $user->tokens()->delete();
         }
 
+        // Invalida la sesión actual
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Limpia la cookie de sesión
+        Cookie::queue(Cookie::forget('pixela_session'));
+
         return response()
             ->json([
                 'data' => ['message' => 'Sesión cerrada.'],
