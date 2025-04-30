@@ -1,9 +1,43 @@
 // URLs base
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
+//export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL || 'http://localhost/api';
 export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
+
+
+export const API_ENDPOINTS = {
+  // Series
+  SERIES: {
+    GET_BY_ID: (id: string) => `${API_BASE_URL}/api/series/${id}`,
+    LIST: `${API_BASE_URL}/api/series`,
+    GET_CAST: (id: string) => `${API_BASE_URL}/api/series/${id}/cast`,
+    GET_VIDEOS: (id: string) => `${API_BASE_URL}/api/series/${id}/videos`,
+    GET_IMAGES: (id: string) => `${API_BASE_URL}/api/series/${id}/images`, // ✅ añadido
+    GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/api/series/${id}/watch-providers`,
+  },
+  
+  // Películas
+  PELICULAS: {
+    GET_BY_ID: (id: string) => `${API_BASE_URL}/api/movies/${id}`,
+    LIST: `${API_BASE_URL}/api/movies`,
+    GET_CAST: (id: string) => `${API_BASE_URL}/api/movies/${id}/cast`,
+    GET_VIDEOS: (id: string) => `${API_BASE_URL}/api/movies/${id}/videos`,
+    GET_IMAGES: (id: string) => `${API_BASE_URL}/api/movies/${id}/images`, // ✅ añadido
+    GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/api/movies/${id}/watch-providers`,
+  },
+
+  // Auth
+  AUTH: {
+    LOGIN: '/login',
+    LOGOUT: '/logout',
+    REGISTER: '/register',
+    USER: '/user',
+  }
+
+};
 
 // Endpoints específicos
-export const API_ENDPOINTS = {
+/* export const API_ENDPOINTS = {
   // Series
   SERIES: {
     GET_BY_ID: (id: string) => `/series/${id}`,
@@ -33,6 +67,15 @@ export const API_ENDPOINTS = {
     REGISTER: '/register',
     USER: '/user',
   }
+}; */
+
+// Opciones por defecto para las peticiones fetch
+export const DEFAULT_FETCH_OPTIONS = {
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+  cache: 'no-store' as RequestCache
 };
 
 // Estado del token CSRF
@@ -80,7 +123,7 @@ export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): P
     // Construir la URL completa
     const fullUrl = url.startsWith('http') 
       ? url 
-      : `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`;
+      : `${API_URL}${url.startsWith('/') ? url : `/${url}`}`;
     
     console.log('Haciendo petición a:', fullUrl);
     

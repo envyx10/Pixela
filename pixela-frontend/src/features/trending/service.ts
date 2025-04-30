@@ -1,5 +1,6 @@
 import { SeriesResponse, MoviesResponse, TrendingSerie, TrendingMovie } from "@/features/trending/type";
-import { API_ENDPOINTS, fetchFromAPI } from "@/config/api";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL;
 
 /**
  * Obtiene las series en tendencia
@@ -9,10 +10,16 @@ import { API_ENDPOINTS, fetchFromAPI } from "@/config/api";
  */
 export async function getTrendingSeries(limit = 20, offset = 0): Promise<TrendingSerie[]> {
     try {
-        const data: SeriesResponse = await fetchFromAPI(
-            `${API_ENDPOINTS.SERIES.GET_TRENDING}?limit=${limit}&offset=${offset}`
-        );
+        console.log(`Fetching trending series from: ${API_BASE_URL}/api/series/trending?limit=${limit}&offset=${offset}`);
+        const response = await fetch(`${API_BASE_URL}/api/series/trending?limit=${limit}&offset=${offset}`);
+        
+        if (!response.ok) {
+            throw new Error(`Error de API: ${response.status} ${response.statusText}`);
+        }
+
+        const data: SeriesResponse = await response.json();
         return data.data;
+
     } catch (error) {
         console.error('Error fetching trending series:', error);
         // Devolver un array vacío en caso de error para evitar fallos en la UI
@@ -28,10 +35,16 @@ export async function getTrendingSeries(limit = 20, offset = 0): Promise<Trendin
  */
 export async function getTrendingMovies(limit = 20, offset = 0): Promise<TrendingMovie[]> {
     try {
-        const data: MoviesResponse = await fetchFromAPI(
-            `${API_ENDPOINTS.PELICULAS.GET_TRENDING}?limit=${limit}&offset=${offset}`
-        );
+        console.log(`Fetching trending movies from: ${API_BASE_URL}/api/movies/trending?limit=${limit}&offset=${offset}`);
+        const response = await fetch(`${API_BASE_URL}/api/movies/trending?limit=${limit}&offset=${offset}`);
+        
+        if (!response.ok) {
+            throw new Error(`Error de API: ${response.status} ${response.statusText}`);
+        }
+
+        const data: MoviesResponse = await response.json();
         return data.data;
+
     } catch (error) {
         console.error('Error fetching trending movies:', error);
         // Devolver un array vacío en caso de error para evitar fallos en la UI

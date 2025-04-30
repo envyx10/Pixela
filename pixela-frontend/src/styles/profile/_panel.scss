@@ -1,0 +1,151 @@
+// Estilos para los paneles de contenido
+
+.content-panel {
+  padding: $spacing-lg;
+  background-color: rgba($pixela-dark, 0.5);
+  border-radius: $border-radius-md;
+  border: 1px solid $border-color;
+  
+  &__header {
+    margin-bottom: $spacing-lg;
+  }
+  
+  &__title {
+    font-size: $font-size-large;
+    font-weight: bold;
+    color: $text-primary;
+    font-family: $font-primary;
+  }
+  
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xxl 0;
+    text-align: center;
+  }
+  
+  &__empty-icon {
+    font-size: 3rem;
+    color: $text-secondary;
+    margin-bottom: $spacing-md;
+  }
+  
+  &__empty-message {
+    color: $text-secondary;
+    font-size: $font-size-medium;
+    font-family: $font-primary;
+  }
+  
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: $spacing-lg;
+  }
+  
+  &__item {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: $border-radius-sm;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+    
+    &__empty {
+      padding: $spacing-xl 0;
+    }
+    
+    &__empty-message {
+      font-size: $font-size-normal;
+    }
+  }
+}
+
+.profile-panel {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-sm;
+    border-bottom: 2px solid #EC1B69;
+  }
+  
+  &__title {
+    font-size: $font-size-large;
+    font-weight: bold;
+    color: $text-primary;
+    margin: 0;
+  }
+  
+  &__edit-button {
+    padding: $spacing-xs $spacing-sm;
+    background: rgba(#ec1b69, 0.1);
+    color: #ec1b69;
+    border: 1px solid rgba(#ec1b69, 0.3);
+    border-radius: $border-radius-sm;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: rgba(#ec1b69, 0.2);
+      border-color: rgba(#ec1b69, 0.5);
+    }
+  }
+  
+  &__info-list {
+    display: grid;
+    gap: $spacing-md;
+  }
+  
+  &__info-item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+  }
+  
+  &__label {
+    font-size: $font-size-small;
+    color: $text-secondary;
+  }
+  
+  &__value {
+    font-size: $font-size-medium;
+    color: $text-primary;
+  }
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+    
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-sm;
+    }
+    
+    &__edit-button {
+      width: 100%;
+      text-align: center;
+    }
+  }
+} 

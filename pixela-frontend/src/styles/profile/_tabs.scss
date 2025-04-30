@@ -1,0 +1,74 @@
+// Estilos para las pestañas del perfil
+
+.profile-tabs {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  overflow-x: auto;
+  padding-bottom: $spacing-xs;
+  scrollbar-width: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  &__button {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-medium;
+    color: $text-secondary;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #ec1b69;
+      transition: width 0.2s ease;
+    }
+    
+    &:hover {
+      color: $text-primary;
+      
+      &::after {
+        width: 100%;
+      }
+    }
+    
+    &--active {
+      color: $text-primary;
+      font-weight: bold;
+      
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+  
+  &__icon {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  &__label {
+    font-size: 0.9375rem; // text-[15px]
+  }
+  
+  @media (max-width: $breakpoint-md) {
+    gap: $spacing-sm;
+    
+    &__button {
+      padding: $spacing-xs $spacing-sm;
+      font-size: $font-size-small;
+    }
+  }
+} 
