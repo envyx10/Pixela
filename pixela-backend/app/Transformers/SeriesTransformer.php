@@ -64,7 +64,7 @@ class SeriesTransformer
     }
 
     /**
-     * Transforma un conjunto de series.
+     * Transforms a collection of series.
      *
      * @param array $seriesCollection Colección de datos de series desde la API de TMDb.
      * @return array Colección de datos transformados.

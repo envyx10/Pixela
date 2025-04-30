@@ -19,7 +19,7 @@ class MovieController extends Controller
     }
 
     /**
-     * Obtiene los detalles de una película por su ID
+     * Obtain the details of a movie by its ID
      *
      * @param Request $request
      * @param int $movieId ID de la película
@@ -51,7 +51,7 @@ class MovieController extends Controller
     }
 
     /**
-     * Obtiene todas las películas trending
+     * Obtain the list of movies that are trending
      *
      * @return JsonResponse
      */
@@ -77,7 +77,7 @@ class MovieController extends Controller
     }
 
     /**
-     * Obtiene las películas mejor valoradas
+     * Obtain the list of movies that are popular
      *
      * @return JsonResponse
      */
@@ -102,7 +102,7 @@ class MovieController extends Controller
     }
 
     /**
-     * Obtiene las películas que se están estrenando en cines
+     * Obtain the list of movies that are now playing
      *
      * @return JsonResponse
      */
@@ -127,7 +127,7 @@ class MovieController extends Controller
     }
 
     /**
-     * Obtiene todas las películas de un género
+     * Obtain the list of movies by genre
      *
      * @param int $genreId ID del género
      * @return JsonResponse

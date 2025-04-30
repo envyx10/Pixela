@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { User } from '@/features/profile/types/user';
 import { ProfileFormData } from '@/features/profile/types/profileTypes';
+import { authAPI } from '@/config/api';
 
 import { 
   ProfileLoader,
@@ -142,29 +143,26 @@ const ProfileClient = ({ user }: { user: User }) => {
   );
 };
 
-// Función para obtener datos de usuario (simulada pero preparada para fetch real)
+// Función para obtener datos de usuario desde la API
 async function getUserData(): Promise<User> {
-  // En producción, esto sería un fetch real con next/cache
-  // const res = await fetch('/api/user', { next: { revalidate: 60 } });
-  // return res.json();
-  
-  // Por ahora simulamos la data
-  return {
-    id: 1,
-    name: 'Usuario Ejemplo',
-    email: 'usuario@ejemplo.com',
-    created_at: new Date().toISOString(),
-    is_admin: false,
-    profile_image: undefined
-  };
+  try {
+    const userData = await authAPI.getUser();
+    if (!userData) {
+      throw new Error('No se pudieron obtener los datos del usuario');
+    }
+    return userData;
+  } catch (error) {
+    console.error('Error al obtener datos del usuario:', error);
+    throw error;
+  }
 }
 
 // No podemos usar async/await en componentes con la directiva 'use client'
 // por lo que necesitamos otra estructura
 export default function ProfilePage() {
-  // La función getUserData se llama en el cliente
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Utilizamos useEffect para cargar los datos en el cliente
   useEffect(() => {
@@ -174,6 +172,7 @@ export default function ProfilePage() {
         setUser(userData);
       } catch (error) {
         console.error("Error al cargar datos de usuario:", error);
+        setError('No se pudieron cargar los datos del usuario. Por favor, intenta nuevamente.');
       } finally {
         setLoading(false);
       }
@@ -186,8 +185,12 @@ export default function ProfilePage() {
     return <ProfileLoader />;
   }
 
+  if (error) {
+    return <ProfileError message={error} />;
+  }
+
   if (!user) {
-    return <ProfileError />;
+    return <ProfileError message="No se encontraron datos del usuario." />;
   }
 
   return <ProfileClient user={user} />;

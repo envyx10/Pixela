@@ -1,18 +1,33 @@
 'use client';
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { mainNavLinks } from "@/data/links/navigation"
-import { MdLogout } from "react-icons/md"
-import { FiUser } from "react-icons/fi"
-import { useAuthStore } from "@/store/auth.store"
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { MdLogout } from 'react-icons/md';
+import { FiUser } from 'react-icons/fi';
+import { mainNavLinks } from '@/data/links/navigation';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export const Navbar = () => {
   const router = useRouter();
-  const { logout } = useAuthStore();
+  const { user, isAuthenticated, isLoading } = useAuthStore();
+  const logout = useAuthStore((s) => s.logout);
 
-  const handleLogout = () => {
-    logout();
+  const handleProfile = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isAuthenticated && user) {
+      router.push('/profile');
+    } else {
+      window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/login`;
+    }
+  };
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error durante el logout:', error);
+    }
   };
 
   return (
@@ -37,26 +52,27 @@ export const Navbar = () => {
         </div>
 
         <div className="mx-10 flex items-center space-x-4">
-          <Link
-            href="/profile"
+          <button
+            onClick={handleProfile}
             className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
-            aria-label="Perfil"
+            aria-label={isAuthenticated ? "Perfil" : "Iniciar sesión"}
+            title={isAuthenticated ? "Perfil" : "Iniciar sesión"}
           >
             <FiUser className="h-6 w-6" />
-          </Link>
-          
-          <button 
-            onClick={handleLogout}
-            className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
-            aria-label="Cerrar sesión"
-          >
-            <MdLogout className="h-6 w-6" />
           </button>
+          
+          {isAuthenticated && !isLoading && (
+            <button 
+              onClick={handleLogout}
+              className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
+              aria-label="Cerrar sesión"
+              title="Cerrar sesión"
+            >
+              <MdLogout className="h-6 w-6" />
+            </button>
+          )}
         </div>
       </div>
     </nav>
-  )
-}
-
-
- 
+  );
+};

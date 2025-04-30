@@ -14,38 +14,26 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie', 'frontend-logout'],
+    'paths' => [
 
+        'api/*',
+        'sanctum/csrf-cookie',
+        'login',        // POST /login
+        'logout',       // POST /logout
+        'register',     // POST /register
 
-    'allowed_methods' => ['*'],
+    ],
 
-    /*
-     * Orígenes permitidos para CORS
-     */
-    'allowed_origins' => ['*'],
+    'allowed_methods'   => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 
-    /*
-     * Patrones de orígenes permitidos
-     */
-    'allowed_origins_patterns' => [],
+    'allowed_origins'   => ['http://localhost', 'http://localhost:3000', 'http://laravel.test'],
 
-    /*
-     * Encabezados permitidos durante las solicitudes CORS
-     */
-    'allowed_headers' => ['*'],
+    'allowed_headers'   => ['*'],
 
-    /*
-     * Encabezados que pueden ser expuestos desde el servidor
-     */
     'exposed_headers' => [],
 
-    /*
-     * Tiempo de caché máximo para los resultados preflight
-     */
     'max_age' => 0,
 
-    /*
-     * Si se deben enviar credenciales durante las solicitudes CORS
-     */
-    'supports_credentials' => false,
+    'supports_credentials' => true,
+
 ]; 

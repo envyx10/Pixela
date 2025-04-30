@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Http\RedirectResponse;
+use Cookie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -26,11 +26,17 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        // Redirigir al frontend usando FRONTEND_URL
-        return redirect()->away(env('FRONTEND_URL'));
+        $user = Auth::user();
+        
+        // Crear un nuevo token de API
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Guardar el token en la sesión para que esté disponible en el frontend
+        session(['api_token' => $token]);
+
+        return redirect(env('FRONTEND_URL'));
     }
 
     /**
@@ -38,11 +44,20 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        $user = $request->user();
 
+        // Eliminar el token de API
+        if ($user) {
+            $user->tokens()->delete();
+        }
+
+        Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->away(env('FRONTEND_URL'));
+        // Limpia la cookie de sesión
+        Cookie::queue(Cookie::forget('pixela_session'));
+
+        return redirect(env('FRONTEND_URL'));
     }
 }

@@ -19,7 +19,7 @@ class SeriesController extends Controller
     }
 
     /**
-     * Obtiene los detalles de una serie por su ID
+     * Obtains the details of a series by its ID
      *
      * @param Request $request
      * @param int $seriesId ID de la serie
@@ -50,7 +50,7 @@ class SeriesController extends Controller
     }
 
     /**
-     * Obtiene todas las series trending
+     * Obtain the list of popular series
      *
      * @return JsonResponse
      */
@@ -76,7 +76,7 @@ class SeriesController extends Controller
     }
 
     /**
-     * Obtiene las series mejor valoradas
+     * Obtain the list of top-rated series
      *
      * @return JsonResponse
      */
@@ -101,7 +101,7 @@ class SeriesController extends Controller
     }
 
     /**
-     * Obtiene las series que se están estrenando en cines
+     * Obtain the list of series currently airing
      *
      * @return JsonResponse
      */
@@ -126,7 +126,7 @@ class SeriesController extends Controller
     }
 
     /**
-     * Obtiene todas las series de un género
+     * Obtain the list of series by genre
      *
      * @param int $genreId ID del género
      * @return JsonResponse
