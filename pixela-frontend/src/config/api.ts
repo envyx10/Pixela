@@ -155,6 +155,7 @@ export const authAPI = {
 
     if (response.token) {
       localStorage.setItem('token', response.token);
+      localStorage.removeItem('forceLogout');
     }
 
     return response;

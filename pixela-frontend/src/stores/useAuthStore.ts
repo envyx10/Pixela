@@ -30,6 +30,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   checkAuth: async () => {
     try {
       set({ isLoading: true, error: null });
+      localStorage.removeItem('forceLogout');
       const user = await authAPI.getUser();
       set({ user, isAuthenticated: true, isLoading: false, error: null });
     } catch (error) {
