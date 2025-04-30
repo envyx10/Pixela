@@ -8,6 +8,7 @@ import { FiSettings, FiClock, FiList, FiStar } from 'react-icons/fi';
 const mockUser = {
   id: 1,
   name: 'Usuario de Prueba',
+  surname: 'Apellido de Prueba',
   email: 'usuario@ejemplo.com',
   created_at: '2023-01-01'
 };

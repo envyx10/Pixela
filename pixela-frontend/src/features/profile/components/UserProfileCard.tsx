@@ -7,8 +7,9 @@ import { IoKeyOutline } from 'react-icons/io5';
 interface User {
   id: number;
   name: string;
+  surname: string;
   email: string;
-  created_at?: string;
+  created_at: string;
   is_admin?: boolean;
   profile_image?: string;
 }

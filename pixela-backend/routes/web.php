@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
+Route::get('/login', function () {
     return redirect()->route('login');
 });
 
@@ -14,6 +14,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/frontend-logout', [AuthController::class, 'webLogout']);
+//Route::get('/frontend-logout', [AuthController::class, 'webLogout']);
 
 require __DIR__.'/auth.php';

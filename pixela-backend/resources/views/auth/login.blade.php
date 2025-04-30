@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ env('APP_URL') }}/api/auth/login" class="py-4 space-y-6 max-w-md">
+    <form method="POST" action="{{ route('login') }}" class="py-4 space-y-6 max-w-md">
         @csrf
 
         <!-- Title -->
@@ -72,4 +72,5 @@
             </div>
         </div>
     </form>
+
 </x-guest-layout>

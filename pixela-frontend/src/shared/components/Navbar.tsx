@@ -6,21 +6,18 @@ import { MdLogout } from 'react-icons/md';
 import { FiUser } from 'react-icons/fi';
 import { mainNavLinks } from '@/data/links/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { useRef, useEffect, useState } from 'react';
 
 export const Navbar = () => {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
-  const formRef = useRef<HTMLFormElement>(null);
 
   const handleProfile = (e: React.MouseEvent) => {
     e.preventDefault();
-
     if (user) {
       router.push('/profile');
     } else {
-      window.location.replace(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`);
+      window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/login`;
     }
   };
 
@@ -55,18 +52,20 @@ export const Navbar = () => {
           <button
             onClick={handleProfile}
             className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
-            aria-label="Perfil"
+            aria-label={user ? "Perfil" : "Iniciar sesión"}
           >
             <FiUser className="h-6 w-6" />
           </button>
           
-          <button 
-            onClick={handleLogout}
-            className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
-            aria-label="Cerrar sesión"
-          >
-            <MdLogout className="h-6 w-6" />
-          </button>
+          {user && (
+            <button 
+              onClick={handleLogout}
+              className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
+              aria-label="Cerrar sesión"
+            >
+              <MdLogout className="h-6 w-6" />
+            </button>
+          )}
         </div>
       </div>
     </nav>

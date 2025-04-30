@@ -14,18 +14,15 @@ use Illuminate\Support\Facades\Cookie;
 class AuthController extends Controller
 {
     /**
-     * Registers a new user and issues a token.
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * Register a new user, issue token and set cookie.
      */
-    public function register(Request $request): JsonResponse
+    /* public function register(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'surname'  => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'name'     => ['required','string','max:255'],
+            'surname'  => ['required','string','max:255'],
+            'email'    => ['required','email','max:255','unique:users,email'],
+            'password' => ['required','string','min:8','confirmed'],
         ]);
 
         $user = User::create([
@@ -35,36 +32,27 @@ class AuthController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        $user->generateEmailVerificationToken();
-        $user->sendEmailVerificationNotification();
+        $cookie = session()->getCookie();
 
-        $plainTextToken = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'data' => [
-                'message' => 'User registered successfully. Please verify your email.',
-                'token'   => $plainTextToken,
-            ],
-            'meta' => [
-                'timestamp' => now(),
-            ],
-        ], 201);
-    }
+        return response()
+            ->json([
+                'data' => [
+                    'message' => 'User registered successfully.',
+                ],
+                'meta' => ['timestamp' => now()],
+            ], 201)
+            ->withCookie($cookie);
+    } */
 
     /**
-     * Login: authenticates the user and issues a token.
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * Login: authenticate, issue token and set cookie.
      */
-    public function login(Request $request): JsonResponse
+    /* public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
-            'email'    => ['bail', 'required', 'email', 'exists:users,email'],
-            'password' => ['required', 'string'],
-        ], [
-            'email.exists' => __('auth.failed'),
-        ]);
+            'email'    => ['bail','required','email','exists:users,email'],
+            'password' => ['required','string'],
+        ], ['email.exists' => __('auth.failed')]);
 
         if (! Auth::attempt($credentials)) {
             throw ValidationException::withMessages([
@@ -73,46 +61,46 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+        // Revoca tokens previos
         $user->tokens()->delete();
-        $plainTextToken = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'data' => [
-                'message' => __('auth.login_success'),
-                'token'   => $plainTextToken,
-            ],
-            'meta' => [
-                'timestamp' => now(),
-            ],
-        ], 200);
-    }
+        $cookie = session()->getCookie();
+
+        return response()
+            ->json([
+                'data' => [
+                    'message' => __('auth.login_success'),
+                ],
+                'meta' => ['timestamp' => now()],
+            ], 200)
+            ->withCookie($cookie);
+    } */
 
     /**
-     * Get the authenticated user.
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * Devuelve el usuario autenticado
      */
-    public function user(Request $request)
+    public function user(Request $request): JsonResponse
     {
+        //$cookie = session()->getCookie();
+
         return response()->json($request->user());
+        //->withCookie($cookie);
     }
 
     /**
-     * Logout: revokes the API token and invalidates the session.
-     *
-     * @param Request $request
-     * @return JsonResponse|\Illuminate\Http\RedirectResponse
+     * Logout: borra token y cookie.
      */
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
-        $request->user()->tokens()->delete();
+        // Revoca todos los tokens de API
+        if ($user = $request->user()) {
+            $user->tokens()->delete();
+        }
 
-        return response()->json([
-            'data' => ['message' => 'Sesión cerrada'],
-            'meta' => ['timestamp' => now()],
-        ]);
-
+        return response()
+            ->json([
+                'data' => ['message' => 'Sesión cerrada.'],
+                'meta' => ['timestamp' => now()],
+            ], 200);
     }
-
 }
