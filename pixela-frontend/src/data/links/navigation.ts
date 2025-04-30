@@ -14,6 +14,10 @@ export const mainNavLinks: NavLink[] = [
     label: "Inicio",
   },
   {
+    href: "/tendencias",
+    label: "Tendencias",
+  },
+  {
     href: "/categories",
     label: "Categorías",
   },

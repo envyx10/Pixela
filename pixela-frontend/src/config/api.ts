@@ -4,7 +4,6 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL || 'http://
 export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost';
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
 
-
 export const API_ENDPOINTS = {
   // Series
   SERIES: {
@@ -12,7 +11,7 @@ export const API_ENDPOINTS = {
     LIST: `${API_BASE_URL}/api/series`,
     GET_CAST: (id: string) => `${API_BASE_URL}/api/series/${id}/cast`,
     GET_VIDEOS: (id: string) => `${API_BASE_URL}/api/series/${id}/videos`,
-    GET_IMAGES: (id: string) => `${API_BASE_URL}/api/series/${id}/images`, // ✅ añadido
+    GET_IMAGES: (id: string) => `${API_BASE_URL}/api/series/${id}/images`, 
     GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/api/series/${id}/watch-providers`,
   },
   
@@ -22,7 +21,7 @@ export const API_ENDPOINTS = {
     LIST: `${API_BASE_URL}/api/movies`,
     GET_CAST: (id: string) => `${API_BASE_URL}/api/movies/${id}/cast`,
     GET_VIDEOS: (id: string) => `${API_BASE_URL}/api/movies/${id}/videos`,
-    GET_IMAGES: (id: string) => `${API_BASE_URL}/api/movies/${id}/images`, // ✅ añadido
+    GET_IMAGES: (id: string) => `${API_BASE_URL}/api/movies/${id}/images`, 
     GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/api/movies/${id}/watch-providers`,
   },
 
