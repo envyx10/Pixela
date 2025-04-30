@@ -38,7 +38,7 @@ export const FooterNewsletter = () => {
           <label 
             className="absolute text-sm text-white/60 duration-300 transform -translate-y-6 scale-75 top-4 z-10 origin-[0] left-5 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 peer-focus:text-[#ff007f]"
           >
-            Tu email creativo
+            Tu email aquí
           </label>
         </div>
         <button

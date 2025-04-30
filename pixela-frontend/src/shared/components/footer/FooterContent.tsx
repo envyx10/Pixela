@@ -128,9 +128,6 @@ export const FooterContent: React.FC<FooterContentProps> = ({ isAnimated }) => {
           </div>
         </div>
 
-        {/* Borde decorativo gradiente */}
-        <div className={`w-full h-px bg-gradient-to-r from-transparent via-[#ff007f]/30 to-transparent my-6 transition-opacity duration-700 ${isAnimated ? 'opacity-100' : 'opacity-0'}`}></div>
-        
         {/* Copyright */}
         <div className={`pb-12 transition-all duration-700 delay-100 ${isAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="flex flex-col sm:flex-row justify-between items-center">

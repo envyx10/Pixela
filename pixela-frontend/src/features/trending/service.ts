@@ -1,5 +1,6 @@
 import { SeriesResponse, MoviesResponse, TrendingSerie, TrendingMovie } from "@/features/trending/type";
-import { API_BASE_URL } from "@/config/api";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL;
 
 /**
  * Obtiene las series en tendencia

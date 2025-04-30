@@ -1,7 +1,6 @@
-import { Serie } from '@/features/media/types/media';
+import { Actor, Serie } from '@/features/media/types';
 import { API_ENDPOINTS, DEFAULT_FETCH_OPTIONS } from '@/config/api';
 import { mapSerieFromApi } from './mapSerie';
-import { Actor } from '../../features/media/types/media';
 
 export async function getSerieById(id: string): Promise<Serie> {
   const apiUrl = API_ENDPOINTS.SERIES.GET_BY_ID(id);

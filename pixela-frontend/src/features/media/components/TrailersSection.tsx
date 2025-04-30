@@ -17,7 +17,7 @@ export const TrailersSection = ({ trailers }: TrailersSectionProps) => {
   if (youtubeTrailers.length === 0) return null;
   
   return (
-    <div className="mb-12">
+    <div className="mt-12 mb-24">
       <h2 className="text-2xl font-bold text-white mb-5">Trailers y Videos</h2>
       <div className="max-w-[1000px]">
         <div className="flex gap-6">

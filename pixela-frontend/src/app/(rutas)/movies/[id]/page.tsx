@@ -13,7 +13,7 @@ export default async function MoviePage(
     const pelicula = await getMovieData(id);
     
     return (
-      <section className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 min-h-screen pb-12">
+      <section className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 min-h-screen pb-12">
         <MediaPage media={pelicula} />
       </section>
     );
