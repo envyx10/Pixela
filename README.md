@@ -15,7 +15,12 @@ Historial del repositorio de commits: [Historial github](https://github.com/envy
 Historial de ramas de pixela [Ramas pixela](https://github.com/envyx10/Pixela/branches/active) <br/>
 
 # Video Pixela <br/>
-Video dia 30/04/2025 | checkIn: 
+Dado el avance del proyecto, el vídeo necesitaba superar los 5 minutos para cubrir adecuadamente el contenido. Aun así, hemos hecho un gran esfuerzo por resumir al máximo los conceptos y todo lo que hemos desarrollado.
+<br>
+<br>
+**Video dia 30/04/2025 | checkIn:** [Video](https://vimeo.com/1080303986/9f50bbfb83?share=copy)
+
+
 
 
 # Documentación habitual <br/>
