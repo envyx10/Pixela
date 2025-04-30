@@ -10,13 +10,17 @@ import { MediaInfoDetails } from "./MediaInfoDetails";
 interface TrendingMediaCardProps {
   media: TrendingSerie | TrendingMovie;
   type: 'series' | 'movies';
+  index?: number; // Añadimos índice para identificar primeras imágenes
 }
 
-export const TrendingMediaCard = memo(({ media, type }: TrendingMediaCardProps) => {
+export const TrendingMediaCard = memo(({ media, type, index = 0 }: TrendingMediaCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   
   // Determinar si hay una puntuación alta (más de 7.5)
   const isHighRated = media.vote_average && media.vote_average >= 7.5;
+  
+  // Determinar si esta es una de las primeras imágenes (visible en viewport inicial)
+  const isInitiallyVisible = index < 3; // Primeras 3 imágenes con prioridad
 
   const handleFollowClick = () => {
     console.log("Seguir", type === 'series' ? 'serie' : 'película', media.title);
@@ -39,7 +43,9 @@ export const TrendingMediaCard = memo(({ media, type }: TrendingMediaCardProps) 
           alt={media.title}
           fill
           className="object-cover"
-          priority
+          priority={isInitiallyVisible}
+          sizes="(max-width: 768px) 100vw, 375px"
+          loading={isInitiallyVisible ? "eager" : "lazy"}
         />
         
         {/* Efecto de ruido para dar textura */}

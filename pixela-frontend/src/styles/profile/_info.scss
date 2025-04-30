@@ -1,0 +1,102 @@
+// Estilos para la información del perfil
+
+.profile-info {
+  padding: $spacing-lg;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  border-radius: $border-radius-lg;
+  
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xl;
+  }
+  
+  &__title {
+    font-size: $font-size-xlarge;
+    font-weight: bold;
+    color: $text-primary;
+    font-family: $font-primary;
+  }
+  
+  &__edit-button {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    background-color: #ec1b69;
+    color: $text-primary;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: 9999px; // rounded-full
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-family: $font-primary;
+    
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    
+    &:hover {
+      background-color: rgba(#ec1b69, 0.8);
+    }
+  }
+  
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+  
+  &__field {
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid rgba($border-color, 0.7);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  &__label {
+    font-size: $font-size-small;
+    color: $text-secondary;
+    margin-bottom: $spacing-sm;
+    font-family: $font-primary;
+  }
+  
+  &__value {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    font-size: $font-size-medium;
+    color: $text-primary;
+    font-family: $font-primary;
+  }
+  
+  &__icon {
+    color: #ec1b69;
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+    
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+    }
+    
+    &__title {
+      font-size: $font-size-large;
+    }
+    
+    &__edit-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+} 
