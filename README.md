@@ -39,13 +39,13 @@ Dado el avance del proyecto, el vídeo necesitaba superar los 5 minutos para cub
 | 🧩 Frontend                                 | 🧩 Backend                                                   |
 |--------------------------------------------|--------------------------------------------------------------|
 | Next.js 15 – App Router y Server Components | Laravel 12 – API REST desacoplada                            |
-| React 19 – UI con componentes               | Sanctum – Autenticación con tokens                           |
+| React 19 – UI con componentes               | Laravel Sanctum – Autenticación con API tokens               |
 | TypeScript – Tipado estricto                | Laravel CORS – Permite consumo desde el frontend             |
-| Tailwind CSS – Utilidades de estilos        | Redis – Cache y mejora de rendimiento                        |
-| Sass (SCSS) – Preprocesador CSS             |                                                              |
-| Zustand – Estado global                     |                                                              |
-| React Hook Form – Formularios eficientes    |                                                              |
-| fetch API – Consumo de API REST             |                                                              |
+| Tailwind CSS – Utilidades de estilos        | Laravel Breeze kit - Scaffolding                             |
+| Sass (SCSS) – Preprocesador CSS             | Laravel HTTP Session - Control de sesiones                   |
+| Zustand – Estado global                     | Blade Templates - vistas Login y Register                    |
+| React Hook Form – Formularios eficientes    | Redis – Cache y Mejora de rendimiento                        |
+| fetch API – Consumo de API REST             | Tailwind CSS - Diseño de las vistas Blade                    |
 
 
 
