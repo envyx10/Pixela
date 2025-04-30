@@ -1,6 +1,6 @@
 // URLs base
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://laravel.test/api';
-export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://laravel.test';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
+export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost';
 
 // Endpoints específicos
 export const API_ENDPOINTS = {
@@ -28,36 +28,42 @@ export const API_ENDPOINTS = {
 
   // Auth
   AUTH: {
-    LOGIN: '/login',        // Ruta web
-    LOGOUT: '/logout',      // Ruta web
-    REGISTER: '/register',  // Ruta web
-    USER: '/api/user',      // Ruta API
+    LOGIN: '/login',
+    LOGOUT: '/logout',
+    REGISTER: '/register',
+    USER: '/user',
   }
 };
+
+// Estado del token CSRF
+let csrfInitialized = false;
 
 // Helper para obtener el token CSRF
 async function initCsrf(): Promise<void> {
   if (csrfInitialized) return;
   
   try {
+    console.log('Inicializando CSRF token...');
     const response = await fetch(`${BACKEND_URL}/sanctum/csrf-cookie`, {
       credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+      },
     });
     
     if (!response.ok) {
-      throw new Error(`Error obteniendo CSRF token: ${response.status} - ${await response.text()}`);
+      throw new Error(`Error obteniendo CSRF token: ${response.status}`);
     }
     
     csrfInitialized = true;
+    console.log('CSRF token inicializado correctamente');
 
   } catch (error) {
     console.error('[API] Error inicializando CSRF:', error);
+    csrfInitialized = false;
     throw error;
   }
 }
-
-// Estado del token CSRF
-let csrfInitialized = false;
 
 // Helper para hacer peticiones a la API
 export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): Promise<T> {
@@ -65,9 +71,18 @@ export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): P
     // Asegurarnos de tener el token CSRF
     await initCsrf();
 
-    const isApiRoute = url.startsWith('/api');
-    const baseUrl = isApiRoute ? API_BASE_URL : BACKEND_URL;
-    const fullUrl = `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
+    // Obtener el token CSRF
+    const token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('XSRF-TOKEN='))
+      ?.split('=')[1];
+
+    // Construir la URL completa
+    const fullUrl = url.startsWith('http') 
+      ? url 
+      : `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`;
+    
+    console.log('Haciendo petición a:', fullUrl);
     
     // Realizar la petición
     const response = await fetch(fullUrl, {
@@ -77,17 +92,24 @@ export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): P
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
+        ...(token ? { 'X-XSRF-TOKEN': decodeURIComponent(token) } : {}),
         ...(options.headers || {}),
       },
     });
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[API] Error en la respuesta: ${response.status} - ${errorText}`);
+      console.error(`[API] Error en la respuesta:`, {
+        status: response.status,
+        url: fullUrl,
+        error: errorText
+      });
       throw new Error(`Error en la respuesta: ${response.status} - ${errorText}`);
     }
     
-    return await response.json();
+    const data = await response.json();
+    console.log('Respuesta recibida:', data);
+    return data;
 
   } catch (error) {
     console.error('[API] Error en fetchFromAPI:', error);
@@ -117,6 +139,11 @@ interface UserResponse {
   avatar: string;
   password: string;
   created_at: string;
+}
+
+// Helper para eliminar cookies
+function deleteCookie(name: string) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
 
 export const authAPI = {
@@ -153,15 +180,36 @@ export const authAPI = {
   },
 
   async logout(): Promise<void> {
-    await fetchFromAPI(API_ENDPOINTS.AUTH.LOGOUT, {
-      method: 'POST',
-    });
-
-    // Eliminar el token al hacer logout
-    localStorage.removeItem('token');
+    try {
+      // Primero hacer el logout en el backend
+      await fetchFromAPI(API_ENDPOINTS.AUTH.LOGOUT, {
+        method: 'POST',
+      });
+      
+      // Limpiar localStorage
+      localStorage.removeItem('token');
+      localStorage.setItem('forceLogout', 'true');
+      
+      // Limpiar cookies con dominio correcto
+      document.cookie = 'XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = 'pixela_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = `XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname}`;
+      document.cookie = `pixela_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname}`;
+      
+      // Forzar recarga completa para limpiar el estado
+      window.location.replace('/');
+    } catch (error) {
+      console.error('[API] Error en logout:', error);
+      throw error;
+    }
   },
 
   async getUser(): Promise<UserResponse> {
+    // Si hay un logout forzado, no intentar obtener el usuario
+    if (localStorage.getItem('forceLogout')) {
+      localStorage.removeItem('forceLogout');
+      throw new Error('Sesión cerrada');
+    }
     return fetchFromAPI<UserResponse>(API_ENDPOINTS.AUTH.USER);
   }
 };

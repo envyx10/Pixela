@@ -16,7 +16,10 @@ export default function RootLayout({
 
   // Llamamos a checkAuth al montar
   useEffect(() => {
-    checkAuth();
+    // No verificar autenticación si acabamos de hacer logout
+    if (!localStorage.getItem('forceLogout')) {
+      checkAuth();
+    }
   }, [checkAuth]);
 
   return (

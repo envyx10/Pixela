@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { UserProfileCard } from '@/features/profile/components/UserProfileCard';
 import { FiSettings, FiClock, FiList, FiStar } from 'react-icons/fi';
 
@@ -14,8 +16,24 @@ const mockUser = {
 };
 
 export default function ProfilePage() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
-  
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/');
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  if (isLoading) {
+    return <div>Cargando...</div>;
+  }
+
+  if (!isAuthenticated || !user) {
+    return null;
+  }
+
   return (
     <main className="pt-28 px-6 min-h-screen bg-gradient-to-b from-pixela-dark to-black">
       <div className="max-w-6xl mx-auto">
@@ -83,7 +101,7 @@ export default function ProfilePage() {
         {/* Contenido de las pestañas */}
         <div className="mt-6">
           {activeTab === 'profile' && (
-            <UserProfileCard user={mockUser} />
+            <UserProfileCard user={user} />
           )}
           
           {activeTab === 'history' && (

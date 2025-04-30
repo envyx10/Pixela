@@ -1,68 +1,68 @@
 'use client';
 
 import { create } from 'zustand';
-import { initCsrf, fetcher, logout as apiLogout } from '@/lib/api';
+import { authAPI } from '@/config/api';
 
-export interface User {
+interface User {
   id: number;
   name: string;
   surname: string;
   email: string;
+  avatar: string;
   created_at: string;
-  updated_at: string;
 }
 
 interface AuthState {
-  isAuthenticated: boolean;
   user: User | null;
-  loading: boolean;
-  /**
-   * Inicializa CSRF y comprueba si hay sesión activa.
-   */
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
   checkAuth: () => Promise<void>;
-  /**
-   * Llama a /logout y limpia el estado.
-   */
   logout: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: false,
   user: null,
-  loading: true,
-
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
+  
   checkAuth: async () => {
-    set({ loading: true });
     try {
-      // 1) Inicializa la cookie XSRF-TOKEN
-      await initCsrf();
-
-      // 2) Llama a /api/user con fetcher (incluye pixela_session + XSRF-TOKEN)
-      const user = await fetcher<User>('/api/user');
-
-      // 3) Si responde ok, guardamos usuario y marcamos auth=true
-      set({ user, isAuthenticated: true, loading: false });
-
-    } catch (e) {
-      // Si falla (403, 401, error de red…), no está autenticado
-      set({ user: null, isAuthenticated: false, loading: false });
-      
+      set({ isLoading: true, error: null });
+      const user = await authAPI.getUser();
+      set({ user, isAuthenticated: true, isLoading: false, error: null });
+    } catch (error) {
+      console.error('Error checking auth:', error);
+      set({ 
+        user: null, 
+        isAuthenticated: false, 
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      });
     }
   },
 
   logout: async () => {
     try {
-      // Llama al endpoint de logout que borra la cookie pixela_session
-      await apiLogout();
+      set({ isLoading: true, error: null });
+      await authAPI.logout();
+      
+      // Actualizar el estado inmediatamente
+      set({ 
+        user: null, 
+        isAuthenticated: false, 
+        isLoading: false, 
+        error: null 
+      });
 
-    } catch (e) {
-      console.error('Error during logout:', e);
-
-    } finally {
-      // Limpiamos siempre el estado y redirigimos al login Blade
-      set({ user: null, isAuthenticated: false });
-      window.location.href = '/login';
-
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      set({ 
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Error al cerrar sesión'
+      });
+      throw error; // Propagar el error para manejarlo en el componente
     }
   },
 }));

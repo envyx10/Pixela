@@ -9,12 +9,12 @@ import { useAuthStore } from '@/stores/useAuthStore';
 
 export const Navbar = () => {
   const router = useRouter();
-  const user = useAuthStore((s) => s.user);
+  const { user, isAuthenticated, isLoading } = useAuthStore();
   const logout = useAuthStore((s) => s.logout);
 
   const handleProfile = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (user) {
+    if (isAuthenticated && user) {
       router.push('/profile');
     } else {
       window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/login`;
@@ -23,8 +23,11 @@ export const Navbar = () => {
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
-    await logout();
-    router.push('/');
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error durante el logout:', error);
+    }
   };
 
   return (
@@ -52,16 +55,18 @@ export const Navbar = () => {
           <button
             onClick={handleProfile}
             className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
-            aria-label={user ? "Perfil" : "Iniciar sesión"}
+            aria-label={isAuthenticated ? "Perfil" : "Iniciar sesión"}
+            title={isAuthenticated ? "Perfil" : "Iniciar sesión"}
           >
             <FiUser className="h-6 w-6" />
           </button>
           
-          {user && (
+          {isAuthenticated && !isLoading && (
             <button 
               onClick={handleLogout}
               className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
               aria-label="Cerrar sesión"
+              title="Cerrar sesión"
             >
               <MdLogout className="h-6 w-6" />
             </button>
