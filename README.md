@@ -8,7 +8,7 @@ Pixela es una plataforma interactiva diseñada para que los usuarios puedan desc
 El proyecto será desarrollado utilizando NextJS y react por debajo para la interfaz de usuario (frontend) y Laravel para la lógica del servidor (backend), asegurando una experiencia moderna, dinámica y eficiente.
 
 Ante proyecto: [www.notion.es](https://sphenoid-stone-975.notion.site/ANTEPROYECTO-PIXELA-1c2bccfbf6a4800c8945f8c8dfb77095) <br/>
-Historial de commits y pull requests, cuaderno de bitácoras: [Historial ruyi y pablo](https://docs.google.com/document/d/1tCagftMIyK-YbXul7YxGf_HXpOOPHqtqO7swChsxbao/edit?tab=t.0) <br/>
+Historial de commits y pull requests, cuaderno de bitácoras: [bitácoras ruyi y pablo](https://docs.google.com/document/d/1tCagftMIyK-YbXul7YxGf_HXpOOPHqtqO7swChsxbao/edit?tab=t.0) <br/>
 Historial del repositorio de commits: [Historial github](https://github.com/envyx10/Pixela/commits/main/) <br/>
 Historial de ramas de pixela [Ramas pixela](https://github.com/envyx10/Pixela/branches/active) <br/>
 
