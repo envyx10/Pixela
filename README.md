@@ -8,11 +8,27 @@ Pixela es una plataforma interactiva diseñada para que los usuarios puedan desc
 El proyecto será desarrollado utilizando NextJS y react por debajo para la interfaz de usuario (frontend) y Laravel para la lógica del servidor (backend), asegurando una experiencia moderna, dinámica y eficiente.
 
 Ante proyecto: [www.notion.es](https://sphenoid-stone-975.notion.site/ANTEPROYECTO-PIXELA-1c2bccfbf6a4800c8945f8c8dfb77095) <br/>
+
+# Historial Pixela <br/>
 Historial de commits y pull requests, cuaderno de bitácoras: [Bitácoras Ruyi y Pablo](https://docs.google.com/document/d/1tCagftMIyK-YbXul7YxGf_HXpOOPHqtqO7swChsxbao/edit?tab=t.0) <br/>
 Historial del repositorio de commits: [Historial github](https://github.com/envyx10/Pixela/commits/main/) <br/>
 Historial de ramas de pixela [Ramas pixela](https://github.com/envyx10/Pixela/branches/active) <br/>
 
+# Video Pixela <br/>
 Video dia 30/04/2025 | checkIn: 
+
+
+# Documentación habitual <br/>
+
+| Frontend                                           | Backend                                                                 |
+|----------------------------------------------------|-------------------------------------------------------------------------|
+| [NEXTJS](https://nextjs.org/learn)                | [LARAVEL (Sanctum CORS)](https://laravel.com/docs/12.x/sanctum#cors-and-cookies) |
+| [REACT](https://es.react.dev/learn)               | [LARAVEL (Auth)](https://laravel.com/docs/12.x/authentication#authenticating-users) |
+| [REACT WIKI](https://www.reactjs.wiki/)           | [MEDIUM](https://rezakhademix.medium.com/laravel-11-no-http-kernel-no-casts-no-console-kernel-721c62adb6ef) |
+| [TAILWINDCSS](https://tailwindcss.com/)           | [LARACASTS](https://laracasts.com/)                                    |
+| [FRONTEND MASTERS](https://frontendmasters.com/)  | [LARAVEL 12](https://laravel.com/docs/12.x/installation)                                                                       |
+| [DEVTALLES](https://cursos.devtalles.com/)        | [LARAVEL REDIS](https://laravel.com/docs/12.x/redis)                                                                        |
+                     
 
 
 ![datos_1](https://github.com/user-attachments/assets/9809f359-e4a4-4c77-8144-7fc5a4b55a58)
