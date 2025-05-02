@@ -47,7 +47,7 @@ export const ProfileInfo = ({ user, onEdit }: ProfileInfoProps) => {
           <p className="profile-info__label">Apellidos</p>
           <div className="profile-info__value">
             <FiUsers className="profile-info__icon" />
-            <span>{user.lastname || 'No especificado'}</span>
+            <span>{user.surname || 'No especificado'}</span>
           </div>
         </div>
         

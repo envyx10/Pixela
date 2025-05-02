@@ -1,5 +1,4 @@
 // URLs base
-//export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL || 'http://localhost/api';
 export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost';
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
@@ -35,39 +34,6 @@ export const API_ENDPOINTS = {
 
 };
 
-// Endpoints específicos
-/* export const API_ENDPOINTS = {
-  // Series
-  SERIES: {
-    GET_BY_ID: (id: string) => `/series/${id}`,
-    LIST: '/series',
-    GET_CAST: (id: string) => `/series/${id}/cast`,
-    GET_VIDEOS: (id: string) => `/series/${id}/videos`,
-    GET_IMAGES: (id: string) => `/series/${id}/images`,
-    GET_WATCH_PROVIDERS: (id: string) => `/series/${id}/watch-providers`,
-    GET_TRENDING: '/series/trending',
-  },
-  
-  // Películas
-  PELICULAS: {
-    GET_BY_ID: (id: string) => `/movies/${id}`,
-    LIST: '/movies',
-    GET_CAST: (id: string) => `/movies/${id}/cast`,
-    GET_VIDEOS: (id: string) => `/movies/${id}/videos`,
-    GET_IMAGES: (id: string) => `/movies/${id}/images`,
-    GET_WATCH_PROVIDERS: (id: string) => `/movies/${id}/watch-providers`,
-    GET_TRENDING: '/movies/trending',
-  },
-
-  // Auth
-  AUTH: {
-    LOGIN: '/login',
-    LOGOUT: '/logout',
-    REGISTER: '/register',
-    USER: '/user',
-  }
-}; */
-
 // Opciones por defecto para las peticiones fetch
 export const DEFAULT_FETCH_OPTIONS = {
   headers: {
@@ -90,6 +56,7 @@ async function initCsrf(): Promise<void> {
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
     });
     
@@ -167,7 +134,8 @@ interface AuthResponse {
     name: string;
     surname: string;
     email: string;
-    avatar: string;
+    photo_url: string;
+    is_admin: boolean;
     password: string;
     created_at: string;
   };
@@ -178,14 +146,10 @@ interface UserResponse {
   name: string;
   surname: string;
   email: string;
-  avatar: string;
+  photo_url: string;
+  is_admin: boolean;
   password: string;
   created_at: string;
-}
-
-// Helper para eliminar cookies
-function deleteCookie(name: string) {
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
 
 export const authAPI = {
@@ -196,7 +160,7 @@ export const authAPI = {
     });
 
     if (response.token) {
-      localStorage.setItem('token', response.token);
+      //localStorage.setItem('token', response.token);
       localStorage.removeItem('forceLogout');
     }
 
@@ -205,7 +169,7 @@ export const authAPI = {
 
   async register(userData: {
     name: string;
-    username: string;
+    surname: string;
     email: string;
     password: string;
     password_confirmation: string;
@@ -230,7 +194,7 @@ export const authAPI = {
       });
       
       // Limpiar localStorage
-      localStorage.removeItem('token');
+      //localStorage.removeItem('token');
       localStorage.setItem('forceLogout', 'true');
       
       // Limpiar cookies con dominio correcto
@@ -241,6 +205,7 @@ export const authAPI = {
       
       // Forzar recarga completa para limpiar el estado
       window.location.replace('/');
+
     } catch (error) {
       console.error('[API] Error en logout:', error);
       throw error;

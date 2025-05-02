@@ -17,12 +17,13 @@ export const UpdateProfileForm = ({
     defaultValues: {
       name: initialData.name,
       email: initialData.email,
-      lastname: '',
+      surname: initialData.surname,
+      photo_url: initialData.photo_url,
       password: ''
     }
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [profileImage, setProfileImage] = useState<string | undefined>(initialData.profile_image);
+  const [profileImage, setProfileImage] = useState<string | undefined>(initialData.photo_url);
   const [imageError, setImageError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +53,7 @@ export const UpdateProfileForm = ({
   };
 
   const onFormSubmit = (data: ProfileFormData) => {
-    onSubmit({ ...data, profileImage });
+    onSubmit({ ...data, photo_url: profileImage });
   };
 
   return (
@@ -127,9 +128,9 @@ export const UpdateProfileForm = ({
 
           <InputField
             type="text"
-            name="lastname"
+            name="surname"
             placeholder="Apellidos"
-            register={register('lastname')}
+            register={register('surname')}
             icon={<FiUsers className="profile-input__icon" />}
             labelText="Apellidos"
           />

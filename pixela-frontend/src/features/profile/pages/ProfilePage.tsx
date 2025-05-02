@@ -82,7 +82,7 @@ const ProfileClient = ({ user }: { user: User }) => {
                 {/* Columna de avatar */}
                 <div className={`profile-page__avatar-column avatar-scroll-effect ${scrolled ? 'scrolled' : ''}`}>
                   <UserAvatar 
-                    profileImage={user.profile_image} 
+                    profileImage={user.photo_url} 
                     name={user.name} 
                   />
                   <h3 className="user-avatar__name">{user.name}</h3>
@@ -106,8 +106,9 @@ const ProfileClient = ({ user }: { user: User }) => {
             <UpdateProfileForm
               initialData={{
                 name: user.name,
+                surname: user.surname,
                 email: user.email,
-                profile_image: user.profile_image
+                photo_url: user.photo_url
               }}
               onCancel={handleCancelEdit}
               onSubmit={handleSubmitProfile}
