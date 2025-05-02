@@ -1,0 +1,17 @@
+// Importar variables primero
+@import './variables';
+
+// Importar estilos base
+@import './layout';
+@import './avatar';
+@import './tabs';
+@import './panel';
+@import './form';
+@import './input';
+@import './update-profile';
+@import './animations';
+
+// Importaciones de archivos parciales
+@import 'info';
+@import 'loader';
+@import 'error'; 

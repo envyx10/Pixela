@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class ReviewController extends Controller
 {
     /**
-     * Añade una reseña a un item
+     * Add a review for a movie or series
      * 
      * @param Request $request
      * @return JsonResponse
@@ -48,7 +48,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Lista las reseñas del usuario
+     * Lists all reviews of the user
      * 
      * @return JsonResponse
      */
@@ -72,7 +72,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Obtiene las reseñas de un item
+     * Obtain reviews by type (movie or series)
      * 
      * @param string $itemType
      * @param int $tmdbId
@@ -100,7 +100,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Elimina una reseña
+     * Remove a review
      * 
      * @param int $id
      * @return JsonResponse

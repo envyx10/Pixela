@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import clsx from 'clsx';
 import { useHeroStore } from "../store";
@@ -6,38 +8,52 @@ interface ImageCarouselProps {
   images: string[];
 }
 
+const VisualOverlays = () => (
+  <>
+    <div className="absolute inset-0 bg-pixela-dark/300" />
+    <div className="absolute inset-0 bg-gradient-to-t from-pixela-dark/90 via-pixela-dark/50 to-pixela-dark/80" />
+    <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-pixela-dark via-pixela-dark/50 to-transparent" />
+    <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-pixela-dark via-pixela-dark/50 to-transparent"></div>
+    <div className="absolute bottom-0 left-0 w-full h-96 bg-gradient-to-t from-pixela-dark via-pixela-dark/50 to-transparent"></div>
+  </>
+);
+
 export const ImageCarousel = ({ images }: ImageCarouselProps) => {
-  
   const { currentImageIndex, fadeIn } = useHeroStore();
 
   return (
     <div className="absolute inset-0 w-full h-full">
-      {/* Imagen hero en blanco y negro */}
-      <div 
+      {/* Imagen de fondo con transición */}
+      <div
         className={clsx(
-          "absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out", 
+          "absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out",
           fadeIn ? "opacity-100" : "opacity-0"
         )}
+        aria-hidden="true"
+        role="presentation"
       >
-        <Image 
-          src={images[currentImageIndex]} 
-          alt="Hero Pixela" 
+        {/* 
+          Imagen optimizada para LCP (Largest Contentful Paint)
+          - priority: garantiza precarga
+          - quality: calidad óptima para imágenes hero
+          - sizes: responde a diferentes tamaños de viewport
+        */}
+        <Image
+          src={images[currentImageIndex]}
+          alt={`Hero background image ${currentImageIndex + 1}`}
           className="w-full h-full object-cover brightness-90 contrast-100 grayscale"
           width={1920}
           height={1080}
           priority
+          quality={90}
+          sizes="100vw"
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAEDQIHq4C7ygAAAABJRU5ErkJggg=="
         />
       </div>
-      
-      {/* Capas para efecto visual */}
-      <div className="absolute inset-0 bg-pixela-dark/40"></div>
-      <div className="absolute inset-0 bg-gradient-to-t from-pixela-accent/15 via-pixela-dark/70 to-pixela-dark/90"></div>
-      {/* Degradado superior para navbar */}
-      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-pixela-dark via-pixela-dark/70 to-transparent"></div>
-      {/* Degradado inferior para reforzar el efecto accent desde abajo (más sutil) */}
-      <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-pixela-accent/10 to-transparent"></div>
-      {/* Capa de ruido */}
-      <div className="noise-effect"></div>
+
+      {/* Capas visuales */}
+      <VisualOverlays />
     </div>
   );
-}; 
+};

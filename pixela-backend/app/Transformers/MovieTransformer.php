@@ -5,7 +5,7 @@ namespace App\Transformers;
 class MovieTransformer
 {
     /**
-     * Transforma los datos de una única película.
+     * Transforms all the data of a movie.
      *
      * @param array $movie
      * @return array
@@ -25,7 +25,7 @@ class MovieTransformer
     }
 
     /**
-     * Transforma un conjunto de películas.
+     * Transforms a collection of movies.
      *
      * @param array $movies
      * @return array

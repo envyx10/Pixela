@@ -7,8 +7,6 @@ export const ContentSection = ({
   accentTitle,
   description,
   secondaryButtonText,
-  ctaText,
-  ctaLink
 }: HeroContent) => {
   return (
     <div className="absolute inset-x-0 bottom-0 z-10">
@@ -29,17 +27,9 @@ export const ContentSection = ({
         
         {/* Botones - Diseño mejorado */}
         <div className="flex items-center gap-8">
-          {/* Botón primario CTA */}
-          <Link 
-            href={ctaLink}
-            className="bg-pixela-accent hover:bg-pixela-accent/90 text-pixela-dark font-medium py-3 px-8 rounded-full transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,84,84,0.5)] transform hover:translate-y-[-2px]"
-          >
-            {ctaText}
-          </Link>
-          
           {/* Botón secundario con icono al lado */}
           <Link 
-            href="#features"
+            href="#tendencias"
             className="group flex items-center transition-all duration-300"
           >
             <span className="font-medium text-pixela-light group-hover:text-white group-hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.7)] transition-all duration-300 mr-2">

@@ -1,0 +1,63 @@
+// Estilos para animaciones y efectos interactivos
+
+// Efectos de scroll
+.scroll-animation {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  
+  &--visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Animación de entrada
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Animación de rotación
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Animación de pulsación
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// Clases de utilidad para animaciones
+.animate {
+  &--fade-in {
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  &--rotate {
+    animation: rotate 2s linear infinite;
+  }
+  
+  &--pulse {
+    animation: pulse 2s ease infinite;
+  }
+} 

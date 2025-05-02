@@ -1,0 +1,62 @@
+// Estilos para el componente de error
+
+.profile-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  padding: $spacing-xl;
+  
+  &__icon {
+    font-size: 4rem;
+    color: #ff5252;
+    margin-bottom: $spacing-lg;
+  }
+  
+  &__title {
+    font-size: $font-size-xlarge;
+    font-weight: bold;
+    color: $text-primary;
+    margin-bottom: $spacing-md;
+    font-family: $font-primary;
+  }
+  
+  &__message {
+    font-size: $font-size-medium;
+    color: $text-secondary;
+    max-width: 600px;
+    margin-bottom: $spacing-xl;
+    font-family: $font-primary;
+  }
+  
+  &__button {
+    background-color: $pixela-primary;
+    color: $text-primary;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-normal;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-family: $font-primary;
+    
+    &:hover {
+      background-color: darken($pixela-primary, 10%);
+    }
+  }
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg;
+    
+    &__title {
+      font-size: $font-size-large;
+    }
+    
+    &__message {
+      font-size: $font-size-normal;
+    }
+  }
+} 

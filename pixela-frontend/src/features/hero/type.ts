@@ -4,8 +4,6 @@ export interface HeroContent {
     accentTitle: string;
     description: string;
     secondaryButtonText: string;
-    ctaText: string;
-    ctaLink: string;
     images: string[];
   }
   

@@ -29,7 +29,7 @@ class TmdbMovieService
     }
 
     /**
-     * Realiza peticiones a la API de TMDb.
+     * Make a request to the TMDB API
      *
      * @param string $endpoint
      * @return array
@@ -59,7 +59,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene información detallada de una película por su ID
+     * Obtains details of a movie by its ID
      *
      * @param int $id ID de la película
      * @return array
@@ -71,7 +71,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene todas las películas populares
+     * Obtains all trending movies
      *
      * @return array
      * @throws Exception
@@ -82,7 +82,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene las películas mejor valoradas
+     * Obtains top rated movies
      *
      * @return array
      * @throws Exception
@@ -93,7 +93,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene las películas que se están estrenando en cines
+     * Obtains now playing movies
      *
      * @return array
      * @throws Exception
@@ -104,7 +104,7 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene todas las películas de un género
+     * Obtains all movies by genre
      *
      * @param int $genreId ID del género
      * @return array
@@ -115,4 +115,154 @@ class TmdbMovieService
         return $this->makeRequest("/discover/movie?with_genres={$genreId}");
     }
 
+    /**
+     * Obtiene los actores de una película por su ID
+     *
+     * @param int $movieId ID de la película
+     * @return array
+     * @throws Exception
+     */
+    public function getMovieCast(int $movieId): array
+    {
+        try {
+            $response = $this->makeRequest("/movie/{$movieId}/credits");
+            
+            if (!isset($response['cast']) || !is_array($response['cast'])) {
+                return ['cast' => []];
+            }
+
+            // Mapear los actores manteniendo todos los datos originales
+            $cast = array_map(function($actor) {
+                return [
+                    'id' => $actor['id'],
+                    'nombre' => $actor['name'],
+                    'personaje' => $actor['character'],
+                    'foto' => $actor['profile_path'] 
+                        ? "https://image.tmdb.org/t/p/w500{$actor['profile_path']}"
+                        : "https://via.placeholder.com/500x750?text=No+Image"
+                ];
+            }, $response['cast']);
+
+            return ['cast' => $cast];
+        } catch (Exception $e) {
+            return ['cast' => []];
+        }
+    }
+
+    /**
+     * Obtiene los videos (trailers) de una película por su ID
+     *
+     * @param int $movieId ID de la película
+     * @return array
+     * @throws Exception
+     */
+    public function getMovieVideos(int $movieId): array
+    {
+        return $this->makeRequest("/movie/{$movieId}/videos");
+    }
+
+    /**
+     * Obtiene las plataformas de streaming donde se puede ver una película
+     *
+     * @param int $movieId ID de la película
+     * @param string $region Código de región (por defecto ES para España)
+     * @return array
+     * @throws Exception
+     */
+    public function getMovieWatchProviders(int $movieId, string $region = 'ES'): array
+    {
+        return $this->makeRequest("/movie/{$movieId}/watch/providers?watch_region={$region}");
+    }
+
+    /**
+     * Obtiene el creador de una película por su ID
+     *
+     * @param int $movieId ID de la película
+     * @return array
+     * @throws Exception
+     */
+    public function getMovieCreator(int $movieId): array
+    {
+        try {
+            $response = $this->makeRequest("/movie/{$movieId}/credits");
+            
+            if (!isset($response['crew']) || !is_array($response['crew'])) {
+                return ['creator' => null];
+            }
+
+            // Buscar el director (que es el creador principal en películas)
+            $director = array_filter($response['crew'], function($member) {
+                return $member['job'] === 'Director';
+            });
+
+            if (empty($director)) {
+                return ['creator' => null];
+            }
+
+            $director = reset($director);
+            
+            return ['creator' => [
+                'id' => $director['id'],
+                'nombre' => $director['name'],
+                'foto' => $director['profile_path'] 
+                    ? "https://image.tmdb.org/t/p/w500{$director['profile_path']}"
+                    : "https://via.placeholder.com/500x750?text=No+Image"
+            ]];
+        } catch (Exception $e) {
+            return ['creator' => null];
+        }
+    }
+
+    /**
+     * Obtiene las imágenes de una película por su ID
+     *
+     * @param int $movieId ID de la película
+     * @return array
+     * @throws Exception
+     */
+    public function getMovieImages(int $movieId): array
+    {
+        try {
+            $response = $this->makeRequest("/movie/{$movieId}/images");
+            
+            if (!isset($response['backdrops']) || !isset($response['posters'])) {
+                return [
+                    'backdrops' => [],
+                    'posters' => []
+                ];
+            }
+
+            // Mapear los backdrops
+            $backdrops = array_map(function($backdrop) {
+                return [
+                    'id' => $backdrop['file_path'],
+                    'tipo' => 'backdrop',
+                    'url' => "https://image.tmdb.org/t/p/original{$backdrop['file_path']}",
+                    'ancho' => $backdrop['width'],
+                    'alto' => $backdrop['height']
+                ];
+            }, $response['backdrops']);
+
+            // Mapear los posters
+            $posters = array_map(function($poster) {
+                return [
+                    'id' => $poster['file_path'],
+                    'tipo' => 'poster',
+                    'url' => "https://image.tmdb.org/t/p/original{$poster['file_path']}",
+                    'ancho' => $poster['width'],
+                    'alto' => $poster['height']
+                ];
+            }, $response['posters']);
+
+            return [
+                'backdrops' => $backdrops,
+                'posters' => $posters
+            ];
+        } catch (Exception $e) {
+            return [
+                'backdrops' => [],
+                'posters' => []
+            ];
+        }
+    }
 } 

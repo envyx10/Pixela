@@ -2,47 +2,47 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    /**
+     * Devuelve el usuario autenticado
+     */
+    public function user(Request $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        return response()->json($request->user());
+    }
 
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+    /**
+     * Logout: borra token y cookie.
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        // Revoca todos los tokens de API
+        if ($user = $request->user()) {
+            $user->tokens()->delete();
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        // Invalida la sesión actual
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        return response()->json([
-            'token' => $token,
-            'user' => $user,
-            'is_admin' => $user->is_admin,
-        ]);
+        // Limpia la cookie de sesión
+        Cookie::queue(Cookie::forget('pixela_session'));
+
+        return response()
+            ->json([
+                'data' => ['message' => 'Sesión cerrada.'],
+                'meta' => ['timestamp' => now()],
+            ], 200);
     }
-
-    public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'Logged out successfully']);
-    }
-
-    public function isAdmin(Request $request)
-    {
-        return response()->json(['is_admin' => $request->user()->is_admin]);
-    }
-} 
+}
