@@ -47,6 +47,6 @@ class RegisteredUserController extends Controller
 
         //Auth::login($user);
 
-        return redirect()->route('register')->with('status', 'Usuario registrado correctamente. Ahora puedes iniciar sesión.');
+        return redirect()->route('register')->with('status', __('auth.register'));
     }
 }
