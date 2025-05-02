@@ -19,7 +19,7 @@ import {
 import '@/styles/profile/main.scss';
 
 // Definimos el tipo para las pestañas
-type TabType = 'profile' | 'history' | 'watchlist' | 'favorites';
+type TabType = 'profile' | 'reviews' | 'favorites' | 'users' ;
 
 // Componente del cliente que maneja la edición y navegación de pestañas
 const ProfileClient = ({ user }: { user: User }) => {
@@ -115,7 +115,7 @@ const ProfileClient = ({ user }: { user: User }) => {
             />
           )}
           
-          {activeTab === 'history' && (
+          {/* {activeTab === 'history' && (
             <ContentPanel 
               title="Historial de Visualización" 
               isEmpty={true} 
@@ -130,12 +130,29 @@ const ProfileClient = ({ user }: { user: User }) => {
               emptyMessage="No hay elementos en tu lista de seguimiento."
             />
           )}
+           */}
+
+          {activeTab === 'reviews' && (
+            <ContentPanel 
+              title="Reseñas" 
+              isEmpty={true} 
+              emptyMessage="No hay elementos en la lista de reseñas."
+            />
+          )}
           
           {activeTab === 'favorites' && (
             <ContentPanel 
               title="Favoritos" 
               isEmpty={true} 
-              emptyMessage="No hay elementos en tus favoritos."
+              emptyMessage="No hay elementos en la lista de favoritos."
+            />
+          )}
+
+          {activeTab === 'users' && user.is_admin && (
+            <ContentPanel 
+              title="Usuarios" 
+              isEmpty={true} 
+              emptyMessage="No hay elementos en la lista de usuarios."
             />
           )}
         </div>
