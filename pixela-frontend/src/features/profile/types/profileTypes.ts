@@ -3,17 +3,21 @@
 export interface ProfileFormData {
   name: string;
   email: string;
-  lastname: string;
-  password: string;
-  profileImage?: string;
+  surname: string;
+  password?: string;
+  created_at: string;
+  is_admin: boolean;
+  photo_url?: string;
 }
 
 // Interfaz para el formulario de perfil
 export interface UpdateProfileFormProps {
   initialData: {
     name: string;
+    surname: string;
     email: string;
-    profile_image?: string;
+    password?: string;
+    photo_url?: string;
   };
   onCancel: () => void;
   onSubmit: (data: ProfileFormData) => void;

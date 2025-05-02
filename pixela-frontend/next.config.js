@@ -20,7 +20,8 @@ const nextConfig = {
             'via.placeholder.com', 
             'img.youtube.com',
             'laravel.test',
-            'localhost'
+            'localhost',
+            'i.pravatar.cc'
         ],
     },
     webpack: (config, { isServer }) => {
