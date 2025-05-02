@@ -57,7 +57,6 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
         <UpdateProfileForm
           initialData={{
             name: user.name,
-            surname: user.surname,
             email: user.email,
             photo_url: user.photo_url
           }}

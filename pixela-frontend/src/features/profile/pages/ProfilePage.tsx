@@ -71,7 +71,8 @@ const ProfileClient = ({ user }: { user: User }) => {
         {/* Tabs de navegación */}
         <ProfileTabs 
           activeTab={activeTab} 
-          onTabChange={handleTabChange} 
+          onTabChange={handleTabChange}
+          isAdmin={user.is_admin ?? false}
         />
         
         {/* Contenido de las pestañas */}
@@ -106,7 +107,6 @@ const ProfileClient = ({ user }: { user: User }) => {
             <UpdateProfileForm
               initialData={{
                 name: user.name,
-                surname: user.surname,
                 email: user.email,
                 photo_url: user.photo_url
               }}

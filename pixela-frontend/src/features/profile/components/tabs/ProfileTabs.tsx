@@ -6,9 +6,10 @@ type TabType = 'profile' | 'reviews' | 'favorites' | 'users';
 interface ProfileTabsProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  isAdmin: boolean;
 }
 
-export const ProfileTabs = ({ activeTab, onTabChange }: ProfileTabsProps) => {
+export const ProfileTabs = ({ activeTab, onTabChange, isAdmin }: ProfileTabsProps) => {
   return (
     <div className="profile-tabs">
       <TabNavigationButton
@@ -46,12 +47,14 @@ export const ProfileTabs = ({ activeTab, onTabChange }: ProfileTabsProps) => {
         onClick={() => onTabChange('favorites')}
       />
 
-      <TabNavigationButton
-        label="Usuarios"
-        icon={<FiUsers />}
-        isActive={activeTab === 'users'}
-        onClick={() => onTabChange('users')}
-      />
+      {isAdmin && (
+        <TabNavigationButton
+          label="Usuarios"
+          icon={<FiUsers />}
+          isActive={activeTab === 'users'}
+          onClick={() => onTabChange('users')}
+        />
+      )}
     </div>
   );
 }; 

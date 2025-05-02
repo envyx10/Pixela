@@ -3,7 +3,6 @@
 export interface ProfileFormData {
   name: string;
   email: string;
-  surname: string;
   password?: string;
   created_at: string;
   is_admin: boolean;
@@ -14,7 +13,6 @@ export interface ProfileFormData {
 export interface UpdateProfileFormProps {
   initialData: {
     name: string;
-    surname: string;
     email: string;
     password?: string;
     photo_url?: string;

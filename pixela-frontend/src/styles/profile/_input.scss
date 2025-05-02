@@ -60,4 +60,19 @@
     font-size: $font-size-small;
     margin-top: $spacing-xs;
   }
-} 
+}
+
+.input-field__label {
+  display: block;
+  font-size: $font-size-small;
+  color: $text-secondary;
+  margin-bottom: $spacing-xs;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+}
+
+.profile-edit__field-group {
+  .profile-input__label {
+    padding-left: 4px;
+  }
+}

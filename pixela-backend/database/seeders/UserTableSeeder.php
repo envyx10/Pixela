@@ -19,7 +19,6 @@ class UserTableSeeder extends Seeder
         $admins = [
             [
                 'name' => 'Pablo',
-                'surname' => 'Gil',
                 'email' => 'pablo@pixela.com',
                 'email_verified_at' => now(),
                 'password' => Hash::make('admin123'),
@@ -27,8 +26,8 @@ class UserTableSeeder extends Seeder
             ],
             [
                 'name' => 'Ruyi',
-                'surname' => 'Xia',
                 'email' => 'ruyi@pixela.com',
+                'photo_url' => 'https://i.pravatar.cc/150?img=24',
                 'email_verified_at' => now(),
                 'password' => Hash::make('admin123'),
                 'is_admin' => true,
