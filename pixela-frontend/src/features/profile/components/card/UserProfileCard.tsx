@@ -35,7 +35,7 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
             {/* Columna de avatar */}
             <div className="flex flex-col items-center text-center pt-4">
               <UserAvatar 
-                profileImage={user.profile_image} 
+                profileImage={user.photo_url} 
                 name={user.name} 
               />
               <h3 className="text-2xl font-bold text-white mt-4 font-outfit">{user.name}</h3>
@@ -58,7 +58,7 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
           initialData={{
             name: user.name,
             email: user.email,
-            profile_image: user.profile_image
+            photo_url: user.photo_url
           }}
           onCancel={handleCancelEdit}
           onSubmit={handleSubmitProfile}

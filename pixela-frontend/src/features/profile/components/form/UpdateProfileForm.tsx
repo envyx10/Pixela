@@ -17,12 +17,12 @@ export const UpdateProfileForm = ({
     defaultValues: {
       name: initialData.name,
       email: initialData.email,
-      lastname: '',
+      photo_url: initialData.photo_url,
       password: ''
     }
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [profileImage, setProfileImage] = useState<string | undefined>(initialData.profile_image);
+  const [profileImage, setProfileImage] = useState<string | undefined>(initialData.photo_url);
   const [imageError, setImageError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +52,7 @@ export const UpdateProfileForm = ({
   };
 
   const onFormSubmit = (data: ProfileFormData) => {
-    onSubmit({ ...data, profileImage });
+    onSubmit({ ...data, photo_url: profileImage });
   };
 
   return (
@@ -114,51 +114,50 @@ export const UpdateProfileForm = ({
           </button>
         </div>
 
+        {/* Campos del formulario */}
         <form onSubmit={handleSubmit(onFormSubmit)} className="profile-edit__fields">
-          <InputField
-            type="text"
-            name="name"
-            placeholder="Nombre"
-            register={register('name', { required: true })}
-            icon={<FiUser className="profile-input__icon" />}
-            error={errors.name}
-            labelText="Nombre"
-          />
+          {/* Campo de username */}
+          <div className="profile-edit__field-group">
+            <label className="profile-input__label">Username</label>
+            <InputField
+              type="text"
+              name="name"
+              placeholder="Username"
+              register={register('name', { required: true })}
+              icon={<FiUser className="profile-input__icon" />}
+              error={errors.name}
+            />
+          </div>
 
-          <InputField
-            type="text"
-            name="lastname"
-            placeholder="Apellidos"
-            register={register('lastname')}
-            icon={<FiUsers className="profile-input__icon" />}
-            labelText="Apellidos"
-          />
+          <div className="profile-edit__field-group">
+            <label className="profile-input__label">Email</label>
+            <InputField
+              type="email"
+              name="email"
+              placeholder="Email"
+              register={register('email', { 
+                required: true,
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Formato de email inválido"
+                }
+              })}
+              icon={<FiMail className="profile-input__icon" />}
+              error={errors.email}
+            />
+          </div>
 
-          <InputField
-            type="email"
-            name="email"
-            placeholder="Email"
-            register={register('email', { 
-              required: true,
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Formato de email inválido"
-              }
-            })}
-            icon={<FiMail className="profile-input__icon" />}
-            error={errors.email}
-            labelText="Email"
-          />
-
-          <InputField
-            type="password"
-            name="password"
-            placeholder="Contraseña"
-            register={register('password')}
-            icon={<IoKeyOutline className="profile-input__icon" />}
-            helperText="Deja este campo vacío si no deseas cambiar tu contraseña actual"
-            labelText="Contraseña"
-          />
+          <div className="profile-edit__field-group">
+            <label className="profile-input__label">Contraseña</label>
+            <InputField
+              type="password"
+              name="password"
+              placeholder="Contraseña"
+              register={register('password')}
+              icon={<IoKeyOutline className="profile-input__icon" />}
+              helperText="Deja este campo vacío si no deseas cambiar tu contraseña actual"
+            />
+          </div>
 
           <div className="profile-edit__actions">
             <button

@@ -28,14 +28,6 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        $user = Auth::user();
-        
-        // Crear un nuevo token de API
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        // Guardar el token en la sesión para que esté disponible en el frontend
-        session(['api_token' => $token]);
-
         return redirect(env('FRONTEND_URL'));
     }
 
@@ -45,11 +37,6 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $user = $request->user();
-
-        // Eliminar el token de API
-        if ($user) {
-            $user->tokens()->delete();
-        }
 
         Auth::guard('web')->logout();
         $request->session()->invalidate();

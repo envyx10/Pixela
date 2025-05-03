@@ -10,7 +10,8 @@
         "codeat3/blade-carbon-icons": "^2.34",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "laraveles/spanish": "^1.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

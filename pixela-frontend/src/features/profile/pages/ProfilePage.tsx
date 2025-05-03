@@ -19,7 +19,7 @@ import {
 import '@/styles/profile/main.scss';
 
 // Definimos el tipo para las pestañas
-type TabType = 'profile' | 'history' | 'watchlist' | 'favorites';
+type TabType = 'profile' | 'reviews' | 'favorites' | 'users' ;
 
 // Componente del cliente que maneja la edición y navegación de pestañas
 const ProfileClient = ({ user }: { user: User }) => {
@@ -71,7 +71,8 @@ const ProfileClient = ({ user }: { user: User }) => {
         {/* Tabs de navegación */}
         <ProfileTabs 
           activeTab={activeTab} 
-          onTabChange={handleTabChange} 
+          onTabChange={handleTabChange}
+          isAdmin={user.is_admin ?? false}
         />
         
         {/* Contenido de las pestañas */}
@@ -82,7 +83,7 @@ const ProfileClient = ({ user }: { user: User }) => {
                 {/* Columna de avatar */}
                 <div className={`profile-page__avatar-column avatar-scroll-effect ${scrolled ? 'scrolled' : ''}`}>
                   <UserAvatar 
-                    profileImage={user.profile_image} 
+                    profileImage={user.photo_url} 
                     name={user.name} 
                   />
                   <h3 className="user-avatar__name">{user.name}</h3>
@@ -107,14 +108,14 @@ const ProfileClient = ({ user }: { user: User }) => {
               initialData={{
                 name: user.name,
                 email: user.email,
-                profile_image: user.profile_image
+                photo_url: user.photo_url
               }}
               onCancel={handleCancelEdit}
               onSubmit={handleSubmitProfile}
             />
           )}
           
-          {activeTab === 'history' && (
+          {/* {activeTab === 'history' && (
             <ContentPanel 
               title="Historial de Visualización" 
               isEmpty={true} 
@@ -129,12 +130,29 @@ const ProfileClient = ({ user }: { user: User }) => {
               emptyMessage="No hay elementos en tu lista de seguimiento."
             />
           )}
+           */}
+
+          {activeTab === 'reviews' && (
+            <ContentPanel 
+              title="Reseñas" 
+              isEmpty={true} 
+              emptyMessage="No hay elementos en la lista de reseñas."
+            />
+          )}
           
           {activeTab === 'favorites' && (
             <ContentPanel 
               title="Favoritos" 
               isEmpty={true} 
-              emptyMessage="No hay elementos en tus favoritos."
+              emptyMessage="No hay elementos en la lista de favoritos."
+            />
+          )}
+
+          {activeTab === 'users' && user.is_admin && (
+            <ContentPanel 
+              title="Usuarios" 
+              isEmpty={true} 
+              emptyMessage="No hay elementos en la lista de usuarios."
             />
           )}
         </div>

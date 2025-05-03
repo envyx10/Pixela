@@ -1,6 +1,4 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <form method="POST" action="{{ route('register') }}" class="py-4 space-y-6">
         @csrf
@@ -16,7 +14,7 @@
                 class="block w-full bg-[#181818] text-white/90 text-[16px] font-['Outfit'] pl-10" 
                 type="text" 
                 name="name" 
-                placeholder="Nombre"
+                placeholder="Username"
                 :value="old('name')" 
                 required 
                 autofocus 
@@ -78,5 +76,11 @@
                 {{ __('¿Ya tienes cuenta?') }}
             </a>
         </div>
+
+        <!-- Session Status -->
+        <div class="mt-4">
+            <x-auth-session-status class="mb-4" :status="session('status')" />
+        </div>
     </form>
+
 </x-guest-layout>

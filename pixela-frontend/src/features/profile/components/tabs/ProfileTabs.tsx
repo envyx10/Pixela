@@ -1,14 +1,15 @@
-import { FiSettings, FiClock, FiList, FiStar } from 'react-icons/fi';
+import { FiSettings, FiList, FiHeart, FiEdit, FiUsers } from 'react-icons/fi';
 import { TabNavigationButton } from './TabNavigationButton';
 
-type TabType = 'profile' | 'history' | 'watchlist' | 'favorites';
+type TabType = 'profile' | 'reviews' | 'favorites' | 'users';
 
 interface ProfileTabsProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  isAdmin: boolean;
 }
 
-export const ProfileTabs = ({ activeTab, onTabChange }: ProfileTabsProps) => {
+export const ProfileTabs = ({ activeTab, onTabChange, isAdmin }: ProfileTabsProps) => {
   return (
     <div className="profile-tabs">
       <TabNavigationButton
@@ -18,26 +19,42 @@ export const ProfileTabs = ({ activeTab, onTabChange }: ProfileTabsProps) => {
         onClick={() => onTabChange('profile')}
       />
       
-      <TabNavigationButton
+      {/* <TabNavigationButton
         label="Historial"
         icon={<FiClock />}
         isActive={activeTab === 'history'}
         onClick={() => onTabChange('history')}
-      />
+      /> */}
       
-      <TabNavigationButton
+      {/* <TabNavigationButton
         label="Lista de seguimiento"
         icon={<FiList />}
         isActive={activeTab === 'watchlist'}
         onClick={() => onTabChange('watchlist')}
+      /> */}
+
+      <TabNavigationButton
+        label="Reseñas"
+        icon={<FiEdit />}
+        isActive={activeTab === 'reviews'}
+        onClick={() => onTabChange('reviews')}
       />
       
       <TabNavigationButton
         label="Favoritos"
-        icon={<FiStar />}
+        icon={<FiHeart />}
         isActive={activeTab === 'favorites'}
         onClick={() => onTabChange('favorites')}
       />
+
+      {isAdmin && (
+        <TabNavigationButton
+          label="Usuarios"
+          icon={<FiUsers />}
+          isActive={activeTab === 'users'}
+          onClick={() => onTabChange('users')}
+        />
+      )}
     </div>
   );
 }; 

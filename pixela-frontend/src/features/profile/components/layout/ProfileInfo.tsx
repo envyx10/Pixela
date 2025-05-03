@@ -1,7 +1,7 @@
 'use client';
 
 import { User } from '@/features/profile/types/user';
-import { FiUser, FiUsers, FiMail, FiCalendar, FiShield, FiEdit } from 'react-icons/fi';
+import { FiUser, FiMail, FiCalendar, FiShield, FiEdit } from 'react-icons/fi';
 
 interface ProfileInfoProps {
   user: User;
@@ -36,18 +36,10 @@ export const ProfileInfo = ({ user, onEdit }: ProfileInfoProps) => {
 
       <div className="profile-info__content">
         <div className="profile-info__field">
-          <p className="profile-info__label">Nombre</p>
+          <p className="profile-info__label">Username</p>
           <div className="profile-info__value">
             <FiUser className="profile-info__icon" />
             <span>{user.name}</span>
-          </div>
-        </div>
-
-        <div className="profile-info__field">
-          <p className="profile-info__label">Apellidos</p>
-          <div className="profile-info__value">
-            <FiUsers className="profile-info__icon" />
-            <span>{user.lastname || 'No especificado'}</span>
           </div>
         </div>
         
