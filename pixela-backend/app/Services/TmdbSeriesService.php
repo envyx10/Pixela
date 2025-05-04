@@ -60,9 +60,9 @@ class TmdbSeriesService
     }
 
     /**
-     * Obtains details of a series by its ID
+     * Get the details of a series by its ID
      *
-     * @param int $id ID de la serie
+     * @param int $id ID of the series
      * @return array
      * @throws Exception
      */
@@ -72,7 +72,7 @@ class TmdbSeriesService
     }
 
     /**
-     * Obtains the list of popular series
+     * Get the list of popular series
      *
      * @return array
      * @throws Exception
@@ -83,7 +83,7 @@ class TmdbSeriesService
     } 
 
     /**
-     * Obtains top rated series
+     * Get the top rated series
      *
      * @return array
      * @throws Exception
@@ -94,7 +94,7 @@ class TmdbSeriesService
     }
     
     /**
-    * Obtains the list of series currently airing
+     * Get the list of series currently airing
      *
      * @return array
      * @throws Exception
@@ -105,9 +105,9 @@ class TmdbSeriesService
     }
 
     /**
-     * Obtains the list of series by genre
+     * Get the list of series by genre
      *
-     * @param int $genreId ID del género
+     * @param int $genreId ID of the genre
      * @return array
      * @throws Exception
      */
@@ -117,9 +117,9 @@ class TmdbSeriesService
     }
     
     /**
-     * Obtiene los actores de una serie por su ID
+     * Get the cast of a series by its ID
      *
-     * @param int $seriesId ID de la serie
+     * @param int $seriesId ID of the series
      * @return array
      * @throws Exception
      */
@@ -163,9 +163,9 @@ class TmdbSeriesService
     }
     
     /**
-     * Obtiene los videos (trailers) de una serie por su ID
+     * Get the videos (trailers) of a series by its ID
      *
-     * @param int $seriesId ID de la serie
+     * @param int $seriesId ID of the series
      * @return array
      * @throws Exception
      */
@@ -175,10 +175,10 @@ class TmdbSeriesService
     }
 
     /**
-     * Obtiene las plataformas de streaming donde se puede ver una serie
+     * Get the streaming platforms where a series can be watched
      *
-     * @param int $seriesId ID de la serie
-     * @param string $region Código de región (por defecto ES para España)
+     * @param int $seriesId ID of the series
+     * @param string $region Region code (default ES for Spain)
      * @return array
      * @throws Exception
      */
