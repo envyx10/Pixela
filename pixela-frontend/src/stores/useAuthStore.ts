@@ -8,7 +8,8 @@ interface User {
   name: string;
   surname: string;
   email: string;
-  avatar: string;
+  photo_url: string;
+  is_admin: boolean;
   created_at: string;
 }
 

@@ -1,5 +1,7 @@
-import { Actor, Serie } from '@/features/media/types';
-import { API_ENDPOINTS, DEFAULT_FETCH_OPTIONS } from '@/config/api';
+import { Actor } from '@/features/media/types/people';
+import { Serie } from '@/features/media/types/content';
+import { API_ENDPOINTS } from '@/config/apiEndpoints';
+import { DEFAULT_FETCH_OPTIONS } from '@/config/api';
 import { mapSerieFromApi } from './mapSerie';
 
 export async function getSerieById(id: string): Promise<Serie> {
