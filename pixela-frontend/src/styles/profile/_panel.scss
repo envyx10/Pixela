@@ -2,19 +2,24 @@
 
 .content-panel {
   padding: $spacing-lg;
-  background-color: rgba($pixela-dark, 0.5);
+  background-color: rgba($pixela-dark, 0.35);
   border-radius: $border-radius-md;
-  border: 1px solid $border-color;
+  border: 1px solid rgba($border-color, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
   
   &__header {
     margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid rgba($border-color, 0.1);
   }
   
   &__title {
     font-size: $font-size-large;
-    font-weight: bold;
+    font-weight: 600;
     color: $text-primary;
     font-family: $font-primary;
+    letter-spacing: -0.02em;
   }
   
   &__empty {
@@ -39,9 +44,13 @@
   }
   
   &__content {
+    max-width: 60rem;
+    margin: 0 auto;
+    width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: $spacing-lg;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: $spacing-md;
+    padding: $spacing-sm;
   }
   
   &__item {
@@ -54,6 +63,12 @@
       transform: translateY(-5px);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
+  }
+  
+  &:hover {
+    background-color: rgba($pixela-dark, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
   
   @media (max-width: $breakpoint-md) {

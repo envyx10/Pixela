@@ -30,6 +30,30 @@ export const API_ENDPOINTS = {
         LOGOUT: '/logout',
         REGISTER: '/register',
         USER: '/user',
+    },
+
+    // Users
+    USERS: {
+        LIST: '/users',
+        CREATE: '/users',
+        UPDATE: '/users/:id',
+        DELETE: '/users/:id',
+    },
+
+    // Favorites
+    FAVORITES: {
+        LIST: '/favorites',
+        CREATE: '/favorites',
+        DELETE: '/favorites/:id',
+        DETAILS: '/favorites/details',
+    },
+
+    // Reviews
+    REVIEWS: {
+        LIST: '/reviews',
+        CREATE: '/reviews',
+        UPDATE: '/reviews/:id',
+        DELETE: '/reviews/:id',
     }
 
 };

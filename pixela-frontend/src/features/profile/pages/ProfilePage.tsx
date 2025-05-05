@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { User } from '@/features/profile/types/user';
 import { ProfileFormData } from '@/features/profile/types/profileTypes';
-import { authAPI } from '@/config/api';
-
+import { authAPI, favoritesAPI } from '@/config/api';
+import { FavoriteWithDetails } from '@/config/apiTypes';
 import { 
   ProfileLoader,
   ProfileError,
@@ -17,6 +17,8 @@ import {
 
 // Importación de los estilos SASS
 import '@/styles/profile/main.scss';
+import { Favorite } from '@/config/apiTypes';
+import { ProfileFavorites } from '../components/layout/ProfileFavorites';
 
 // Definimos el tipo para las pestañas
 type TabType = 'profile' | 'reviews' | 'favorites' | 'users' ;
@@ -26,6 +28,11 @@ const ProfileClient = ({ user }: { user: User }) => {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Estado para favoritos
+  const [favorites, setFavorites] = useState<FavoriteWithDetails[]>([]);
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [favoritesError, setFavoritesError] = useState<string | null>(null);
 
   // Añadimos efecto de scroll para la animación, solo en el cliente
   useEffect(() => {
@@ -37,9 +44,21 @@ const ProfileClient = ({ user }: { user: User }) => {
       }
     };
     
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll);  
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Cargar favoritos solo cuando se selecciona la pestaña "favorites"
+  useEffect(() => {
+    if (activeTab === 'favorites') {
+      setFavoritesLoading(true);
+      setFavoritesError(null);
+      favoritesAPI.listWithDetails()
+        .then(setFavorites)
+        .catch(() => setFavoritesError('No se pudieron cargar los favoritos.'))
+        .finally(() => setFavoritesLoading(false));
+    }
+  }, [activeTab]);
 
   // Manejador para cambiar de pestaña
   const handleTabChange = (tab: TabType) => {
@@ -114,38 +133,19 @@ const ProfileClient = ({ user }: { user: User }) => {
               onSubmit={handleSubmitProfile}
             />
           )}
-          
-          {/* {activeTab === 'history' && (
-            <ContentPanel 
-              title="Historial de Visualización" 
-              isEmpty={true} 
-              emptyMessage="No hay elementos en tu historial de visualización."
-            />
-          )}
-          
-          {activeTab === 'watchlist' && (
-            <ContentPanel 
-              title="Lista de Seguimiento" 
-              isEmpty={true} 
-              emptyMessage="No hay elementos en tu lista de seguimiento."
-            />
-          )}
-           */}
 
           {activeTab === 'reviews' && (
             <ContentPanel 
               title="Reseñas" 
               isEmpty={true} 
-              emptyMessage="No hay elementos en la lista de reseñas."
+              emptyMessage="No hay elementos en tus reseñas."
             />
           )}
           
           {activeTab === 'favorites' && (
-            <ContentPanel 
-              title="Favoritos" 
-              isEmpty={true} 
-              emptyMessage="No hay elementos en la lista de favoritos."
-            />
+            <ContentPanel title="Favoritos">
+              <ProfileFavorites />
+            </ContentPanel>
           )}
 
           {activeTab === 'users' && user.is_admin && (

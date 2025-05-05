@@ -1,4 +1,4 @@
-import { AuthResponse, UserResponse } from './apiTypes';
+import { AuthResponse, UserResponse, Favorite, FavoriteWithDetails } from './apiTypes';
 import { API_ENDPOINTS } from './apiEndpoints';
 import { fetchFromAPI } from './apiHelpers';
 
@@ -11,6 +11,7 @@ export const DEFAULT_FETCH_OPTIONS = {
   cache: 'no-store' as RequestCache
 };
 
+// API para autenticación
 export const authAPI = {
   async login(email: string, password: string): Promise<AuthResponse> {
     const response = await fetchFromAPI<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, {
@@ -78,5 +79,26 @@ export const authAPI = {
       throw new Error('Sesión cerrada');
     }
     return fetchFromAPI<UserResponse>(API_ENDPOINTS.AUTH.USER);
+  }
+};
+
+// API para favoritos
+export const favoritesAPI = {
+  async listWithDetails(): Promise<FavoriteWithDetails[]> {
+    const response = await fetchFromAPI<{ success: boolean; data: FavoriteWithDetails[] }>(API_ENDPOINTS.FAVORITES.DETAILS);
+    return response.data;
+  },
+
+  async addFavorite(favorite: Favorite): Promise<Favorite> {
+    return fetchFromAPI<Favorite>(API_ENDPOINTS.FAVORITES.CREATE, {
+      method: 'POST',
+      body: JSON.stringify(favorite),
+    });
+  },
+
+  async deleteFavorite(favoriteId: number): Promise<void> {
+    await fetchFromAPI(API_ENDPOINTS.FAVORITES.DELETE.replace(':id', String(favoriteId)), {
+      method: 'DELETE',
+    });
   }
 };

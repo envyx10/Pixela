@@ -33,6 +33,19 @@ export interface Favorite {
     item_type: string;
 }
 
+// Favorito con detalles
+export interface FavoriteWithDetails {
+    id: number;
+    user_id: number;
+    tmdb_id: number;
+    item_type: string;
+    title: string;
+    poster_path: string;
+    overview: string;
+    release_date: string;
+    vote_average: number;
+}
+
 // Reseña
 export interface Review {
     id: number;
