@@ -17,8 +17,8 @@ import {
 
 // Importación de los estilos SASS
 import '@/styles/profile/main.scss';
-import { Favorite } from '@/config/apiTypes';
 import { ProfileFavorites } from '../components/layout/ProfileFavorites';
+import { ProfileReviews } from '../components/layout/ProfileReviews';
 
 // Definimos el tipo para las pestañas
 type TabType = 'profile' | 'reviews' | 'favorites' | 'users' ;
@@ -135,11 +135,9 @@ const ProfileClient = ({ user }: { user: User }) => {
           )}
 
           {activeTab === 'reviews' && (
-            <ContentPanel 
-              title="Reseñas" 
-              isEmpty={true} 
-              emptyMessage="No hay elementos en tus reseñas."
-            />
+            <ContentPanel title="Reseñas">
+              <ProfileReviews />
+            </ContentPanel>
           )}
           
           {activeTab === 'favorites' && (

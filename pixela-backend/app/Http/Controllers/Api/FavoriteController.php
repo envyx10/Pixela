@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Api;
-
 
 use App\Http\Controllers\Controller;
 use App\Models\Favorite;
@@ -10,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
+
 class FavoriteController extends Controller
 {
     /**

@@ -1,4 +1,4 @@
-import { AuthResponse, UserResponse, Favorite, FavoriteWithDetails } from './apiTypes';
+import { AuthResponse, UserResponse, Favorite, FavoriteWithDetails, Review } from './apiTypes';
 import { API_ENDPOINTS } from './apiEndpoints';
 import { fetchFromAPI } from './apiHelpers';
 
@@ -98,6 +98,34 @@ export const favoritesAPI = {
 
   async deleteFavorite(favoriteId: number): Promise<void> {
     await fetchFromAPI(API_ENDPOINTS.FAVORITES.DELETE.replace(':id', String(favoriteId)), {
+      method: 'DELETE',
+    });
+  }
+};
+
+// API para reseñas
+export const reviewsAPI = {
+  async list(): Promise<Review[]> {
+    const response = await fetchFromAPI<{ success: boolean; data: Review[] }>(API_ENDPOINTS.REVIEWS.LIST);
+    return response.data;
+  },
+
+  async add(review: Review): Promise<Review> {
+    return fetchFromAPI<Review>(API_ENDPOINTS.REVIEWS.CREATE, {
+      method: 'POST',
+      body: JSON.stringify(review),
+    });
+  },
+
+  async update(review: Review): Promise<Review> {
+    return fetchFromAPI<Review>(API_ENDPOINTS.REVIEWS.UPDATE.replace(':id', String(review.id)), {
+      method: 'PUT',
+      body: JSON.stringify(review),
+    });
+  },
+
+  async delete(reviewId: number): Promise<void> {
+    await fetchFromAPI(API_ENDPOINTS.REVIEWS.DELETE.replace(':id', String(reviewId)), {
       method: 'DELETE',
     });
   }

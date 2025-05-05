@@ -101,7 +101,7 @@ export const ProfileFavorites = () => {
 
             {/* Botón de eliminar */}
             <button 
-              className="p-3 text-gray-400 hover:text-red-500 transition-colors duration-200"
+              className="p-3 text-gray-400 hover:text-[#ec1b69] transition-colors duration-200"
               title="Eliminar de favoritos"
               disabled={deletingId === fav.id}
               onClick={() => handleDelete(fav.id)}

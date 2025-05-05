@@ -30,7 +30,7 @@ export interface Favorite {
     id: number;
     user_id: number;
     tmdb_id: number;
-    item_type: string;
+    item_type: 'movie' | 'series';
 }
 
 // Favorito con detalles
@@ -38,7 +38,7 @@ export interface FavoriteWithDetails {
     id: number;
     user_id: number;
     tmdb_id: number;
-    item_type: string;
+    item_type: 'movie' | 'series';
     title: string;
     poster_path: string;
     overview: string;
@@ -50,12 +50,14 @@ export interface FavoriteWithDetails {
 export interface Review {
     id: number;
     user_id: number;
-    item_type: string;
+    item_type: 'movie' | 'series';
     tmdb_id: number;
     rating: number;
     review: string;
     created_at: string;
     updated_at: string;
+    title?: string;
+    poster_path?: string;
 }
 
 // Usuario
