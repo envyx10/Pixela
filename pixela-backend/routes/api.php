@@ -3,16 +3,33 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MovieController;
 use App\Http\Controllers\Api\SeriesController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Support\Facades\Route;
-
-// Public routes
-/* Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']); */
 
 // Private routes
 Route::middleware('auth:sanctum')->group(function() {
+
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('/users', [UserController::class, 'list'])->middleware('isAdmin');
+    Route::post('/users', [UserController::class, 'create'])->middleware('isAdmin');
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'delete']);
+
+    // Favorites routes
+    Route::get('/favorites', [FavoriteController::class, 'list']);
+    Route::post('/favorites', [FavoriteController::class, 'add']);
+    Route::delete('/favorites/{favorite}', [FavoriteController::class, 'delete']);
+    Route::get('/favorites/details', [FavoriteController::class, 'listWithDetails']);
+    
+    // Reviews routes
+    Route::get('/reviews', [ReviewController::class, 'list']);
+    Route::post('/reviews', [ReviewController::class, 'add']);
+    Route::put('/reviews/{review}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{review}', [ReviewController::class, 'delete']);
 });
 
 // Movie routes

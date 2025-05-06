@@ -116,9 +116,9 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene los actores de una película por su ID
+     * Get the cast of a movie by its ID
      *
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @return array
      * @throws Exception
      */
@@ -150,9 +150,9 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene los videos (trailers) de una película por su ID
+     * Get the videos (trailers) of a movie by its ID
      *
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @return array
      * @throws Exception
      */
@@ -162,10 +162,10 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene las plataformas de streaming donde se puede ver una película
+     * Get the streaming platforms where a movie can be watched
      *
-     * @param int $movieId ID de la película
-     * @param string $region Código de región (por defecto ES para España)
+     * @param int $movieId ID of the movie
+     * @param string $region Region code (default ES for Spain)
      * @return array
      * @throws Exception
      */
@@ -175,9 +175,9 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene el creador de una película por su ID
+     * Get the creator of a movie by its ID
      *
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @return array
      * @throws Exception
      */
@@ -214,9 +214,9 @@ class TmdbMovieService
     }
 
     /**
-     * Obtiene las imágenes de una película por su ID
+     * Get the images of a movie by its ID
      *
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @return array
      * @throws Exception
      */
