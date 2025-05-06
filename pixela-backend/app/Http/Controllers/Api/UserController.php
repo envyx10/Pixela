@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
-
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -29,7 +29,19 @@ class UserController extends Controller
             return response()->json(['message' => 'You are not authorized to list users'], 403);
         }
 
-        $users = User::all();
+        $users = User::all()->map(function ($user) {
+            return [
+                'user_id'    => $user->user_id,
+                'name'       => $user->name,
+                'email'      => $user->email,
+                'photo_url'  => $user->photo_url,
+                'is_admin'   => $user->is_admin,
+                'password'   => $user->password,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ];
+        });
+
         return response()->json([
             'message' => 'Users listed successfully',
             'users' => $users
@@ -79,17 +91,18 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user): JsonResponse
     {
-        if (!$request->user()->is_admin && $request->user()->id !== $user->id) {
+        $authUser = $request->user();
+
+        if (!$authUser->is_admin && $authUser->user_id !== $user->user_id) {
             return response()->json(['message' => 'You are not authorized to update this user'], 403);
         }
-        
+
         $request->validate([
             'name'     => ['required', 'string', 'max:100'],
-            'email'    => ['required', 'string', 'email', 'max:100', 'unique:users,email,' . $user->id],
-            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->user_id, 'user_id')],
+            'password' => ['nullable', Rules\Password::defaults()],
             'is_admin' => ['nullable', 'boolean'],
         ]);
-
 
         $user->update([
             'name'     => $request->name,
@@ -98,8 +111,8 @@ class UserController extends Controller
             'is_admin' => $request->is_admin ?? $user->is_admin,
         ]);
 
-
         return response()->json([
+            'success' => true,
             'message' => 'User updated successfully',
             'user' => $user
         ], 200);
@@ -113,7 +126,7 @@ class UserController extends Controller
      */
     public function delete(Request $request, User $user): JsonResponse
     {
-        if (!$request->user()->is_admin && $request->user()->id !== $user->id) {
+        if (!$request->user()->is_admin && $request->user()->user_id !== $user->user_id) {
             return response()->json(['message' => 'You are not authorized to delete this user'], 403);
         }
 

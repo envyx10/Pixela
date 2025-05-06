@@ -5,6 +5,9 @@ import { User } from '@/features/profile/types/user';
 import { ProfileFormData } from '@/features/profile/types/profileTypes';
 import { authAPI, favoritesAPI } from '@/config/api';
 import { FavoriteWithDetails } from '@/config/apiTypes';
+import { ProfileFavorites } from '../components/layout/ProfileFavorites';
+import { ProfileReviews } from '../components/layout/ProfileReviews';
+import { ProfileUsers } from '../components/layout/ProfileUsers';
 import { 
   ProfileLoader,
   ProfileError,
@@ -17,8 +20,6 @@ import {
 
 // Importación de los estilos SASS
 import '@/styles/profile/main.scss';
-import { ProfileFavorites } from '../components/layout/ProfileFavorites';
-import { ProfileReviews } from '../components/layout/ProfileReviews';
 
 // Definimos el tipo para las pestañas
 type TabType = 'profile' | 'reviews' | 'favorites' | 'users' ;
@@ -147,11 +148,9 @@ const ProfileClient = ({ user }: { user: User }) => {
           )}
 
           {activeTab === 'users' && user.is_admin && (
-            <ContentPanel 
-              title="Usuarios" 
-              isEmpty={true} 
-              emptyMessage="No hay elementos en la lista de usuarios."
-            />
+            <ContentPanel title="Usuarios">
+              <ProfileUsers />
+            </ContentPanel>
           )}
         </div>
       </div>

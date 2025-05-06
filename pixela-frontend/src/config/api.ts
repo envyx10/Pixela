@@ -1,4 +1,4 @@
-import { AuthResponse, UserResponse, Favorite, FavoriteWithDetails, Review } from './apiTypes';
+import { AuthResponse, UserResponse, Favorite, FavoriteWithDetails, Review, User } from './apiTypes';
 import { API_ENDPOINTS } from './apiEndpoints';
 import { fetchFromAPI } from './apiHelpers';
 
@@ -126,6 +126,34 @@ export const reviewsAPI = {
 
   async delete(reviewId: number): Promise<void> {
     await fetchFromAPI(API_ENDPOINTS.REVIEWS.DELETE.replace(':id', String(reviewId)), {
+      method: 'DELETE',
+    });
+  }
+};
+
+// API para usuarios
+export const usersAPI = {
+  async list(): Promise<User[]> {
+    const response = await fetchFromAPI<{ message: string; users: User[] }>(API_ENDPOINTS.USERS.LIST);
+    return response.users;
+  },
+
+  async create(user: User): Promise<User> {
+    return fetchFromAPI<User>(API_ENDPOINTS.USERS.CREATE, {
+      method: 'POST',
+      body: JSON.stringify(user),
+    });
+  },
+
+  async update(user: User): Promise<User> {
+    return fetchFromAPI<User>(API_ENDPOINTS.USERS.UPDATE.replace(':id', String(user.user_id)), {
+      method: 'PUT',
+      body: JSON.stringify(user),
+    });
+  },
+
+  async delete(userId: number): Promise<void> {
+    await fetchFromAPI(API_ENDPOINTS.USERS.DELETE.replace(':id', String(userId)), {
       method: 'DELETE',
     });
   }

@@ -62,11 +62,12 @@ export interface Review {
 
 // Usuario
 export interface User {
-    id: number;
+    user_id: number;
     name: string;
     email: string;
     photo_url: string;
     is_admin: boolean;
+    password: string;
     created_at: string;
     updated_at: string;
 }

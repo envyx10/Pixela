@@ -69,7 +69,9 @@ export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): P
         url: fullUrl,
         error: errorText
       });
-      throw new Error(`Error en la respuesta: ${response.status} - ${errorText}`);
+      const error: any = new Error(`Error en la respuesta: ${response.status} - ${errorText}`);
+      error.status = response.status;
+      throw error;
     }
     
     const data = await response.json();

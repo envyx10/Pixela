@@ -14,6 +14,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    // Users routes
     Route::get('/users', [UserController::class, 'list'])->middleware('isAdmin');
     Route::post('/users', [UserController::class, 'create'])->middleware('isAdmin');
     Route::put('/users/{user}', [UserController::class, 'update']);
