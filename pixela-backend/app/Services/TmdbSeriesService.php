@@ -36,14 +36,16 @@ class TmdbSeriesService
      * @return array
      * @throws Exception
      */
-    private function makeRequest(string $endpoint): array
+    private function makeRequest(string $endpoint, array $extraQuery = []): array
     {
         try {
+            $query = array_merge([
+                'api_key'  => $this->apiKey,
+                'language' => $this->language,
+            ], $extraQuery);
+
             $response = $this->client->get("{$this->baseUrl}{$endpoint}", [
-                'query'   => [
-                    'api_key'  => $this->apiKey,
-                    'language' => $this->language,
-                ],
+                'query'   => $query,
                 'timeout' => $this->timeout,
             ]);
 
@@ -54,9 +56,24 @@ class TmdbSeriesService
             }
 
             return $data;
+
         } catch (GuzzleException $e) {
             throw new Exception('Error fetching movie from TMDB: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Make a paginated request to the TMDB API
+     *
+     * @param string $endpoint
+     * @param array $params
+     * @param int $page
+     * @return array
+     */
+    private function paginatedRequest(string $endpoint, array $params = [], int $page = 1): array
+    {
+        $params['page'] = $page;
+        return $this->makeRequest($endpoint, $params);
     }
 
     /**
@@ -77,9 +94,12 @@ class TmdbSeriesService
      * @return array
      * @throws Exception
      */
-    public function getTrendingSeries(): array
+    public function getTrendingSeries(int $page = 1): array
     {
-        return $this->makeRequest("/trending/tv/week?with_watch_providers=8|384|119|9|337&watch_region=ES");
+        return $this->paginatedRequest("/trending/tv/week", [
+            'with_watch_providers' => '8|384|119|9|337',
+            'watch_region' => 'ES',
+        ], $page);
     } 
 
     /**
@@ -88,9 +108,21 @@ class TmdbSeriesService
      * @return array
      * @throws Exception
      */
-    public function getTopRatedSeries(): array
+    public function getTopRatedSeries(int $page = 1): array
     {
-        return $this->makeRequest("/tv/top_rated");
+        return $this->paginatedRequest("/tv/top_rated", [], $page);
+    }
+
+    /**
+     * Get all discovered series (any genre)
+     *
+     * @param int $page Número de página para paginación (default 1)
+     * @return array
+     * @throws Exception
+     */
+    public function getAllDiscoveredSeries(int $page = 1): array
+    {
+        return $this->paginatedRequest("/discover/tv", [], $page);
     }
     
     /**
@@ -99,9 +131,9 @@ class TmdbSeriesService
      * @return array
      * @throws Exception
      */
-    public function getSeriesOnTheAir(): array
+    public function getSeriesOnTheAir(int $page = 1): array
     {
-        return $this->makeRequest("/tv/on_the_air");
+        return $this->paginatedRequest("/tv/on_the_air", [], $page);
     }
 
     /**
@@ -111,9 +143,11 @@ class TmdbSeriesService
      * @return array
      * @throws Exception
      */
-    public function getSeriesByGenre(int $genreId): array
+    public function getSeriesByGenre(int $genreId, int $page = 1): array
     {
-        return $this->makeRequest("/discover/tv?with_genres={$genreId}");
+        return $this->paginatedRequest("/discover/tv", [
+            'with_genres' => $genreId,
+        ], $page);
     }
     
     /**
@@ -184,6 +218,8 @@ class TmdbSeriesService
      */
     public function getSeriesWatchProviders(int $seriesId, string $region = 'ES'): array
     {
-        return $this->makeRequest("/tv/{$seriesId}/watch/providers?watch_region={$region}");
+        return $this->makeRequest("/tv/{$seriesId}/watch/providers", [
+            'watch_region' => $region
+        ]);
     }
 } 

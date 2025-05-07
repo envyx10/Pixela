@@ -19,6 +19,24 @@ class SeriesController extends Controller
     }
 
     /**
+     * Returns a paginated response
+     *
+     * @param array $series
+     * @param int $page
+     * @return JsonResponse
+     */
+    private function paginatedResponse(array $series, int $page)
+    {
+        return response()->json([
+            'success' => true,
+            'page' => $page,
+            'total_pages' => $series['total_pages'] ?? null,
+            'total_results' => $series['total_results'] ?? null,
+            'data' => SeriesTransformer::transformCollection($series['results'] ?? [])
+        ]);
+    }
+
+    /**
      * Obtains the details of a series by its ID
      *
      * @param Request $request
@@ -54,17 +72,13 @@ class SeriesController extends Controller
      *
      * @return JsonResponse
      */
-    public function getTrendingSeries(): JsonResponse
+    public function getTrendingSeries(Request $request): JsonResponse
     {
         try {
-            $series = $this->tmdbSeriesService->getTrendingSeries();
-            $series = $series['results'];   
-            $series = SeriesTransformer::transformCollection($series);
-        
-            return response()->json([
-                'success' => true,
-                'data' => $series
-            ]);
+            $page = $request->get('page', 1);
+            $series = $this->tmdbSeriesService->getTrendingSeries($page);
+
+            return $this->paginatedResponse($series, $page);
 
         } catch (Exception $e) {
             return response()->json([
@@ -80,17 +94,13 @@ class SeriesController extends Controller
      *
      * @return JsonResponse
      */
-    public function getTopRatedSeries(): JsonResponse
+    public function getTopRatedSeries(Request $request): JsonResponse
     {
         try {
-            $series = $this->tmdbSeriesService->getTopRatedSeries();
-            $series = $series['results'];
-            $series = SeriesTransformer::transformCollection($series);
+            $page = $request->get('page', 1);
+            $series = $this->tmdbSeriesService->getTopRatedSeries($page);
 
-            return response()->json([
-                'success' => true,
-                'data' => $series
-            ]);
+            return $this->paginatedResponse($series, $page);
 
         } catch (Exception $e) {
             return response()->json([
@@ -105,18 +115,36 @@ class SeriesController extends Controller
      *
      * @return JsonResponse
      */
-    public function getSeriesOnTheAir(): JsonResponse
+    public function getSeriesOnTheAir(Request $request): JsonResponse
     {
-            try {
-            $series = $this->tmdbSeriesService->getSeriesOnTheAir();
-            $series = $series['results'];
-            $series = SeriesTransformer::transformCollection($series);
+        try {
+            $page = $request->get('page', 1);
+            $series = $this->tmdbSeriesService->getSeriesOnTheAir($page);
 
-            return response()->json([
-                'success' => true,
-                'data' => $series
-            ]);
+            return $this->paginatedResponse($series, $page);
             
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get all discovered series (any genre)
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getDiscoveredSeries(Request $request): JsonResponse
+    {
+        try {
+            $page = $request->get('page', 1);
+            $series = $this->tmdbSeriesService->getAllDiscoveredSeries($page);
+
+            return $this->paginatedResponse($series, $page);
+
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -131,17 +159,13 @@ class SeriesController extends Controller
      * @param int $genreId ID del género
      * @return JsonResponse
      */
-    public function getSeriesByGenre(int $genreId): JsonResponse
+    public function getSeriesByGenre(Request $request, int $genreId): JsonResponse
     {
         try {
-            $series = $this->tmdbSeriesService->getSeriesByGenre($genreId);
-            $series = $series['results'];
-            $series = SeriesTransformer::transformCollection($series);
+            $page = $request->get('page', 1);
+            $series = $this->tmdbSeriesService->getSeriesByGenre($genreId, $page);
 
-            return response()->json([
-                'success' => true,
-                'data' => $series
-            ]);
+            return $this->paginatedResponse($series, $page);
 
         } catch (Exception $e) {
             return response()->json([
