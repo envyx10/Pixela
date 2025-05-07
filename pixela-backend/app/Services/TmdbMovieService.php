@@ -35,14 +35,16 @@ class TmdbMovieService
      * @return array
      * @throws Exception
      */
-    private function makeRequest(string $endpoint): array
+    private function makeRequest(string $endpoint, array $extraQuery = []): array
     {
         try {
+            $query = array_merge([
+                'api_key'  => $this->apiKey,
+                'language' => $this->language,
+            ], $extraQuery);
+
             $response = $this->client->get("{$this->baseUrl}{$endpoint}", [
-                'query'   => [
-                    'api_key'  => $this->apiKey,
-                    'language' => $this->language,
-                ],
+                'query'   => $query,
                 'timeout' => $this->timeout,
             ]);
 
@@ -53,9 +55,24 @@ class TmdbMovieService
             }
 
             return $data;
+
         } catch (GuzzleException $e) {
             throw new Exception('Error fetching movie from TMDB: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Make a paginated request to the TMDB API
+     *
+     * @param string $endpoint
+     * @param array $params
+     * @param int $page
+     * @return array
+     */
+    private function paginatedRequest(string $endpoint, array $params = [], int $page = 1): array
+    {
+        $params['page'] = $page;
+        return $this->makeRequest($endpoint, $params);
     }
 
     /**
@@ -76,9 +93,9 @@ class TmdbMovieService
      * @return array
      * @throws Exception
      */
-    public function getTrendingMovies(): array
+    public function getTrendingMovies(int $page = 1): array
     {
-        return $this->makeRequest("/trending/movie/week");
+        return $this->paginatedRequest("/trending/movie/week", [], $page);
     }
 
     /**
@@ -87,9 +104,21 @@ class TmdbMovieService
      * @return array
      * @throws Exception
      */
-    public function getTopRatedMovies(): array
+    public function getTopRatedMovies(int $page = 1): array
     {
-        return $this->makeRequest("/movie/top_rated");
+        return $this->paginatedRequest("/movie/top_rated", [], $page);
+    }
+
+    /**
+     * Get all discovered movies (any genre)
+     *
+     * @param int $page Número de página para paginación (default 1)
+     * @return array
+     * @throws Exception
+     */
+    public function getAllDiscoveredMovies(int $page = 1): array
+    {
+        return $this->paginatedRequest("/discover/movie", [], $page);
     }
 
     /**
@@ -98,9 +127,9 @@ class TmdbMovieService
      * @return array
      * @throws Exception
      */
-    public function getMovieNowPlaying(): array
+    public function getMovieNowPlaying(int $page = 1): array
     {
-        return $this->makeRequest("/movie/now_playing");
+        return $this->paginatedRequest("/movie/now_playing", [], $page);
     }
 
     /**
@@ -110,9 +139,11 @@ class TmdbMovieService
      * @return array
      * @throws Exception
      */
-    public function getMovieByGenre(int $genreId): array
+    public function getMovieByGenre(int $genreId, int $page = 1): array
     {
-        return $this->makeRequest("/discover/movie?with_genres={$genreId}");
+        return $this->paginatedRequest("/discover/movie", [
+            'with_genres' => $genreId
+        ], $page);
     }
 
     /**
