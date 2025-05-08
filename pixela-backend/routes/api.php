@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\SeriesController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\TmdbController;
 use Illuminate\Support\Facades\Route;
 
 // Private routes
@@ -31,6 +32,15 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/reviews', [ReviewController::class, 'add']);
     Route::put('/reviews/{review}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{review}', [ReviewController::class, 'delete']);
+});
+
+// Tmdb routes
+Route::group([
+    'controller' => TmdbController::class,
+    'prefix' => 'tmdb'], function () {
+
+    Route::get('/categories', 'getAllCategories'); #http GET http://localhost/api/tmdb/categories
+    Route::get('/trending', 'getAllTrending'); #http GET http://localhost/api/tmdb/trending
 });
 
 // Movie routes
