@@ -10,7 +10,7 @@ import { usersAPI } from '@/api/users/users';
 import { ProfileFavorites } from '../components/layout/ProfileFavorites';
 import { ProfileReviews } from '../components/layout/ProfileReviews';
 import { ProfileUsers } from '../components/layout/ProfileUsers';
-import { 
+import {
   ProfileLoader,
   ProfileError,
   ProfileTabs,
@@ -41,7 +41,7 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);  
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -78,22 +78,22 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
         ...data,
         user_id: user.user_id
       };
-  
+
       // No enviar password si está vacío
       if (!data.password) {
         userData.password = '';
       }
-  
+
       const updatedUser = await usersAPI.update(userData);
       //Los errores de lint (en user) no afectan al funcionamiento del código
       const userToSet = updatedUser.user ? updatedUser.user : updatedUser;
-  
+
       // Si se actualizó la contraseña, redirigir
       if (data.password) {
         setRedirecting(true);
         return;
       }
-  
+
       // Asegúrate de que el usuario actualizado tiene todos los campos requeridos
       setUser({
         ...user,
@@ -119,8 +119,8 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
     <main className="profile-page">
       <div className="profile-page__container">
         <h1 className="profile-page__title">Mi Cuenta</h1>
-        <ProfileTabs 
-          activeTab={activeTab} 
+        <ProfileTabs
+          activeTab={activeTab}
           onTabChange={handleTabChange}
           isAdmin={user.is_admin ?? false}
         />
@@ -129,9 +129,9 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
             <div className="profile-page__profile-section">
               <div className="profile-page__profile-grid">
                 <div className={`profile-page__avatar-column avatar-scroll-effect ${scrolled ? 'scrolled' : ''}`}>
-                  <UserAvatar 
-                    profileImage={user.photo_url} 
-                    name={user.name} 
+                  <UserAvatar
+                    profileImage={user.photo_url}
+                    name={user.name}
                   />
                   <h3 className="user-avatar__name">{user.name}</h3>
                   <p className="user-avatar__role">
@@ -139,9 +139,9 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
                   </p>
                 </div>
                 <div className="profile-page__info-column">
-                  <ProfileInfo 
-                    user={{ ...user, id: user.user_id }}
-                    onEdit={handleEditProfile} 
+                  <ProfileInfo
+                    user={{ ...user, user_id: user.user_id }}
+                    onEdit={handleEditProfile}
                   />
                 </div>
               </div>
@@ -165,7 +165,7 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
               <ProfileReviews />
             </ContentPanel>
           )}
-          
+
           {activeTab === 'favorites' && (
             <ContentPanel title="Favoritos">
               <ProfileFavorites />
@@ -187,7 +187,7 @@ async function getUserData(): Promise<UserResponse> {
   try {
     const userData = await authAPI.getUser();
     if (!userData) throw new Error('No se pudieron obtener los datos del usuario');
-    
+
     // Mapear UserResponse a User
     return {
       user_id: userData.user_id,

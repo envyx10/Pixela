@@ -1,4 +1,4 @@
-import { FiSettings, FiList, FiHeart, FiEdit, FiUsers } from 'react-icons/fi';
+import { FiSettings, FiHeart, FiEdit, FiUsers } from 'react-icons/fi';
 import { TabNavigationButton } from './TabNavigationButton';
 
 type TabType = 'profile' | 'reviews' | 'favorites' | 'users';
@@ -18,20 +18,6 @@ export const ProfileTabs = ({ activeTab, onTabChange, isAdmin }: ProfileTabsProp
         isActive={activeTab === 'profile'}
         onClick={() => onTabChange('profile')}
       />
-      
-      {/* <TabNavigationButton
-        label="Historial"
-        icon={<FiClock />}
-        isActive={activeTab === 'history'}
-        onClick={() => onTabChange('history')}
-      /> */}
-      
-      {/* <TabNavigationButton
-        label="Lista de seguimiento"
-        icon={<FiList />}
-        isActive={activeTab === 'watchlist'}
-        onClick={() => onTabChange('watchlist')}
-      /> */}
 
       <TabNavigationButton
         label="Reseñas"

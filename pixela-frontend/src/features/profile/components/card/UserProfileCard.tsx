@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { User } from '@/features/profile/types/user';
+import { UserResponse } from '@/api/auth/types';
 import { UserAvatar } from '@/features/profile/components/avatar/UserAvatar';
 import { ProfileInfo } from '@/features/profile/components/layout/ProfileInfo';
 import { UpdateProfileForm } from '@/features/profile/components/form/UpdateProfileForm';
 
 interface UserProfileCardProps {
-  user: User;
+  user: UserResponse;
 }
 
 export const UserProfileCard = ({ user }: UserProfileCardProps) => {

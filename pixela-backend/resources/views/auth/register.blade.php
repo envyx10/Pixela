@@ -77,10 +77,6 @@
             </a>
         </div>
 
-        <!-- Session Status -->
-        <div class="mt-4">
-            <x-auth-session-status class="mb-4" :status="session('status')" />
-        </div>
     </form>
 
 </x-guest-layout>

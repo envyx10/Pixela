@@ -1,4 +1,3 @@
-// src/features/profile/components/layout/ProfileFavorites.tsx
 import React, { useEffect, useState } from 'react';
 import { favoritesAPI } from '@/api/favorites/favorites';
 import { FavoriteWithDetails } from '@/api/favorites/types';
