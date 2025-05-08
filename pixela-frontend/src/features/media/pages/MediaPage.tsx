@@ -3,14 +3,12 @@
 import { Media } from '../types';
 import { useState } from 'react';
 
-import { 
+import {   
   HeroSection, 
   PosterModal, 
   StreamingProviders, 
   CastSection, 
   TrailersSection, 
-  GallerySection, 
-  ImageModal 
 } from '../components';
 
 interface MediaPageProps {
@@ -19,7 +17,6 @@ interface MediaPageProps {
 
 export const MediaPage = ({ media }: MediaPageProps) => {
 
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showPosterModal, setShowPosterModal] = useState(false);
 
   return (
@@ -40,28 +37,17 @@ export const MediaPage = ({ media }: MediaPageProps) => {
         title={media.titulo} 
       />
 
-      {/* Image Modal */}
-      <ImageModal 
-        isOpen={!!selectedImage} 
-        onClose={() => setSelectedImage(null)} 
-        imageUrl={selectedImage} 
-      />
-
       {/* Content Sections */}
-      <div className="relative z-10 -mt-20">
+      <div className="relative z-10 -mt-20 pb-40">
         <div className="container mx-auto px-4">
           {/* Proveedores de Streaming */}
-          <StreamingProviders providers={media.proveedores || []} />
+          <StreamingProviders 
+            providers={media.proveedores || []}
+          />
           {/* Reparto */}
           <CastSection actors={media.actores} />
           {/* Trailers */}
           <TrailersSection trailers={media.trailers} />
-          {/* Galería de Imágenes */}
-          <GallerySection 
-            images={media.imagenes || []} 
-            mediaTitle={media.titulo}
-            onImageClick={setSelectedImage}
-          />
         </div>
       </div>
     </div>
