@@ -1,10 +1,10 @@
 'use client';
 
-import { User } from '@/features/profile/types/user';
+import { UserResponse } from '@/api/auth/types';
 import { FiUser, FiMail, FiCalendar, FiShield, FiEdit } from 'react-icons/fi';
 
 interface ProfileInfoProps {
-  user: User;
+  user: UserResponse;
   onEdit: () => void;
 }
 
