@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { reviewsAPI } from '@/config/api';
-import { Review } from '@/config/apiTypes';
+import { reviewsAPI } from '@/api/reviews/reviews';
+import { Review } from '@/api/reviews/types';
 import { FiLoader, FiAlertCircle, FiStar, FiEdit, FiCheck, FiX } from 'react-icons/fi';
 import { FaTrash } from 'react-icons/fa';
 import Image from 'next/image';

@@ -19,6 +19,24 @@ class MovieController extends Controller
     }
 
     /**
+     * Returns a paginated response
+     *
+     * @param array $movies
+     * @param int $page
+     * @return JsonResponse
+     */
+    private function paginatedResponse(array $movies, int $page)
+    {
+        return response()->json([
+            'success' => true,
+            'page' => $page,
+            'total_pages' => $movies['total_pages'] ?? null,
+            'total_results' => $movies['total_results'] ?? null,
+            'data' => MovieTransformer::transformCollection($movies['results'] ?? [])
+        ]);
+    }
+
+    /**
      * Obtain the details of a movie by its ID
      *
      * @param Request $request
@@ -55,17 +73,13 @@ class MovieController extends Controller
      *
      * @return JsonResponse
      */
-    public function getTrendingMovies(): JsonResponse
+    public function getTrendingMovies(Request $request): JsonResponse
     {
         try {
-            $movies = $this->tmdbMovieService->getTrendingMovies();
-            $movies = $movies['results'];
-            $movies = MovieTransformer::transformCollection($movies);
+            $page = $request->get('page', 1);
+            $movies = $this->tmdbMovieService->getTrendingMovies($page);
             
-            return response()->json([
-                'success' => true,
-                'data' => $movies
-            ]);
+            return $this->paginatedResponse($movies, $page);
 
         } catch (Exception $e) {
             return response()->json([
@@ -81,18 +95,35 @@ class MovieController extends Controller
      *
      * @return JsonResponse
      */
-    public function getTopRatedMovies(): JsonResponse
+    public function getTopRatedMovies(Request $request): JsonResponse
     {
         try {
-            $movies = $this->tmdbMovieService->getTopRatedMovies();
-            $movies = $movies['results'];
-            $movies = MovieTransformer::transformCollection($movies);
-
-            return response()->json([
-                'success' => true,
-                'data' => $movies
-            ]);
+            $page = $request->get('page', 1);
+            $movies = $this->tmdbMovieService->getTopRatedMovies($page);
             
+            return $this->paginatedResponse($movies, $page);
+            
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /** 
+     * Obtain the list of all discovered movies
+     *
+     * @return JsonResponse
+     */
+    public function getDiscoveredMovies(Request $request): JsonResponse
+    {
+        try {
+            $page = $request->get('page', 1);
+            $movies = $this->tmdbMovieService->getAllDiscoveredMovies($page);
+            
+            return $this->paginatedResponse($movies, $page);
+
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -106,17 +137,13 @@ class MovieController extends Controller
      *
      * @return JsonResponse
      */
-    public function getMovieNowPlaying(): JsonResponse
+    public function getMovieNowPlaying(Request $request): JsonResponse
     {
         try {
-            $movies = $this->tmdbMovieService->getMovieNowPlaying();
-            $movies = $movies['results'];
-            $movies = MovieTransformer::transformCollection($movies);
-
-            return response()->json([
-                'success' => true,
-                'data' => $movies
-            ]);
+            $page = $request->get('page', 1);
+            $movies = $this->tmdbMovieService->getMovieNowPlaying($page);
+            
+            return $this->paginatedResponse($movies, $page);
 
         } catch (Exception $e) {
             return response()->json([
@@ -132,17 +159,13 @@ class MovieController extends Controller
      * @param int $genreId ID del género
      * @return JsonResponse
      */
-    public function getMovieByGenre(int $genreId): JsonResponse
+    public function getMovieByGenre(Request $request, int $genreId): JsonResponse
     {
         try {
-            $movies = $this->tmdbMovieService->getMovieByGenre($genreId);
-            $movies = $movies['results'];
-            $movies = MovieTransformer::transformCollection($movies);
-
-            return response()->json([
-                'success' => true,
-                'data' => $movies
-            ]);
+            $page = $request->get('page', 1);
+            $movies = $this->tmdbMovieService->getMovieByGenre($genreId, $page);
+            
+            return $this->paginatedResponse($movies, $page);
 
         } catch (Exception $e) {
             return response()->json([

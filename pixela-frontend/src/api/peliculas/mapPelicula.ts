@@ -1,4 +1,4 @@
-import { Pelicula } from '@/features/media/types/media';
+import { Pelicula } from '@/features/media/types/content';
 
 // URL base para imágenes de TMDb
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';

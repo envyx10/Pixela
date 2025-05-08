@@ -1,10 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User } from '@/features/profile/types/user';
+import { UserResponse } from '@/api/auth/types';
 import { ProfileFormData } from '@/features/profile/types/profileTypes';
-import { authAPI, favoritesAPI } from '@/config/api';
-import { FavoriteWithDetails } from '@/config/apiTypes';
+import { authAPI } from '@/api/auth/auth';
+import { FavoriteWithDetails } from '@/api/favorites/types';
+import { favoritesAPI } from '@/api/favorites/favorites';
+import { usersAPI } from '@/api/users/users';
+import { ProfileFavorites } from '../components/layout/ProfileFavorites';
+import { ProfileReviews } from '../components/layout/ProfileReviews';
+import { ProfileUsers } from '../components/layout/ProfileUsers';
 import { 
   ProfileLoader,
   ProfileError,
@@ -14,41 +19,32 @@ import {
   ProfileInfo,
   UpdateProfileForm
 } from '@/features/profile/components';
+import { FiLoader } from 'react-icons/fi';
 
-// Importación de los estilos SASS
 import '@/styles/profile/main.scss';
-import { ProfileFavorites } from '../components/layout/ProfileFavorites';
-import { ProfileReviews } from '../components/layout/ProfileReviews';
 
-// Definimos el tipo para las pestañas
-type TabType = 'profile' | 'reviews' | 'favorites' | 'users' ;
+type TabType = 'profile' | 'reviews' | 'favorites' | 'users';
 
-// Componente del cliente que maneja la edición y navegación de pestañas
-const ProfileClient = ({ user }: { user: User }) => {
+const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<UserResponse>(initialUser);
+  const [redirecting, setRedirecting] = useState(false);
 
   // Estado para favoritos
   const [favorites, setFavorites] = useState<FavoriteWithDetails[]>([]);
   const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
 
-  // Añadimos efecto de scroll para la animación, solo en el cliente
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
-    
     window.addEventListener('scroll', handleScroll);  
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Cargar favoritos solo cuando se selecciona la pestaña "favorites"
   useEffect(() => {
     if (activeTab === 'favorites') {
       setFavoritesLoading(true);
@@ -60,46 +56,78 @@ const ProfileClient = ({ user }: { user: User }) => {
     }
   }, [activeTab]);
 
-  // Manejador para cambiar de pestaña
-  const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab);
+  // Efecto para la redirección
+  useEffect(() => {
+    if (redirecting) {
+      const timer = setTimeout(() => {
+        // Redirigir al home del frontend
+        window.location.replace('http://localhost:3000');
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [redirecting]);
+
+  const handleTabChange = (tab: TabType) => setActiveTab(tab);
+  const handleEditProfile = () => setIsEditing(true);
+  const handleCancelEdit = () => setIsEditing(false);
+
+  const handleSubmitProfile = async (data: ProfileFormData) => {
+    try {
+      const userData = {
+        ...user,
+        ...data,
+        user_id: user.user_id
+      };
+  
+      // No enviar password si está vacío
+      if (!data.password) {
+        userData.password = '';
+      }
+  
+      const updatedUser = await usersAPI.update(userData);
+      //Los errores de lint (en user) no afectan al funcionamiento del código
+      const userToSet = updatedUser.user ? updatedUser.user : updatedUser;
+  
+      // Si se actualizó la contraseña, redirigir
+      if (data.password) {
+        setRedirecting(true);
+        return;
+      }
+  
+      // Asegúrate de que el usuario actualizado tiene todos los campos requeridos
+      setUser({
+        ...user,
+        ...userToSet,
+        password: '', // Por seguridad, nunca guardes la contraseña en el estado
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error al actualizar el perfil:', error);
+    }
   };
 
-  // Manejador para iniciar la edición
-  const handleEditProfile = () => {
-    setIsEditing(true);
-  };
-
-  // Manejador para cancelar la edición
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-  };
-
-  // Manejador para enviar el formulario
-  const handleSubmitProfile = (data: ProfileFormData) => {
-    console.log('Datos actualizados:', data);
-    // Aquí iría la lógica para actualizar el perfil en el backend
-    setIsEditing(false);
-  };
+  if (redirecting) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-pixela-primary">
+        <FiLoader className="w-8 h-8 mb-4 animate-spin" />
+        <span className="text-lg font-semibold">Contraseña cambiada, redirigiendo al login...</span>
+      </div>
+    );
+  }
 
   return (
     <main className="profile-page">
       <div className="profile-page__container">
         <h1 className="profile-page__title">Mi Cuenta</h1>
-        
-        {/* Tabs de navegación */}
         <ProfileTabs 
           activeTab={activeTab} 
           onTabChange={handleTabChange}
           isAdmin={user.is_admin ?? false}
         />
-        
-        {/* Contenido de las pestañas */}
         <div className="profile-page__content">
           {activeTab === 'profile' && !isEditing && (
             <div className="profile-page__profile-section">
               <div className="profile-page__profile-grid">
-                {/* Columna de avatar */}
                 <div className={`profile-page__avatar-column avatar-scroll-effect ${scrolled ? 'scrolled' : ''}`}>
                   <UserAvatar 
                     profileImage={user.photo_url} 
@@ -110,11 +138,9 @@ const ProfileClient = ({ user }: { user: User }) => {
                     {user.is_admin ? 'Administrador' : 'Usuario'}
                   </p>
                 </div>
-
-                {/* Columna de información */}
                 <div className="profile-page__info-column">
                   <ProfileInfo 
-                    user={user} 
+                    user={{ ...user, id: user.user_id }}
                     onEdit={handleEditProfile} 
                   />
                 </div>
@@ -147,11 +173,9 @@ const ProfileClient = ({ user }: { user: User }) => {
           )}
 
           {activeTab === 'users' && user.is_admin && (
-            <ContentPanel 
-              title="Usuarios" 
-              isEmpty={true} 
-              emptyMessage="No hay elementos en la lista de usuarios."
-            />
+            <ContentPanel title="Usuarios">
+              <ProfileUsers />
+            </ContentPanel>
           )}
         </div>
       </div>
@@ -159,55 +183,50 @@ const ProfileClient = ({ user }: { user: User }) => {
   );
 };
 
-// Función para obtener datos de usuario desde la API
-async function getUserData(): Promise<User> {
+async function getUserData(): Promise<UserResponse> {
   try {
     const userData = await authAPI.getUser();
-    if (!userData) {
-      throw new Error('No se pudieron obtener los datos del usuario');
-    }
-    return userData;
+    if (!userData) throw new Error('No se pudieron obtener los datos del usuario');
+    
+    // Mapear UserResponse a User
+    return {
+      user_id: userData.user_id,
+      name: userData.name,
+      email: userData.email,
+      photo_url: userData.photo_url,
+      is_admin: userData.is_admin,
+      password: userData.password,
+      created_at: userData.created_at,
+      updated_at: new Date().toISOString()
+    };
   } catch (error) {
     console.error('Error al obtener datos del usuario:', error);
     throw error;
   }
 }
 
-// No podemos usar async/await en componentes con la directiva 'use client'
-// por lo que necesitamos otra estructura
 export default function ProfilePage() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Utilizamos useEffect para cargar los datos en el cliente
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userData = await getUserData();
         setUser(userData);
       } catch (error) {
-        console.error("Error al cargar datos de usuario:", error);
         setError('No se pudieron cargar los datos del usuario. Por favor, intenta nuevamente.');
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  if (loading) {
-    return <ProfileLoader />;
-  }
-
-  if (error) {
-    return <ProfileError message={error} />;
-  }
-
-  if (!user) {
-    return <ProfileError message="No se encontraron datos del usuario." />;
-  }
+  if (loading) return <ProfileLoader />;
+  if (error) return <ProfileError message={error} />;
+  if (!user) return <ProfileError message="No se encontraron datos del usuario." />;
 
   return <ProfileClient user={user} />;
-} 
+}

@@ -1,6 +1,6 @@
 import { Pelicula } from '@/features/media/types/content';
-import { API_ENDPOINTS } from '@/config/apiEndpoints';
-import { DEFAULT_FETCH_OPTIONS } from '@/config/api';
+import { API_ENDPOINTS } from '../shared/apiEndpoints';
+import { DEFAULT_FETCH_OPTIONS } from '../shared/apiHelpers';
 import { mapPeliculaFromApi } from './mapPelicula';
 import { Actor } from '@/features/media/types/people';
 import { formatImageUrl } from './mapPelicula';

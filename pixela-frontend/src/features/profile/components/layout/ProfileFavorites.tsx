@@ -1,7 +1,7 @@
 // src/features/profile/components/layout/ProfileFavorites.tsx
 import React, { useEffect, useState } from 'react';
-import { favoritesAPI } from '@/config/api';
-import { FavoriteWithDetails } from '@/config/apiTypes';
+import { favoritesAPI } from '@/api/favorites/favorites';
+import { FavoriteWithDetails } from '@/api/favorites/types';
 import { FiLoader, FiAlertCircle } from 'react-icons/fi';
 import { FaTrash } from 'react-icons/fa';
 import Image from 'next/image';

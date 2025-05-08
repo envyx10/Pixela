@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { FiUser, FiUsers, FiMail, FiX } from 'react-icons/fi';
+import { FiUser, FiMail, FiX } from 'react-icons/fi';
 import { IoKeyOutline } from 'react-icons/io5';
 
 import { useForm } from 'react-hook-form';

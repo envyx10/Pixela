@@ -2,6 +2,15 @@ import { BACKEND_URL, API_URL } from './apiEndpoints';
 // Estado del token CSRF
 let csrfInitialized = false;
 
+// Opciones por defecto para las peticiones fetch
+export const DEFAULT_FETCH_OPTIONS = {
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+  cache: 'no-store' as RequestCache
+};
+
 // Helper para obtener el token CSRF
 async function initCsrf(): Promise<void> {
   if (csrfInitialized) return;
@@ -69,7 +78,9 @@ export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): P
         url: fullUrl,
         error: errorText
       });
-      throw new Error(`Error en la respuesta: ${response.status} - ${errorText}`);
+      const error: any = new Error(`Error en la respuesta: ${response.status} - ${errorText}`);
+      error.status = response.status;
+      throw error;
     }
     
     const data = await response.json();

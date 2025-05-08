@@ -1,20 +1,11 @@
 'use client';
 
 import { create } from 'zustand';
-import { authAPI } from '@/config/api';
-
-interface User {
-  id: number;
-  name: string;
-  surname: string;
-  email: string;
-  photo_url: string;
-  is_admin: boolean;
-  created_at: string;
-}
+import { authAPI } from '@/api/auth/auth';
+import { UserResponse } from '@/api/auth/types';
 
 interface AuthState {
-  user: User | null;
+  user: UserResponse | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -27,18 +18,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   isLoading: false,
   error: null,
-  
+
   checkAuth: async () => {
     try {
       set({ isLoading: true, error: null });
       localStorage.removeItem('forceLogout');
       const user = await authAPI.getUser();
       set({ user, isAuthenticated: true, isLoading: false, error: null });
+
     } catch (error) {
       console.error('Error checking auth:', error);
-      set({ 
-        user: null, 
-        isAuthenticated: false, 
+      set({
+        user: null,
+        isAuthenticated: false,
         isLoading: false,
         error: error instanceof Error ? error.message : 'Error desconocido'
       });
@@ -49,18 +41,18 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       set({ isLoading: true, error: null });
       await authAPI.logout();
-      
+
       // Actualizar el estado inmediatamente
-      set({ 
-        user: null, 
-        isAuthenticated: false, 
-        isLoading: false, 
-        error: null 
+      set({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null
       });
 
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
-      set({ 
+      set({
         isLoading: false,
         error: error instanceof Error ? error.message : 'Error al cerrar sesión'
       });
