@@ -11,6 +11,7 @@ export interface WatchProvider {
   nombre: string;
   logo: string;
   tipo?: 'flatrate' | 'rent' | 'buy';
+  url?: string;
 }
 
 export interface Image {
