@@ -2,6 +2,15 @@ import { BACKEND_URL, API_URL } from './apiEndpoints';
 // Estado del token CSRF
 let csrfInitialized = false;
 
+// Opciones por defecto para las peticiones fetch
+export const DEFAULT_FETCH_OPTIONS = {
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+  cache: 'no-store' as RequestCache
+};
+
 // Helper para obtener el token CSRF
 async function initCsrf(): Promise<void> {
   if (csrfInitialized) return;

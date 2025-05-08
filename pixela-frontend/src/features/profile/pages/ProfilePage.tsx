@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User } from '@/config/apiTypes';
+import { UserResponse } from '@/api/auth/types';
 import { ProfileFormData } from '@/features/profile/types/profileTypes';
-import { authAPI, favoritesAPI, usersAPI } from '@/config/api';
-import { FavoriteWithDetails } from '@/config/apiTypes';
+import { authAPI } from '@/api/auth/auth';
+import { FavoriteWithDetails } from '@/api/favorites/types';
+import { favoritesAPI } from '@/api/favorites/favorites';
+import { usersAPI } from '@/api/users/users';
 import { ProfileFavorites } from '../components/layout/ProfileFavorites';
 import { ProfileReviews } from '../components/layout/ProfileReviews';
 import { ProfileUsers } from '../components/layout/ProfileUsers';
@@ -23,11 +25,11 @@ import '@/styles/profile/main.scss';
 
 type TabType = 'profile' | 'reviews' | 'favorites' | 'users';
 
-const ProfileClient = ({ user: initialUser }: { user: User }) => {
+const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<User>(initialUser);
+  const [user, setUser] = useState<UserResponse>(initialUser);
   const [redirecting, setRedirecting] = useState(false);
 
   // Estado para favoritos
@@ -83,7 +85,7 @@ const ProfileClient = ({ user: initialUser }: { user: User }) => {
       }
   
       const updatedUser = await usersAPI.update(userData);
-      //Los errores de lint no afectan al funcionamiento del código
+      //Los errores de lint (en user) no afectan al funcionamiento del código
       const userToSet = updatedUser.user ? updatedUser.user : updatedUser;
   
       // Si se actualizó la contraseña, redirigir
@@ -181,7 +183,7 @@ const ProfileClient = ({ user: initialUser }: { user: User }) => {
   );
 };
 
-async function getUserData(): Promise<User> {
+async function getUserData(): Promise<UserResponse> {
   try {
     const userData = await authAPI.getUser();
     if (!userData) throw new Error('No se pudieron obtener los datos del usuario');
@@ -204,7 +206,7 @@ async function getUserData(): Promise<User> {
 }
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

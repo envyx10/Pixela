@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { usersAPI } from '@/config/api';
-import { User } from '@/config/apiTypes';
+import { usersAPI } from '@/api/users/users';
+import { User } from '@/api/users/types';
 import { FiLoader, FiAlertCircle } from 'react-icons/fi';
 import { FaTrash } from 'react-icons/fa';
 import { UserAvatar } from '@/features/profile/components/avatar/UserAvatar';
