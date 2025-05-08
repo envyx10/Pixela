@@ -55,7 +55,10 @@ export const ProfileUsers = () => {
     if (!editingUser) return;
 
     try {
-      await usersAPI.update(editingUser);
+      const userToUpdate = { ...editingUser };
+      delete userToUpdate.password;
+      
+      await usersAPI.update(userToUpdate);
       // Refrescar la lista completa de usuarios
       const refreshedUsers = await usersAPI.list();
       setUsers(Array.isArray(refreshedUsers) ? refreshedUsers : []);

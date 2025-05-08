@@ -5,7 +5,7 @@ export interface User {
     email: string;
     photo_url: string;
     is_admin: boolean;
-    password: string;
+    password?: string;
     created_at: string;
     updated_at: string;
 }
