@@ -37,19 +37,23 @@ export const ImageCarousel = ({ images }: ImageCarouselProps) => {
           - priority: garantiza precarga
           - quality: calidad óptima para imágenes hero
           - sizes: responde a diferentes tamaños de viewport
+          - object-position: centra la imagen más abajo para evitar recortes en la parte superior
         */}
-        <Image
-          src={images[currentImageIndex]}
-          alt={`Hero background image ${currentImageIndex + 1}`}
-          className="w-full h-full object-cover brightness-90 contrast-100 grayscale"
-          width={1920}
-          height={1080}
-          priority
-          quality={90}
-          sizes="100vw"
-          placeholder="blur"
-          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAEDQIHq4C7ygAAAABJRU5ErkJggg=="
-        />
+        <div className="relative w-full h-full pt-16">
+          <Image
+            src={images[currentImageIndex]}
+            alt={`Hero background image ${currentImageIndex + 1}`}
+            className="w-full h-full object-cover brightness-90 contrast-100 grayscale"
+            style={{ objectPosition: 'center 35%' }}
+            width={1920}
+            height={1080}
+            priority
+            quality={90}
+            sizes="100vw"
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAEDQIHq4C7ygAAAABJRU5ErkJggg=="
+          />
+        </div>
       </div>
 
       {/* Capas visuales */}
