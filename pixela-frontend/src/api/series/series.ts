@@ -75,12 +75,11 @@ export async function getSerieActores(id: string): Promise<Actor[]> {
        return [];
     }
 
-    // Filtramos actores sin foto y aseguramos el formato correcto
+    // Filtramos solo actores con información básica correcta (sin filtrar por foto)
     return actores.filter((actor: Actor) => 
       actor && 
       typeof actor === 'object' && 
-      actor.nombre && 
-      actor.foto
+      actor.nombre
     );
   } catch (error) {
     console.error('[ERROR] getSerieActores:', error);

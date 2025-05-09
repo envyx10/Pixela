@@ -1,7 +1,8 @@
 import { Actor } from '../../types';
 import Image from 'next/image';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import clsx from 'clsx';
+import { FiUser } from 'react-icons/fi';
 
 interface ActorCardProps {
   actor: Actor;
@@ -9,6 +10,9 @@ interface ActorCardProps {
 }
 
 export const ActorCard = memo(function ActorCard({ actor, className = '' }: ActorCardProps) {
+  const [imageError, setImageError] = useState(false);
+  const hasValidImage = actor.foto && !imageError;
+
   return (
     <div 
       className={clsx(
@@ -17,14 +21,21 @@ export const ActorCard = memo(function ActorCard({ actor, className = '' }: Acto
       )}
     >
       <div className="relative aspect-[2/3] overflow-hidden">
-        <Image 
-          src={actor.foto} 
-          alt={actor.nombre}
-          fill
-          sizes="(max-width: 640px) 140px, (max-width: 768px) 160px, 180px"
-          className="object-cover"
-          priority={false}
-        />
+        {hasValidImage ? (
+          <Image 
+            src={actor.foto} 
+            alt={actor.nombre}
+            fill
+            sizes="(max-width: 640px) 140px, (max-width: 768px) 160px, 180px"
+            className="object-cover"
+            priority={false}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-800">
+            <FiUser className="text-gray-400 w-1/3 h-1/3" />
+          </div>
+        )}
       </div>
       <div className="p-3">
         <div className="flex flex-col">
