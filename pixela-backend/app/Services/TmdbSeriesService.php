@@ -145,7 +145,9 @@ class TmdbSeriesService
      */
     public function getSeriesVideos(int $seriesId): array
     {
-        return $this->makeRequest("/tv/{$seriesId}/videos");
+        return $this->makeRequest("/tv/{$seriesId}/videos", [
+            'language' => 'es-ES'
+        ]);
     }
 
     /**
@@ -161,5 +163,75 @@ class TmdbSeriesService
         return $this->makeRequest("/tv/{$seriesId}/watch/providers", [
             'watch_region' => $region
         ]);
+    }
+
+    /**
+     * Get all images for a specific series
+     *
+     * @param int $seriesId ID of the series
+     * @return array
+     * @throws Exception
+     */
+    public function getSeriesImages(int $seriesId): array
+    {
+        try {
+            $response = $this->makeRequest("/tv/{$seriesId}/images", [
+                'include_image_language' => 'es,null'
+            ]);
+            
+            if (!isset($response['backdrops']) || !isset($response['posters'])) {
+                return [
+                    'backdrops' => [],
+                    'posters' => []
+                ];
+            }
+
+            // Mapear los backdrops
+            $backdrops = array_map(function($backdrop) {
+                return [
+                    'id' => $backdrop['file_path'],
+                    'tipo' => 'backdrop',
+                    'url' => "https://image.tmdb.org/t/p/original{$backdrop['file_path']}",
+                    'ancho' => $backdrop['width'],
+                    'alto' => $backdrop['height']
+                ];
+            }, $response['backdrops']);
+
+            // Mapear los posters
+            $posters = array_map(function($poster) {
+                return [
+                    'id' => $poster['file_path'],
+                    'tipo' => 'poster',
+                    'url' => "https://image.tmdb.org/t/p/original{$poster['file_path']}",
+                    'ancho' => $poster['width'],
+                    'alto' => $poster['height']
+                ];
+            }, $response['posters']);
+
+            return [
+                'backdrops' => $backdrops,
+                'posters' => $posters
+            ];
+        } catch (Exception $e) {
+            return [
+                'backdrops' => [],
+                'posters' => []
+            ];
+        }
+    }
+
+    /**
+     * Get the reviews of a series by its ID
+     *
+     * @param int $seriesId ID of the series
+     * @param int $page Page number for pagination
+     * @return array
+     * @throws Exception
+     */
+    public function getSeriesReviews(int $seriesId, int $page = 1): array
+    {
+        return $this->paginatedRequest("/tv/{$seriesId}/reviews", [
+            'language' => 'es-ES'
+        ], $page);
     }
 } 

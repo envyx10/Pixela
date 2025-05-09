@@ -40,7 +40,7 @@ class SeriesController extends Controller
      * Obtains the details of a series by its ID
      *
      * @param Request $request
-     * @param int $seriesId ID de la serie
+     * @param int $seriesId ID of the series
      * @return JsonResponse
      */
     public function getSeriesDetails(Request $request, int $seriesId): JsonResponse
@@ -156,7 +156,7 @@ class SeriesController extends Controller
     /**
      * Obtain the list of series by genre
      *
-     * @param int $genreId ID del género
+     * @param int $genreId ID of the genre
      * @return JsonResponse
      */
     public function getSeriesByGenre(Request $request, int $genreId): JsonResponse
@@ -176,9 +176,9 @@ class SeriesController extends Controller
     }   
 
     /**
-     * Obtiene los actores de una serie por su ID
+     * Get the cast of a series by its ID
      *
-     * @param int $seriesId ID de la serie
+     * @param int $seriesId ID of the series
      * @return JsonResponse
      */
     public function getSeriesCast(int $seriesId): JsonResponse
@@ -199,9 +199,9 @@ class SeriesController extends Controller
     }
 
     /**
-     * Obtiene los videos (trailers) de una serie por su ID
+     * Get the videos (trailers) of a series by its ID
      *
-     * @param int $seriesId ID de la serie
+     * @param int $seriesId ID of the series
      * @return JsonResponse
      */
     public function getSeriesVideos(int $seriesId): JsonResponse
@@ -229,9 +229,9 @@ class SeriesController extends Controller
     }
 
     /**
-     * Obtiene las plataformas de streaming donde se puede ver una serie
+     * Get the streaming platforms where a series can be watched
      *
-     * @param int $seriesId ID de la serie
+     * @param int $seriesId ID of the series
      * @param Request $request
      * @return JsonResponse
      */
@@ -255,6 +255,53 @@ class SeriesController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get all images for a specific series
+     *
+     * @param int $seriesId ID of the series
+     * @return JsonResponse
+     */
+    public function getSeriesImages(int $seriesId): JsonResponse
+    {
+        try {
+            $images = $this->tmdbSeriesService->getSeriesImages($seriesId);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $images
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false, 
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get the reviews of a series by its ID
+     *
+     * @param int $seriesId ID of the series
+     * @return JsonResponse
+     */
+    public function getSeriesReviews(int $seriesId): JsonResponse
+    {
+        try {
+            $reviews = $this->tmdbSeriesService->getSeriesReviews($seriesId);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $reviews
+            ]);
+            
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false, 
                 'message' => $e->getMessage()
             ], 500);
         }

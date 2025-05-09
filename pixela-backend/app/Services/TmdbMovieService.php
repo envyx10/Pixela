@@ -18,7 +18,7 @@ class TmdbMovieService
     /**
      * Obtains details of a movie by its ID
      *
-     * @param int $id ID de la película
+     * @param int $id ID of the movie
      * @return array
      * @throws Exception
      */
@@ -52,7 +52,7 @@ class TmdbMovieService
     /**
      * Get all discovered movies (any genre)
      *
-     * @param int $page Número de página para paginación (default 1)
+     * @param int $page Page number for pagination (default 1)
      * @return array
      * @throws Exception
      */
@@ -75,7 +75,7 @@ class TmdbMovieService
     /**
      * Obtains all movies by genre
      *
-     * @param int $genreId ID del género
+     * @param int $genreId ID of the genre
      * @return array
      * @throws Exception
      */
@@ -129,7 +129,9 @@ class TmdbMovieService
      */
     public function getMovieVideos(int $movieId): array
     {
-        return $this->makeRequest("/movie/{$movieId}/videos");
+        return $this->makeRequest("/movie/{$movieId}/videos", [
+            'language' => 'es-ES'  // Incluir videos en español
+        ]);
     }
 
     /**
@@ -185,7 +187,7 @@ class TmdbMovieService
     }
 
     /**
-     * Get the images of a movie by its ID
+     * Get all images for a specific movie
      *
      * @param int $movieId ID of the movie
      * @return array
@@ -194,7 +196,11 @@ class TmdbMovieService
     public function getMovieImages(int $movieId): array
     {
         try {
-            $response = $this->makeRequest("/movie/{$movieId}/images");
+            $url = "{$this->baseUrl}/movie/{$movieId}/images";
+            
+            $response = $this->makeRequest("/movie/{$movieId}/images", [
+                'include_image_language' => 'es,null'
+            ]);
             
             if (!isset($response['backdrops']) || !isset($response['posters'])) {
                 return [
@@ -236,4 +242,20 @@ class TmdbMovieService
             ];
         }
     }
+
+    /**
+     * Get the reviews of a movie by its ID
+     *
+     * @param int $movieId ID of the movie
+     * @param int $page Page number for pagination
+     * @return array
+     * @throws Exception
+     */
+    public function getMovieReviews(int $movieId, int $page = 1): array
+    {
+        return $this->paginatedRequest("/movie/{$movieId}/reviews", [
+            'language' => 'es-ES'
+        ], $page);
+    }
+
 } 

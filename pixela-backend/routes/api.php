@@ -59,6 +59,7 @@ Route::group([
     Route::get('/{movieId}/watch-providers', 'getMovieWatchProviders')->where('movieId', '[0-9]+'); #http GET http://localhost/api/movies/550/watch-providers
     Route::get('/{movieId}/creator', 'getMovieCreator')->where('movieId', '[0-9]+'); #http GET http://localhost/api/movies/550/creator
     Route::get('/{movieId}/images', 'getMovieImages')->where('movieId', '[0-9]+'); #http GET http://localhost/api/movies/550/images
+    Route::get('/{movieId}/reviews', 'getMovieReviews')->where('movieId', '[0-9]+'); #http GET http://localhost/api/movies/550/reviews
 
 });
 
@@ -76,5 +77,6 @@ Route::group([
     Route::get('/{seriesId}/cast', 'getSeriesCast')->where('seriesId', '[0-9]+'); #http GET http://localhost/api/series/108978/cast
     Route::get('/{seriesId}/videos', 'getSeriesVideos')->where('seriesId', '[0-9]+'); #http GET http://localhost/api/series/108978/videos
     Route::get('/{seriesId}/watch-providers', 'getSeriesWatchProviders')->where('seriesId', '[0-9]+'); #http GET http://localhost/api/series/108978/watch-providers
-    
+    Route::get('/{seriesId}/images', 'getSeriesImages')->where('seriesId', '[0-9]+'); #http GET http://localhost/api/series/108978/images
+    Route::get('/{seriesId}/reviews', 'getSeriesReviews')->where('seriesId', '[0-9]+'); #http GET http://localhost/api/series/108978/reviews
 });

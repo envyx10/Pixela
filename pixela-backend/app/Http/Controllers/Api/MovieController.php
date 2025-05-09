@@ -40,7 +40,7 @@ class MovieController extends Controller
      * Obtain the details of a movie by its ID
      *
      * @param Request $request
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @return JsonResponse
      */
     public function getMovieDetails(Request $request, int $movieId): JsonResponse
@@ -156,7 +156,7 @@ class MovieController extends Controller
     /**
      * Obtain the list of movies by genre
      *
-     * @param int $genreId ID del género
+     * @param int $genreId ID of the genre
      * @return JsonResponse
      */
     public function getMovieByGenre(Request $request, int $genreId): JsonResponse
@@ -176,9 +176,9 @@ class MovieController extends Controller
     }       
 
     /**
-     * Obtiene los actores de una película por su ID
+     * Get the cast of a movie by its ID
      *
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @return JsonResponse
      */
     public function getMovieCast(int $movieId): JsonResponse
@@ -199,9 +199,9 @@ class MovieController extends Controller
     }
 
     /**
-     * Obtiene los videos (trailers) de una película por su ID
+     * Get the videos (trailers) of a movie by its ID
      *
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @return JsonResponse
      */
     public function getMovieVideos(int $movieId): JsonResponse
@@ -229,9 +229,9 @@ class MovieController extends Controller
     }
 
     /**
-     * Obtiene las plataformas de streaming donde se puede ver una película
+     * Get the streaming platforms where a movie can be watched
      *
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @param Request $request
      * @return JsonResponse
      */
@@ -261,9 +261,9 @@ class MovieController extends Controller
     }
 
     /**
-     * Obtiene el creador de una película por su ID
+     * Get the creator of a movie by its ID
      *
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @return JsonResponse
      */
     public function getMovieCreator(int $movieId): JsonResponse
@@ -284,9 +284,9 @@ class MovieController extends Controller
     }
 
     /**
-     * Obtiene las imágenes de una película por su ID
+     * Get the images of a movie by its ID
      *
-     * @param int $movieId ID de la película
+     * @param int $movieId ID of the movie
      * @return JsonResponse
      */
     public function getMovieImages(int $movieId): JsonResponse
@@ -305,4 +305,29 @@ class MovieController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get the reviews of a movie by its ID
+     *
+     * @param int $movieId ID of the movie
+     * @return JsonResponse
+     */ 
+    public function getMovieReviews(int $movieId): JsonResponse
+    {
+        try {
+            $reviews = $this->tmdbMovieService->getMovieReviews($movieId);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $reviews
+            ]);
+            
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
 }
