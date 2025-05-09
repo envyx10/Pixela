@@ -8,7 +8,13 @@ interface StreamingProvidersProps {
 }
 
 export function StreamingProviders({ providers }: StreamingProvidersProps) {
-  if (!providers || providers.length === 0) return null;
+  // Verificación y registro para depuración
+  console.log('[DEBUG] StreamingProviders - Proveedores recibidos:', providers);
+  
+  if (!providers || providers.length === 0) {
+    console.log('[DEBUG] StreamingProviders - No hay proveedores disponibles');
+    return null;
+  }
   
   return (
     <section className="mb-12">
@@ -16,7 +22,7 @@ export function StreamingProviders({ providers }: StreamingProvidersProps) {
       <div className="flex flex-wrap gap-4">
         {providers.map((provider) => (
           <PlatformCard 
-            key={provider.id} 
+            key={provider.id || Math.random().toString()} 
             provider={provider} 
           />
         ))}
