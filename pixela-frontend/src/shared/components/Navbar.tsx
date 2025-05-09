@@ -33,7 +33,9 @@ export const Navbar = () => {
   return (
     <nav className="w-full fixed top-0 left-0 z-50 mt-5" role="navigation">
       <div className="max-w-[83.333%] mx-auto flex items-center p-4 bg-dark-opacity backdrop-blur-sm rounded-[36px]">
-        <h1 className="text-3xl font-bold font-outfit text-pixela-accent mx-10">Pixela</h1>
+        <Link href="/" className="mx-10">
+          <h1 className="text-3xl font-bold font-outfit text-pixela-accent">Pixela</h1>
+        </Link>
         
         <div className="flex-1 flex justify-center">
           <div className="flex space-x-8">
@@ -51,25 +53,47 @@ export const Navbar = () => {
           </div>
         </div>
 
-        <div className="mx-10 flex items-center space-x-4">
-          <button
-            onClick={handleProfile}
-            className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
-            aria-label={isAuthenticated ? "Perfil" : "Iniciar sesión"}
-            title={isAuthenticated ? "Perfil" : "Iniciar sesión"}
-          >
-            <FiUser className="h-6 w-6" />
-          </button>
+        <div className="mx-10 flex items-center">
+          <div className="flex items-center gap-2">
+            {isAuthenticated && user && (
+              <>
+                <span className="text-pixela-light font-pixela-outfit-sm">
+                  {user.name}
+                </span>
+                <button
+                  onClick={handleProfile}
+                  className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
+                  aria-label={isAuthenticated ? "Perfil" : "Iniciar sesión"}
+                  title={isAuthenticated ? "Perfil" : "Iniciar sesión"}
+                >
+                  <FiUser className="h-6 w-6" />
+                </button>
+              </>
+            )}
+            {!isAuthenticated && (
+              <button
+                onClick={handleProfile}
+                className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
+                aria-label={isAuthenticated ? "Perfil" : "Iniciar sesión"}
+                title={isAuthenticated ? "Perfil" : "Iniciar sesión"}
+              >
+                <FiUser className="h-6 w-6" />
+              </button>
+            )}
+          </div>
           
           {isAuthenticated && !isLoading && (
-            <button 
-              onClick={handleLogout}
-              className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
-              aria-label="Cerrar sesión"
-              title="Cerrar sesión"
-            >
-              <MdLogout className="h-6 w-6" />
-            </button>
+            <>
+              <div className="mx-2 h-6 w-0.5 bg-pixela-light/20"></div>
+              <button 
+                onClick={handleLogout}
+                className="text-pixela-light/80 hover:text-pixela-accent transition-colors duration-300 p-2 rounded-full hover:bg-pixela-dark/30"
+                aria-label="Cerrar sesión"
+                title="Cerrar sesión"
+              >
+                <MdLogout className="h-6 w-6" />
+              </button>
+            </>
           )}
         </div>
       </div>
