@@ -171,20 +171,35 @@ export async function getPeliculaProveedores(id: string, region: string = 'ES'):
 
     const data = await response.json();
     if (!data.success || !data.data || !data.data.results || !data.data.results[region]) {
+      console.warn(`[WARN] getPeliculaProveedores - Respuesta sin proveedores para la región ${region}:`, data);
       return [];
     }
 
     const providers = data.data.results[region];
+    
+    // Log para depuración - ver estructura de datos
+    console.log(`[DEBUG] getPeliculaProveedores - Estructura de datos recibida:`, providers);
+    
     const allProviders = [
       ...(providers.flatrate || []),
       ...(providers.rent || []),
       ...(providers.buy || [])
     ];
 
-    const uniqueProviders = allProviders.filter((provider, index, self) =>
-      index === self.findIndex((p) => p.provider_id === provider.provider_id)
-    );
+    // Formatear los proveedores para asegurar que tengan la estructura correcta
+    const uniqueProviders = allProviders
+      .filter((provider, index, self) =>
+        index === self.findIndex((p) => p.provider_id === provider.provider_id)
+      )
+      .map(provider => ({
+        provider_id: provider.provider_id,
+        provider_name: provider.provider_name,
+        logo_path: provider.logo_path,
+        // Añadir campos adicionales si los hay
+        ...provider
+      }));
 
+    console.log(`[DEBUG] getPeliculaProveedores - Proveedores procesados:`, uniqueProviders);
     return uniqueProviders;
   } catch (error) {
     console.error('[ERROR] getPeliculaProveedores:', error);

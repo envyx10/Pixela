@@ -1,4 +1,5 @@
-import { Pelicula } from '@/features/media/types/content';
+import { Pelicula, WatchProvider } from '@/features/media/types';
+import { Actor } from '@/features/media/types/people';
 
 // URL base para imágenes de TMDb
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
@@ -37,6 +38,24 @@ const mapTrailer = (trailer: any) => ({
 });
 
 /**
+ * Mapea un proveedor de streaming
+ * @param provider
+ * @returns 
+ */
+const mapProvider = (provider: any, tipo?: 'flatrate' | 'rent' | 'buy'): WatchProvider => {
+  // Verificar y registrar el formato del proveedor para depuración
+  console.log('[DEBUG] mapProvider - Formato de proveedor recibido:', provider);
+  
+  // Asegurar que todos los campos requeridos existan
+  return {
+    id: provider.provider_id?.toString() || provider.id?.toString() || '',
+    nombre: provider.provider_name || provider.nombre || '',
+    logo: formatImageUrl(provider.logo_path || provider.logo || ''),
+    tipo: tipo || provider.tipo || 'flatrate'
+  };
+};
+
+/**
  * Mapea los datos de la API a un objeto Pelicula
  * @param movieData 
  * @returns 
@@ -45,6 +64,14 @@ export function mapPeliculaFromApi(movieData: any): Pelicula {
   if (!movieData || !movieData.id) {
     console.error('[ERROR] mapPeliculaFromApi - Datos de API incompletos:', movieData);
     throw new Error('Los datos recibidos de la API están incompletos o en un formato inesperado');
+  }
+
+  // Procesar proveedores de streaming si existen
+  let proveedores: WatchProvider[] = [];
+  if (movieData.proveedores && Array.isArray(movieData.proveedores)) {
+    console.log('[DEBUG] mapPeliculaFromApi - Proveedores antes de mapeo:', movieData.proveedores);
+    proveedores = movieData.proveedores.map((p: any) => mapProvider(p));
+    console.log('[DEBUG] mapPeliculaFromApi - Proveedores después de mapeo:', proveedores);
   }
 
   return {
@@ -68,6 +95,7 @@ export function mapPeliculaFromApi(movieData: any): Pelicula {
       id: movieData.creador.id.toString(),
       nombre: movieData.creador.nombre || movieData.creador.name,
       foto: formatImageUrl(movieData.creador.foto || movieData.creador.profile_path)
-    } : undefined
+    } : undefined,
+    proveedores: proveedores
   };
 } 
