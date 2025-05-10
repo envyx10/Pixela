@@ -9,6 +9,7 @@ import {
   StreamingProviders, 
   CastSection, 
   TrailersSection, 
+  GallerySection,
 } from '../components';
 
 interface MediaPageProps {
@@ -48,6 +49,8 @@ export const MediaPage = ({ media }: MediaPageProps) => {
           <CastSection actors={media.actores} />
           {/* Trailers */}
           <TrailersSection trailers={media.trailers} />
+          {/* Galería */}
+          <GallerySection media={media} />
         </div>
       </div>
     </div>
