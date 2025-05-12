@@ -6,11 +6,11 @@ const nextConfig = {
         return [
             {
                 source: '/api/series/:path*',
-                destination: 'http://laravel.test/api/series/:path*',
+                destination: 'http://localhost/api/series/:path*',
             },
             {
                 source: '/api/movies/:path*',
-                destination: 'http://laravel.test/api/movies/:path*',
+                destination: 'http://localhost/api/movies/:path*',
             },
         ];
     },
@@ -21,7 +21,8 @@ const nextConfig = {
             'img.youtube.com',
             'laravel.test',
             'localhost',
-            'i.pravatar.cc'
+            'i.pravatar.cc',
+            'picsum.photos'
         ],
     },
     webpack: (config, { isServer }) => {
