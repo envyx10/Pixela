@@ -11,8 +11,7 @@ interface GalleryGridProps {
   showAll?: boolean;
 }
 
-export function GalleryGrid({ images, type, onImageClick, showAll = false }: GalleryGridProps) {
-  // Track image load errors
+export function GalleryGrid({ images, type, onImageClick, showAll = false }: GalleryGridProps) { 
   const [imageErrors, setImageErrors] = useState<{[key: string]: boolean}>({});
 
   const handleImageError = (imagePath: string) => {
@@ -39,7 +38,7 @@ export function GalleryGrid({ images, type, onImageClick, showAll = false }: Gal
       : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'}`}
     >
       {imagesToShow.map((image, index) => {
-        // Skip images that failed to load
+        // Saltar imágenes que fallaron al cargar
         if (imageErrors[image.file_path]) {
           return null;
         }

@@ -15,6 +15,10 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ media, onPosterClick }: HeroSectionProps) {
+  // Mapeo exacto de tipo
+  const getItemType = (tipo: 'pelicula' | 'serie'): 'movie' | 'series' =>
+    tipo === 'pelicula' ? 'movie' : 'series';
+
   return (
     <div className="relative h-[80vh] w-full">
       {/* Backdrop con degradado */}
@@ -41,7 +45,10 @@ export function HeroSection({ media, onPosterClick }: HeroSectionProps) {
               {media.sinopsis}
             </p>
 
-            <ActionButtons />
+            <ActionButtons 
+              tmdbId={Number(media.id)} 
+              itemType={getItemType(media.tipo)} 
+            />
           </div>
         </div>
       </div>

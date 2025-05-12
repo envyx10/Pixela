@@ -62,6 +62,8 @@ export const TrendingMediaCard = memo(({ media, type, index = 0 }: TrendingMedia
 
           {/* Botones de acción para información y seguimiento */}
           <ActionButtons 
+            tmdbId={Number(media.id)}
+            itemType={type === 'series' ? 'series' : 'movie'}
             onFollowClick={handleFollowClick}
             onReviewsClick={handleReviewsClick}
             detailsHref={`/${type}/${media.id}`}

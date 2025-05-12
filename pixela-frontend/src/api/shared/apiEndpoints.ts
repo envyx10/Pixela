@@ -42,8 +42,8 @@ export const API_ENDPOINTS = {
 
     // Favorites
     FAVORITES: {
+        ADD: '/favorites',
         LIST: '/favorites',
-        CREATE: '/favorites',
         DELETE: '/favorites/:id',
         DETAILS: '/favorites/details',
     },

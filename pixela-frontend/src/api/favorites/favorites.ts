@@ -1,8 +1,7 @@
-import { FavoriteWithDetails } from "./types";
+import { FavoriteWithDetails, Favorite, CreateFavorite } from "./types";
 
 import { API_ENDPOINTS } from "../shared/apiEndpoints";
 import { fetchFromAPI } from "../shared/apiHelpers";
-import { Favorite } from "./types";
 
 // API para favoritos
 export const favoritesAPI = {
@@ -11,10 +10,14 @@ export const favoritesAPI = {
       return response.data;
     },
   
-    async addFavorite(favorite: Favorite): Promise<Favorite> {
-      return fetchFromAPI<Favorite>(API_ENDPOINTS.FAVORITES.CREATE, {
+    async addFavorite(favorite: CreateFavorite): Promise<Favorite> {
+      console.log('Enviando datos a la API:', favorite);
+      return fetchFromAPI<Favorite>(API_ENDPOINTS.FAVORITES.ADD, {
         method: 'POST',
-        body: JSON.stringify(favorite),
+        body: JSON.stringify({
+          tmdb_id: favorite.tmdb_id,
+          item_type: favorite.item_type
+        }),
       });
     },
   

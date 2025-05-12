@@ -6,6 +6,9 @@ import { Wallpaper } from '../../types/gallery';
 import { getMediaImages } from '../../services/galleryService';
 import { GalleryGrid } from './GalleryGrid';
 import { GalleryTabs } from './GalleryTabs';
+import { FaTimes } from 'react-icons/fa';
+import { CloseButton } from '../hero/modal/CloseButton';
+import { PosterImage } from '../hero/modal/PosterImage';
 
 interface GallerySectionProps {
   media: Media;
@@ -24,12 +27,12 @@ export function GallerySection({ media }: GallerySectionProps) {
   const [retryCount, setRetryCount] = useState(0);
   const [showAll, setShowAll] = useState(false);
 
-  // Handle client-side only rendering to avoid hydration mismatches
+  // Renderizar el componente solo en el cliente
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Load images on component mount
+  // Cargar imágenes al montar el componente
   useEffect(() => {
     if (!isMounted) return;
     
@@ -43,7 +46,7 @@ export function GallerySection({ media }: GallerySectionProps) {
         
         const imagesData = await getMediaImages(media.id, mediaType);
         
-        // If we have images, set them
+        // Si hay imágenes, establecerlas
         if (imagesData.backdrops.length > 0 || imagesData.posters.length > 0) {
           console.log(`[DEBUG] GallerySection - Received ${imagesData.backdrops.length} backdrops and ${imagesData.posters.length} posters`);
           setImages({
@@ -51,10 +54,9 @@ export function GallerySection({ media }: GallerySectionProps) {
             posters: imagesData.posters || []
           });
         } else if (retryCount < 1) {
-          // If no images were found and we haven't retried yet, retry once
           console.log('[DEBUG] GallerySection - No images found, will retry');
           setRetryCount(prev => prev + 1);
-          // We'll try again on the next run of the effect due to retryCount changing
+        
         } else {
           console.warn('[WARN] GallerySection - No images found after retry');
         }
@@ -69,12 +71,12 @@ export function GallerySection({ media }: GallerySectionProps) {
     fetchImages();
   }, [media.id, media.tipo, isMounted, retryCount]);
 
-  // Don't render anything on server side or before mounting
+  // No renderizar nada en el servidor o antes de montar
   if (!isMounted) {
     return null;
   }
 
-  // If there are no images and we're not loading, don't render the component
+  // Si no hay imágenes y no estamos cargando, no renderizar el componente
   const hasImages = images.backdrops.length > 0 || images.posters.length > 0;
   
   if (isLoading) {
@@ -91,7 +93,6 @@ export function GallerySection({ media }: GallerySectionProps) {
   }
 
   if (!hasImages) {
-    // If we have no images and we're not loading anymore, don't render the component
     return null;
   }
 
@@ -109,7 +110,7 @@ export function GallerySection({ media }: GallerySectionProps) {
         activeTab={activeTab}
         onTabChange={tab => {
           setActiveTab(tab);
-          setShowAll(false); // Al cambiar de tab, colapsa la galería
+          setShowAll(false);
         }}
         backdropsCount={images.backdrops.length}
         postersCount={images.posters.length}
@@ -139,18 +140,27 @@ export function GallerySection({ media }: GallerySectionProps) {
           className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedImage(null)}
         >
-          <div className="relative max-w-7xl max-h-[90vh]">
-            <button
-              className="absolute -top-10 right-0 text-white hover:text-pixela-accent"
-              onClick={() => setSelectedImage(null)}
-            >
-              Cerrar
-            </button>
-            <img 
-              src={selectedImage.file_path} 
-              alt="Preview"
-              className="max-h-[90vh] max-w-full object-contain" 
-            />
+          <div className="relative max-w-7xl max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            {activeTab === 'posters' ? (
+              <>
+                <CloseButton onClick={() => setSelectedImage(null)} />
+                <PosterImage src={selectedImage.file_path} alt="Preview" />
+              </>
+            ) : (
+              <>
+                <button
+                  className="absolute -top-10 right-0 text-white hover:text-pixela-accent"
+                  onClick={() => setSelectedImage(null)}
+                >
+                  <FaTimes />
+                </button>
+                <img 
+                  src={selectedImage.file_path} 
+                  alt="Preview"
+                  className="max-h-[90vh] max-w-full object-contain" 
+                />
+              </>
+            )}
           </div>
         </div>
       )}
