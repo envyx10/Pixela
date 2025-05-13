@@ -39,7 +39,7 @@ export const ActionButtons = ({ tmdbId, itemType }: ActionButtonsProps) => {
 
   const handleFavorite = async () => {
     if (!isAuthenticated) {
-      router.push('/login');
+      window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
       return;
     }
 
@@ -72,6 +72,14 @@ export const ActionButtons = ({ tmdbId, itemType }: ActionButtonsProps) => {
     }
   };
 
+  const handleReview = () => {
+    if (!isAuthenticated) {
+      window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+      return;
+    }
+    // TODO: Implement review functionality
+  };
+
   return (
     <div className="flex gap-4">
       <button 
@@ -90,7 +98,10 @@ export const ActionButtons = ({ tmdbId, itemType }: ActionButtonsProps) => {
             : 'drop-shadow-[0_0_8px_rgba(255,45,85,0.5)] scale-110'
         }`} />
       </button>
-      <button className="bg-[#1A1A1A] hover:bg-[#252525] text-white px-8 py-3 rounded-lg font-medium transition duration-300 flex items-center gap-2 border border-white/10">
+      <button 
+        onClick={handleReview}
+        className="bg-[#1A1A1A] hover:bg-[#252525] text-white px-8 py-3 rounded-lg font-medium transition duration-300 flex items-center gap-2 border border-white/10"
+      >
         <FaPen className="w-5 h-5" />
         Hacer Reseña
       </button>
