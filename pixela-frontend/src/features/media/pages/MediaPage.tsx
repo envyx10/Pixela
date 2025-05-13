@@ -28,6 +28,7 @@ export const MediaPage = ({ media }: MediaPageProps) => {
       <HeroSection 
         media={media} 
         onPosterClick={() => setShowPosterModal(true)} 
+        title={media.titulo}
       />
 
       {/* Poster Modal */}

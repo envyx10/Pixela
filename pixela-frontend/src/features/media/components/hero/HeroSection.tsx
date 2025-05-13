@@ -12,9 +12,10 @@ import { ActionButtons } from './actions/ActionButtons';
 interface HeroSectionProps {
   media: Media;
   onPosterClick: () => void;
+  title: string;
 }
 
-export function HeroSection({ media, onPosterClick }: HeroSectionProps) {
+export function HeroSection({ media, onPosterClick, title }: HeroSectionProps) {
   // Mapeo exacto de tipo
   const getItemType = (tipo: 'pelicula' | 'serie'): 'movie' | 'series' =>
     tipo === 'pelicula' ? 'movie' : 'series';
@@ -47,7 +48,8 @@ export function HeroSection({ media, onPosterClick }: HeroSectionProps) {
 
             <ActionButtons 
               tmdbId={Number(media.id)} 
-              itemType={getItemType(media.tipo)} 
+              itemType={getItemType(media.tipo)}
+              title={title}
             />
           </div>
         </div>

@@ -11,3 +11,11 @@ export interface Review {
     title?: string;
     poster_path?: string;
 }
+
+// Campos requeridos para crear una reseña
+export interface CreateReview {
+    item_type: 'movie' | 'series';
+    tmdb_id: number;
+    rating: number;
+    review: string;
+}

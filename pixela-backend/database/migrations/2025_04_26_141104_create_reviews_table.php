@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->enum('item_type', ['movie', 'series']);
             $table->unsignedBigInteger('tmdb_id');
-            $table->unsignedInteger('rating');
+            $table->decimal('rating', 3, 1)->unsigned();
             $table->text('review')->nullable();
             $table->timestamps();
 

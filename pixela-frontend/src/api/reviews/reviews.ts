@@ -1,4 +1,4 @@
-import { Review } from "./types";
+import { Review, CreateReview } from "./types";
 import { API_ENDPOINTS } from "../shared/apiEndpoints";
 import { fetchFromAPI } from "../shared/apiHelpers";
 
@@ -9,7 +9,7 @@ export const reviewsAPI = {
         return response.data;
     },
 
-    async add(review: Review): Promise<Review> {
+    async add(review: CreateReview): Promise<Review> {
         return fetchFromAPI<Review>(API_ENDPOINTS.REVIEWS.CREATE, {
             method: 'POST',
             body: JSON.stringify(review),

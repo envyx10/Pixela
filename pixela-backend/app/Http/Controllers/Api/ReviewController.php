@@ -22,7 +22,7 @@ class ReviewController extends Controller
         $data = $request->validate([
             'item_type' => 'required|in:movie,series',
             'tmdb_id'   => 'required|integer',
-            'rating'    => 'required|integer|min:1|max:10',
+            'rating'    => 'required|numeric|min:0|max:10',
             'review'    => 'nullable|string'
         ]);
 
