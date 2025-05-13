@@ -6,6 +6,7 @@ import { useState, memo } from "react";
 import { Badge } from "@/shared/components/Badge";
 import { ActionButtons } from "@/shared/components/ActionButtons";
 import { MediaInfoDetails } from "./MediaInfoDetails";
+import { useRouter } from 'next/navigation';
 
 interface TrendingMediaCardProps {
   media: TrendingSerie | TrendingMovie;
@@ -15,6 +16,7 @@ interface TrendingMediaCardProps {
 
 export const TrendingMediaCard = memo(({ media, type, index = 0 }: TrendingMediaCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const router = useRouter();
   
   // Determinar si hay una puntuación alta (más de 7.5)
   const isHighRated = media.vote_average && media.vote_average >= 7.5;
@@ -27,7 +29,8 @@ export const TrendingMediaCard = memo(({ media, type, index = 0 }: TrendingMedia
   };
 
   const handleReviewsClick = () => {
-    console.log("Ver reseñas de", media.title);
+    router.prefetch(`/${type}/${media.id}`);
+    router.push(`/${type}/${media.id}`);
   };
   
   return (

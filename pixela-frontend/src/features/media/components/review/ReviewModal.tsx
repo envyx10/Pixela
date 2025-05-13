@@ -9,6 +9,7 @@ interface ReviewModalProps {
   tmdbId: number;
   itemType: 'movie' | 'series';
   title: string;
+  refreshReviews?: () => void;
 }
 
 // Utilidad para renderizar medias estrellas
@@ -24,7 +25,7 @@ const Star = ({ filled, half }: { filled: boolean; half?: boolean }) => (
   </span>
 );
 
-export const ReviewModal = ({ isOpen, onClose, tmdbId, itemType, title }: ReviewModalProps) => {
+export const ReviewModal = ({ isOpen, onClose, tmdbId, itemType, title, refreshReviews }: ReviewModalProps) => {
   // Default: 3 estrellas (6/10)
   const [rating, setRating] = useState(6);
   const [review, setReview] = useState('');
@@ -53,8 +54,17 @@ export const ReviewModal = ({ isOpen, onClose, tmdbId, itemType, title }: Review
       };
       await reviewsAPI.add(reviewData);
       onClose();
-    } catch (error) {
-      setError('No se pudo guardar la reseña. Por favor, inténtalo de nuevo.');
+      if (refreshReviews) refreshReviews();
+
+    } catch (error: any) {
+      let errorMsg = 'No se pudo guardar la reseña. Por favor, inténtalo de nuevo.';
+      console.log(error);
+
+      if (typeof error?.message === 'string' && error.message.includes('Review already exists')) {
+        errorMsg = 'El usuario ya tiene una reseña para esta ficha.';
+      }
+      setError(errorMsg);
+
     } finally {
       setIsSubmitting(false);
     }

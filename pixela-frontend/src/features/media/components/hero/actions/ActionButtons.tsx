@@ -11,9 +11,10 @@ interface ActionButtonsProps {
   tmdbId: number;
   itemType: 'movie' | 'series';
   title: string;
+  refreshReviews?: () => void;
 }
 
-export const ActionButtons = ({ tmdbId, itemType, title }: ActionButtonsProps) => {
+export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: ActionButtonsProps) => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [favoriteId, setFavoriteId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -118,6 +119,7 @@ export const ActionButtons = ({ tmdbId, itemType, title }: ActionButtonsProps) =
         tmdbId={tmdbId}
         itemType={itemType}
         title={title}
+        refreshReviews={refreshReviews}
       />
     </>
   );

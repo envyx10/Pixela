@@ -13,9 +13,10 @@ interface HeroSectionProps {
   media: Media;
   onPosterClick: () => void;
   title: string;
+  refreshReviews?: () => void;
 }
 
-export function HeroSection({ media, onPosterClick, title }: HeroSectionProps) {
+export function HeroSection({ media, onPosterClick, title, refreshReviews }: HeroSectionProps) {
   // Mapeo exacto de tipo
   const getItemType = (tipo: 'pelicula' | 'serie'): 'movie' | 'series' =>
     tipo === 'pelicula' ? 'movie' : 'series';
@@ -50,6 +51,7 @@ export function HeroSection({ media, onPosterClick, title }: HeroSectionProps) {
               tmdbId={Number(media.id)} 
               itemType={getItemType(media.tipo)}
               title={title}
+              refreshReviews={refreshReviews}
             />
           </div>
         </div>

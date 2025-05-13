@@ -2,6 +2,8 @@
 export interface Review {
     id: number;
     user_id: number;
+    user_name: string;
+    photo_url?: string;
     item_type: 'movie' | 'series';
     tmdb_id: number;
     rating: number;
