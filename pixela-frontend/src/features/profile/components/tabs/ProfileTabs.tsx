@@ -1,5 +1,7 @@
-import { FiSettings, FiHeart, FiEdit, FiUsers } from 'react-icons/fi';
+
+import { FiSettings, FiEdit, FiUsers } from 'react-icons/fi';
 import { TabNavigationButton } from './TabNavigationButton';
+import { FaRegBookmark } from 'react-icons/fa';
 
 type TabType = 'profile' | 'reviews' | 'favorites' | 'users';
 
@@ -28,7 +30,7 @@ export const ProfileTabs = ({ activeTab, onTabChange, isAdmin }: ProfileTabsProp
       
       <TabNavigationButton
         label="Favoritos"
-        icon={<FiHeart />}
+        icon={<FaRegBookmark />}
         isActive={activeTab === 'favorites'}
         onClick={() => onTabChange('favorites')}
       />
