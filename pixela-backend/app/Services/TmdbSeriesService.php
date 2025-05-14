@@ -56,13 +56,16 @@ class TmdbSeriesService
     /**
      * Get all discovered series (any genre)
      *
-     * @param int $page Número de página para paginación (default 1)
+     * @param int $page (default 1)
      * @return array
      * @throws Exception
      */
     public function getAllDiscoveredSeries(int $page = 1): array
     {
-        return $this->paginatedRequest("/discover/tv", [], $page);
+        return $this->paginatedRequest("/discover/tv", [
+            'with_watch_providers' => '8|384|119|9|337',
+            'watch_region' => 'ES',
+        ], $page);
     }
     
     /**

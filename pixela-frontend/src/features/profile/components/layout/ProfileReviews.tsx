@@ -7,6 +7,49 @@ import Image from 'next/image';
 
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
+// Componente para mostrar y editar medias estrellas
+const StarEdit = ({ value, onChange, disabled }: { value: number, onChange: (v: number) => void, disabled?: boolean }) => (
+  <div className="flex items-center gap-1">
+    {[1, 2, 3, 4, 5].map((star) => {
+      const starValue = star * 2;
+      const isFull = value >= starValue;
+      const isHalf = value === starValue - 1;
+      return (
+        <span key={star} className="relative group w-6 h-6">
+          {/* Media estrella (izquierda) */}
+          <button
+            type="button"
+            aria-label={`Puntuar con ${star - 0.5} estrellas`}
+            className="absolute left-0 top-0 w-1/2 h-full z-10"
+            style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
+            onClick={() => !disabled && onChange(star * 2 - 1)}
+            disabled={disabled}
+          />
+          {/* Estrella completa (derecha) */}
+          <button
+            type="button"
+            aria-label={`Puntuar con ${star} estrellas`}
+            className="absolute right-0 top-0 w-1/2 h-full z-10"
+            style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
+            onClick={() => !disabled && onChange(star * 2)}
+            disabled={disabled}
+          />
+          <span className="relative inline-block w-6 h-6">
+            <FiStar className={`w-6 h-6 absolute top-0 left-0 ${isFull ? 'text-yellow-400' : 'text-gray-400'}`} />
+            {isHalf && (
+              <FiStar
+                className="w-6 h-6 absolute top-0 left-0 text-yellow-400"
+                style={{ clipPath: 'inset(0 50% 0 0)' }}
+              />
+            )}
+          </span>
+        </span>
+      );
+    })}
+    <span className="ml-2 text-yellow-400 text-xs">{value % 1 === 0 ? value : value.toFixed(1)}/10</span>
+  </div>
+);
+
 export function ProfileReviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,21 +178,20 @@ export function ProfileReviews() {
                   {review.title || `${review.item_type === 'movie' ? 'Película' : 'Serie'} #${review.tmdb_id}`}
                 </span>
                 <span className="flex items-center text-yellow-400 ml-2">
-                  <FiStar className="w-4 h-4 mr-1" />
+                  {editingId !== review.id && (
+                    <FiStar className="w-4 h-4 mr-1" />
+                  )}
                   {editingId === review.id
                     ? (
-                      <input
-                        type="number"
-                        min={0}
-                        max={10}
-                        step={0.1}
+                      <StarEdit
                         value={editRating}
-                        onChange={e => setEditRating(Number(e.target.value))}
-                        className="w-16 bg-transparent border-b border-pixela-primary text-yellow-400 text-center focus:outline-none"
+                        onChange={setEditRating}
                         disabled={savingId === review.id}
                       />
                     )
-                    : Number(review.rating).toFixed(1)
+                    : Number(review.rating) % 1 === 0
+                      ? Number(review.rating)
+                      : Number(review.rating).toFixed(1)
                   }
                 </span>
               </div>
@@ -173,7 +215,7 @@ export function ProfileReviews() {
                       {savingId === review.id ? (
                         <FiLoader className="w-5 h-5 animate-spin" />
                       ) : (
-                        <FiCheck className="w-5 h-5" />
+                        <FiCheck className="w-5 h-5 text-green-500 hover:text-green-400 transition-colors duration-200" />
                       )}
                     </button>
                     <button

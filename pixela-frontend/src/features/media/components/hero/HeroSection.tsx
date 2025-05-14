@@ -12,9 +12,15 @@ import { ActionButtons } from './actions/ActionButtons';
 interface HeroSectionProps {
   media: Media;
   onPosterClick: () => void;
+  title: string;
+  refreshReviews?: () => void;
 }
 
-export function HeroSection({ media, onPosterClick }: HeroSectionProps) {
+export function HeroSection({ media, onPosterClick, title, refreshReviews }: HeroSectionProps) {
+  // Mapeo exacto de tipo
+  const getItemType = (tipo: 'pelicula' | 'serie'): 'movie' | 'series' =>
+    tipo === 'pelicula' ? 'movie' : 'series';
+
   return (
     <div className="relative h-[80vh] w-full">
       {/* Backdrop con degradado */}
@@ -41,7 +47,12 @@ export function HeroSection({ media, onPosterClick }: HeroSectionProps) {
               {media.sinopsis}
             </p>
 
-            <ActionButtons />
+            <ActionButtons 
+              tmdbId={Number(media.id)} 
+              itemType={getItemType(media.tipo)}
+              title={title}
+              refreshReviews={refreshReviews}
+            />
           </div>
         </div>
       </div>

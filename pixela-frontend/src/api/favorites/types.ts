@@ -6,6 +6,12 @@ export interface Favorite {
     item_type: 'movie' | 'series';
 }
 
+// Tipo para crear un favorito
+export interface CreateFavorite {
+    tmdb_id: number;
+    item_type: 'movie' | 'series';
+}
+
 // Favorito con detalles
 export interface FavoriteWithDetails {
     id: number;

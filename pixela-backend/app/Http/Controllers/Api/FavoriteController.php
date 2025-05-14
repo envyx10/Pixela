@@ -27,8 +27,8 @@ class FavoriteController extends Controller
         $user = $request->user();
 
         $exists = $user->favorites()
-                    ->where('tmdb_id', $request->tmdb_id)
-                    ->where('item_type', $request->item_type)
+                    ->where('tmdb_id', $data['tmdb_id'])
+                    ->where('item_type', $data['item_type'])
                     ->exists();
        
         if ($exists) {
