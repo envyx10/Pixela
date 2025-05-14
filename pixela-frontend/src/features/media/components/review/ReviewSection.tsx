@@ -1,7 +1,11 @@
-import { FiStar, FiLoader, FiAlertCircle } from 'react-icons/fi';
+import { FiStar, FiLoader, FiAlertCircle, FiEdit2 } from 'react-icons/fi';
 import Image from 'next/image';
 import { Review } from '@/api/reviews/types';
 import { useAuthStore } from '@/stores/useAuthStore';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { reviewsAPI } from '@/api/reviews/reviews';
 
 interface ReviewSectionProps {
   tmdbId: number;
@@ -37,8 +41,47 @@ const StarDisplay = ({ value }: { value: number }) => (
   </span>
 );
 
-export function ReviewSection({ reviews, loading, error }: ReviewSectionProps) {
+export function ReviewSection({ reviews, loading, error, refreshReviews }: ReviewSectionProps) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const userId = useAuthStore((state) => state.user?.user_id);
+  const router = useRouter();
+  const [editingReview, setEditingReview] = useState<Review | null>(null);
+  const [editText, setEditText] = useState('');
+  const [editRating, setEditRating] = useState(0);
+
+  const handleEditClick = (review: Review) => {
+    setEditingReview(review);
+    setEditText(review.review);
+    setEditRating(Number(review.rating));
+  };
+
+  const handleCancelEdit = () => {
+    setEditingReview(null);
+    setEditText('');
+    setEditRating(0);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingReview) return;
+
+    try {
+      await reviewsAPI.update({
+        ...editingReview,
+        review: editText,
+        rating: editRating
+      });
+      
+      // Refrescar la lista de reseñas
+      if (refreshReviews) {
+        refreshReviews();
+      }
+      
+      handleCancelEdit();
+    } catch (error) {
+      console.error('Error al actualizar la reseña:', error);
+    }
+  };
+
   if (!isAuthenticated) return null;
 
   if (loading) {
@@ -68,44 +111,103 @@ export function ReviewSection({ reviews, loading, error }: ReviewSectionProps) {
         </div>
       ) : (
         <div className="space-y-8">
-          {reviews.map((review) => (
-            <div
-              key={review.id}
-              className="bg-[#18181b]/80 border border-white/10 rounded-2xl shadow-lg px-6 py-5 flex flex-col gap-3 transition-all duration-300 hover:shadow-2xl"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-pixela-accent/20 text-pixela-accent font-bold text-lg overflow-hidden">
-                      {review.photo_url ? (
-                        <Image
-                          src={review.photo_url}
-                          alt={review.user_name || 'Avatar'}
-                          width={32}
-                          height={32}
-                          className="object-cover w-8 h-8 rounded-full"
-                        />
-                      ) : (
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      )}
-                    </span>
-                    <span className="font-semibold text-white text-base">{review.user_name || 'Usuario'}</span>
+          {reviews.map((review) => {
+            const isUserReview = review.user_id === userId;
+            const isEditing = editingReview?.id === review.id;
+
+            return (
+              <div
+                key={review.id}
+                className="bg-[#18181b]/80 border border-white/10 rounded-2xl shadow-lg px-6 py-5 flex flex-col gap-3 transition-all duration-300 hover:shadow-2xl"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-pixela-accent/20 text-pixela-accent font-bold text-lg overflow-hidden">
+                        {review.photo_url ? (
+                          <Image
+                            src={review.photo_url}
+                            alt={review.user_name || 'Avatar'}
+                            width={32}
+                            height={32}
+                            className="object-cover w-8 h-8 rounded-full"
+                          />
+                        ) : (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                        )}
+                      </span>
+                      <span className="font-semibold text-white text-base">{review.user_name || 'Usuario'}</span>
+                    </div>
+                    {!isEditing && (
+                      <span className="ml-4 flex items-center">
+                        <StarDisplay value={Number(review.rating)} />
+                      </span>
+                    )}
                   </div>
-                  <span className="ml-4 flex items-center">
-                    <StarDisplay value={Number(review.rating)} />
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {isUserReview && !isEditing && (
+                      <button
+                        onClick={() => handleEditClick(review)}
+                        className="p-2 text-gray-400 hover:text-white transition-colors duration-200"
+                        title="Editar reseña"
+                      >
+                        <FiEdit2 className="w-4 h-4" />
+                      </button>
+                    )}
+                    <span className="text-xs text-gray-400 font-mono">
+                      {review.created_at && new Date(review.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
-                <span className="text-xs text-gray-400 font-mono">
-                  {review.created_at && new Date(review.created_at).toLocaleDateString()}
-                </span>
+
+                {isEditing ? (
+                  <div className="mt-4 space-y-4">
+                    <div className="flex items-center gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => setEditRating(star * 2)}
+                          className="text-2xl"
+                        >
+                          <FiStar
+                            className={`w-6 h-6 ${
+                              editRating >= star * 2 ? 'text-yellow-400' : 'text-gray-400'
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      className="w-full bg-[#1a1a1a]/70 border border-white/10 rounded-lg p-3 text-white resize-none min-h-[100px] focus:outline-none focus:border-pixela-accent/40"
+                      placeholder="Escribe tu reseña..."
+                    />
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={handleCancelEdit}
+                        className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={handleSaveEdit}
+                        className="px-4 py-2 text-sm bg-pixela-accent text-white rounded-lg hover:bg-pixela-accent/80 transition-colors duration-200"
+                      >
+                        Guardar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-gray-200 text-lg leading-relaxed mt-2 whitespace-pre-line">
+                    {review.review}
+                  </p>
+                )}
               </div>
-              <p className="text-gray-200 text-lg leading-relaxed mt-2 whitespace-pre-line">
-                {review.review}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

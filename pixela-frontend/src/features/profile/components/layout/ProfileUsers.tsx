@@ -110,33 +110,50 @@ export const ProfileUsers = () => {
           </div>
           <div className="flex flex-col justify-center flex-2 pl-5">
             {editingId === user.user_id ? (
-              <>
-                <input
-                  type="text"
-                  value={editingUser?.name || ''}
-                  onChange={(e) => handleEditChange('name', e.target.value)}
-                  className="bg-pixela-dark border border-pixela-primary/30 rounded px-2 py-1 text-white mb-1"
-                />
-                <input
-                  type="email"
-                  value={editingUser?.email || ''}
-                  onChange={(e) => handleEditChange('email', e.target.value)}
-                  className="bg-pixela-dark border border-pixela-primary/30 rounded px-2 py-1 text-white mb-1"
-                />
-                <select
-                  value={editingUser?.is_admin ? 'true' : 'false'}
-                  onChange={(e) => handleEditChange('is_admin', e.target.value === 'true')}
-                  className="bg-pixela-dark border border-pixela-primary/30 rounded px-2 py-1 text-white w-fit"
-                >
-                  <option value="true">Administrador</option>
-                  <option value="false">Usuario</option>
-                </select>
-              </>
+              <div className="grid grid-cols-3 gap-4 w-full">
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-400 mb-1 block">Nombre</label>
+                  <input
+                    type="text"
+                    value={editingUser?.name || ''}
+                    onChange={(e) => handleEditChange('name', e.target.value)}
+                    className="w-full bg-[#1a1a1a]/70 border border-transparent rounded-md px-3 py-1.5 text-white text-sm focus:outline-none focus:border-[#ec1b69]/40 focus:bg-[#1a1a1a]/80 transition-all duration-200 placeholder:text-gray-500/40"
+                    placeholder="Nombre de usuario"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-400 mb-1 block">Email</label>
+                  <input
+                    type="email"
+                    value={editingUser?.email || ''}
+                    onChange={(e) => handleEditChange('email', e.target.value)}
+                    className="w-full bg-[#1a1a1a]/70 border border-transparent rounded-md px-3 py-1.5 text-white text-sm focus:outline-none focus:border-[#ec1b69]/40 focus:bg-[#1a1a1a]/80 transition-all duration-200 placeholder:text-gray-500/40"
+                    placeholder="Correo electrónico"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-400 mb-1 block">Rol</label>
+                  <select
+                    value={editingUser?.is_admin ? 'true' : 'false'}
+                    onChange={(e) => handleEditChange('is_admin', e.target.value === 'true')}
+                    className="w-full bg-[#1a1a1a]/70 border border-transparent rounded-md px-3 py-1.5 text-white text-sm focus:outline-none focus:border-[#ec1b69]/40 focus:bg-[#1a1a1a]/80 transition-all duration-200 appearance-none cursor-pointer"
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ec1b69' stroke-opacity='0.4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                      backgroundSize: '1rem',
+                      backgroundPosition: 'right 0.75rem center',
+                      backgroundRepeat: 'no-repeat'
+                    }}
+                  >
+                    <option value="true">Administrador</option>
+                    <option value="false">Usuario</option>
+                  </select>
+                </div>
+              </div>
             ) : (
               <>
                 <span className="font-semibold text-white">{user.name}</span>
                 <span className="text-gray-400">{user.email}</span>
-                <span className="text-xs py-1 rounded bg-pixela-primary/20 text-pixela-primary w-fit">
+                <span className={`text-xs py-1 px-3 rounded-md w-fit font-medium mt-1 ${user.is_admin ? 'bg-[#ec1b69]/10 text-[#ec1b69] border border-[#ec1b69]/20' : 'bg-gray-800/60 text-gray-400 border border-gray-700/50'}`}>
                   {user.is_admin ? 'Administrador' : 'Usuario'}
                 </span>
               </>
