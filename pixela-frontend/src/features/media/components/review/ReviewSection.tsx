@@ -1,6 +1,7 @@
 import { FiStar, FiLoader, FiAlertCircle } from 'react-icons/fi';
 import Image from 'next/image';
 import { Review } from '@/api/reviews/types';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface ReviewSectionProps {
   tmdbId: number;
@@ -37,6 +38,9 @@ const StarDisplay = ({ value }: { value: number }) => (
 );
 
 export function ReviewSection({ reviews, loading, error }: ReviewSectionProps) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  if (!isAuthenticated) return null;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
