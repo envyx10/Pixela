@@ -44,7 +44,7 @@ Dado el avance del proyecto, el vídeo necesitaba superar los 5 minutos para cub
 | Tailwind CSS – Utilidades de estilos        | Laravel Breeze kit - Scaffolding                             |
 | Sass (SCSS) – Preprocesador CSS             | Laravel HTTP Session - Control de sesiones                   |
 | Zustand – Estado global                     | Blade Templates - vistas Login y Register                    |
-| React Hook Form – Formularios eficientes    | Redis – Cache y Mejora de rendimiento                        |
+| React Hook Form – Formularios eficientes    | Guzzle (PHP HTTP Client) - Peticiones API                    |
 | fetch API – Consumo de API REST             | Tailwind CSS - Diseño de las vistas Blade                    |
 
 
