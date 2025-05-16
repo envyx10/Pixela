@@ -187,16 +187,16 @@ export function ReviewSection({ reviews, loading, error, refreshReviews }: Revie
                     />
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={handleCancelEdit}
-                        className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
-                      >
-                        Cancelar
-                      </button>
-                      <button
                         onClick={handleSaveEdit}
                         className="px-4 py-2 text-sm bg-pixela-accent text-white rounded-lg hover:bg-pixela-accent/80 transition-colors duration-200"
                       >
                         Guardar
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
+                      >
+                        Cancelar
                       </button>
                     </div>
                   </div>
