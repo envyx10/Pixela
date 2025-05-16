@@ -5,7 +5,7 @@ import { FiLoader, FiAlertCircle, FiEdit, FiCheck, FiX } from 'react-icons/fi';
 import { FaTrash } from 'react-icons/fa';
 import { UserAvatar } from '@/features/profile/components/avatar/UserAvatar';
 
-export const ProfileUsers = () => {
+export const ProfileUsers = ({ refresh }: { refresh: boolean }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export const ProfileUsers = () => {
       })
       .catch(() => setError('No se pudieron cargar los usuarios.'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [refresh]);
 
   // Borrar usuario
   const handleDelete = async (userId: number) => {

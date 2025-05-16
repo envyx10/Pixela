@@ -20,6 +20,7 @@ import {
   UpdateProfileForm
 } from '@/features/profile/components';
 import { FiLoader } from 'react-icons/fi';
+import { UserCreateModal } from '../components/form/UserCreateModal';
 
 import '@/styles/profile/main.scss';
 
@@ -36,6 +37,9 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
   const [favorites, setFavorites] = useState<FavoriteWithDetails[]>([]);
   const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
+
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [refreshUsers, setRefreshUsers] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,9 +64,9 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
   useEffect(() => {
     if (redirecting) {
       const timer = setTimeout(() => {
-        // Redirigir al home del frontend
         window.location.replace('http://localhost:3000');
       }, 1200);
+
       return () => clearTimeout(timer);
     }
   }, [redirecting]);
@@ -79,7 +83,6 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
         user_id: user.user_id
       };
 
-      // No enviar password si está vacío
       if (!data.password) {
         userData.password = '';
       }
@@ -94,11 +97,11 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
         return;
       }
 
-      // Asegúrate de que el usuario actualizado tiene todos los campos requeridos
+      // Inicializar el usuario con los datos actualizados
       setUser({
         ...user,
         ...userToSet,
-        password: '', // Por seguridad, nunca guardes la contraseña en el estado
+        password: '',
       });
       setIsEditing(false);
     } catch (error) {
@@ -173,8 +176,27 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
           )}
 
           {activeTab === 'users' && user.is_admin && (
-            <ContentPanel title="Usuarios">
-              <ProfileUsers />
+            <ContentPanel
+              title="Usuarios"
+              headerAction={
+                <button
+                  className="w-8 h-8 flex items-center justify-center rounded-full border-2 border-pixela-accent text-pixela-accent hover:bg-pixela-accent/10 transition-colors ml-2"
+                  title="Registrar nuevo usuario"
+                  onClick={() => setShowCreateModal(true)}
+                >
+                  +
+                </button>
+              }
+            >
+              <UserCreateModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onUserCreated={() => {
+                  setRefreshUsers(r => !r);
+                  setShowCreateModal(false);
+                }}
+              />
+              <ProfileUsers refresh={refreshUsers} />
             </ContentPanel>
           )}
         </div>

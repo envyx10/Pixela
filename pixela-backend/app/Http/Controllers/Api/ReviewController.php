@@ -53,7 +53,7 @@ class ReviewController extends Controller
             'item_type' => 'required|in:movie,series',
             'tmdb_id'   => 'required|integer',
             'rating'    => 'required|numeric|min:0|max:10',
-            'review'    => 'nullable|string'
+            'review'    => 'nullable|string|max:600'
         ]);
 
         $user = $request->user();
@@ -129,7 +129,7 @@ class ReviewController extends Controller
 
         $data = $request->validate([
             'rating'    => 'required|numeric|min:0|max:10',
-            'review'    => 'nullable|string'
+            'review'    => 'nullable|string|max:600'
         ]);
 
         $review->update($data);
