@@ -1,0 +1,3487 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Pixela API Documentation",
+        "description": "API Documentation for Pixela - A platform for tracking and managing your movie and series watching history",
+        "contact": {
+            "email": "admin@pixela.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get authenticated user",
+                "description": "Returns information about the currently authenticated user",
+                "operationId": "getAuthUser",
+                "responses": {
+                    "200": {
+                        "description": "User information retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout",
+                "description": "Logs out the current user, revokes all tokens and clears cookies",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "Successfully logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Successfully logged out"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "timestamp": {
+                                                    "type": "string",
+                                                    "format": "datetime"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/favorites": {
+            "get": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "List favorites",
+                "description": "Get user's complete favorites list with details for each item",
+                "operationId": "listFavorites",
+                "responses": {
+                    "200": {
+                        "description": "Favorites list retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Favorites with details retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Favorite"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Add to favorites",
+                "description": "Add a movie or series to user's favorites list",
+                "operationId": "addFavorite",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FavoriteRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Favorite added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Favorite already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/favorites/{favorite}": {
+            "delete": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Remove from favorites",
+                "description": "Remove a movie or series from user's favorites list",
+                "operationId": "deleteFavorite",
+                "parameters": [
+                    {
+                        "name": "favorite",
+                        "in": "path",
+                        "description": "ID of the favorite to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Favorite removed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Favorite item removed successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not authorized to delete this favorite",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Favorite not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/movies/{movieId}": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get movie details",
+                "description": "Get detailed information about a specific movie by its ID",
+                "operationId": "getMovieDetails",
+                "parameters": [
+                    {
+                        "name": "movieId",
+                        "in": "path",
+                        "description": "Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Movie details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieDetailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Movie not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/trending": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get trending movies",
+                "description": "Returns a paginated list of trending movies",
+                "operationId": "getTrendingMovies",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trending movies list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedMovieResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/top-rated": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get top rated movies",
+                "description": "Returns a paginated list of top rated movies",
+                "operationId": "getTopRatedMovies",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Top rated movies list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedMovieResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/discover": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Discover movies",
+                "description": "Returns a paginated list of discovered movies",
+                "operationId": "getDiscoveredMovies",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Discovered movies list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedMovieResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/now-playing": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get now playing movies",
+                "description": "Returns a paginated list of movies currently in theaters",
+                "operationId": "getMovieNowPlaying",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Now playing movies list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedMovieResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/genre/{genreId}": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get movies by genre",
+                "description": "Returns a paginated list of movies for a specific genre",
+                "operationId": "getMovieByGenre",
+                "parameters": [
+                    {
+                        "name": "genreId",
+                        "in": "path",
+                        "description": "Genre ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Movies list for the specified genre",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedMovieResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/{movieId}/cast": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get movie cast",
+                "description": "Returns the cast and crew list for a specific movie",
+                "operationId": "getMovieCast",
+                "parameters": [
+                    {
+                        "name": "movieId",
+                        "in": "path",
+                        "description": "Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Movie cast and crew",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieCastResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Movie not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/{movieId}/videos": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get movie videos",
+                "description": "Returns videos (trailers, teasers, etc.) associated with a movie",
+                "operationId": "getMovieVideos",
+                "parameters": [
+                    {
+                        "name": "movieId",
+                        "in": "path",
+                        "description": "Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Movie videos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieVideoResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No videos found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/{movieId}/watch-providers": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get streaming providers",
+                "description": "Returns streaming platforms where the movie is available",
+                "operationId": "getMovieWatchProviders",
+                "parameters": [
+                    {
+                        "name": "movieId",
+                        "in": "path",
+                        "description": "Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "region",
+                        "in": "query",
+                        "description": "Region code (default: ES)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "ES"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Streaming providers found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieProvidersResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No providers found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/{movieId}/creator": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get movie creator",
+                "description": "Returns information about the movie's creator/director",
+                "operationId": "getMovieCreator",
+                "parameters": [
+                    {
+                        "name": "movieId",
+                        "in": "path",
+                        "description": "Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Creator information retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieCreatorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Movie not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/{movieId}/images": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get movie images",
+                "description": "Returns a collection of images associated with the movie (posters, backdrops, etc.)",
+                "operationId": "getMovieImages",
+                "parameters": [
+                    {
+                        "name": "movieId",
+                        "in": "path",
+                        "description": "Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Images retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieImagesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Movie not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/{movieId}/reviews": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get movie reviews",
+                "description": "Returns reviews and ratings associated with the movie",
+                "operationId": "getMovieReviews",
+                "parameters": [
+                    {
+                        "name": "movieId",
+                        "in": "path",
+                        "description": "Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reviews retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieReviewsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Movie not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reviews": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Listar reseñas del usuario",
+                "description": "Obtiene todas las reseñas del usuario autenticado",
+                "operationId": "listReviews",
+                "responses": {
+                    "200": {
+                        "description": "Lista de reseñas recuperada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReviewListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Añadir una nueva reseña",
+                "description": "Crea una nueva reseña para una película o serie",
+                "operationId": "addReview",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Reseña creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReviewResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "La reseña ya existe o datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/reviews/{review}": {
+            "put": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Actualizar una reseña",
+                "description": "Actualiza una reseña existente",
+                "operationId": "updateReview",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "ID de la reseña",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReviewUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Reseña actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReviewResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado para actualizar esta reseña",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Eliminar una reseña",
+                "description": "Elimina una reseña específica",
+                "operationId": "deleteReview",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "ID de la reseña",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reseña eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado para eliminar esta reseña",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/series/{seriesId}": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get TV series details",
+                "description": "Retrieves detailed information about a specific TV series by its ID",
+                "operationId": "getSeriesDetails",
+                "parameters": [
+                    {
+                        "name": "seriesId",
+                        "in": "path",
+                        "description": "ID of the TV series",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "TV series details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/SeriesDetails"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "TV series not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/trending": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get trending TV series",
+                "description": "Returns a paginated list of trending TV series",
+                "operationId": "getTrendingSeries",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of trending TV series",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedSeriesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/top-rated": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get top-rated TV series",
+                "description": "Returns a paginated list of top-rated TV series",
+                "operationId": "getTopRatedSeries",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of top-rated TV series",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedSeriesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/on-the-air": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get TV series currently on air",
+                "description": "Returns a paginated list of TV series currently airing",
+                "operationId": "getSeriesOnTheAir",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of TV series currently on air",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedSeriesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/discover": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Discover TV series",
+                "description": "Returns a paginated list of discovered TV series",
+                "operationId": "getDiscoveredSeries",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of discovered TV series",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedSeriesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/genre/{genreId}": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get TV series by genre",
+                "description": "Returns a paginated list of TV series for a specific genre",
+                "operationId": "getSeriesByGenre",
+                "parameters": [
+                    {
+                        "name": "genreId",
+                        "in": "path",
+                        "description": "ID of the genre",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (default: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of TV series for the specified genre",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedSeriesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/{seriesId}/cast": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get TV series cast",
+                "description": "Returns the cast list of a specific TV series",
+                "operationId": "getSeriesCast",
+                "parameters": [
+                    {
+                        "name": "seriesId",
+                        "in": "path",
+                        "description": "ID of the TV series",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "TV series cast",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeriesCastResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "TV series not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/{seriesId}/videos": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get TV series videos",
+                "description": "Returns videos (trailers, teasers, etc.) associated with a TV series",
+                "operationId": "getSeriesVideos",
+                "parameters": [
+                    {
+                        "name": "seriesId",
+                        "in": "path",
+                        "description": "ID of the TV series",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "TV series videos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeriesVideoResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No videos found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/{seriesId}/watch-providers": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get streaming providers",
+                "description": "Returns streaming platforms where the TV series is available",
+                "operationId": "getSeriesWatchProviders",
+                "parameters": [
+                    {
+                        "name": "seriesId",
+                        "in": "path",
+                        "description": "ID of the TV series",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "region",
+                        "in": "query",
+                        "description": "Region code (default: ES)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "ES"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Streaming providers found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeriesProvidersResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No providers found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/{seriesId}/images": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get TV series images",
+                "description": "Returns images associated with a TV series (posters, backdrops, etc.)",
+                "operationId": "getSeriesImages",
+                "parameters": [
+                    {
+                        "name": "seriesId",
+                        "in": "path",
+                        "description": "ID of the TV series",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "TV series images",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeriesImagesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "TV series not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/series/{seriesId}/reviews": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get TV series reviews",
+                "description": "Returns reviews and ratings associated with a TV series",
+                "operationId": "getSeriesReviews",
+                "parameters": [
+                    {
+                        "name": "seriesId",
+                        "in": "path",
+                        "description": "ID of the TV series",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "TV series reviews",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeriesReviewsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "TV series not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tmdb/categories": {
+            "get": {
+                "tags": [
+                    "TMDB"
+                ],
+                "summary": "Obtener todas las categorías/géneros",
+                "description": "Retorna la lista completa de categorías/géneros disponibles en TMDB",
+                "operationId": "getAllCategories",
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorías recuperada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tmdb/trending": {
+            "get": {
+                "tags": [
+                    "TMDB"
+                ],
+                "summary": "Obtener contenido trending",
+                "description": "Retorna una lista paginada de películas y series que son tendencia",
+                "operationId": "getAllTrending",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página (por defecto: 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de contenido trending recuperada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 550
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Fight Club"
+                                                            },
+                                                            "overview": {
+                                                                "type": "string"
+                                                            },
+                                                            "poster_path": {
+                                                                "type": "string",
+                                                                "nullable": true
+                                                            },
+                                                            "backdrop_path": {
+                                                                "type": "string",
+                                                                "nullable": true
+                                                            },
+                                                            "release_date": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "nullable": true
+                                                            },
+                                                            "vote_average": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 8.4
+                                                            },
+                                                            "media_type": {
+                                                                "type": "string",
+                                                                "enum": [
+                                                                    "movie",
+                                                                    "tv"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List users",
+                "description": "Get the complete list of users (admin only)",
+                "operationId": "listUsers",
+                "responses": {
+                    "200": {
+                        "description": "Users list retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not authorized to list users",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create user",
+                "description": "Create a new user (admin only)",
+                "operationId": "createUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not authorized to create users",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid validation data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user",
+                "description": "Update an existing user (admin or account owner)",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not authorized to update this user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid validation data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete user",
+                "description": "Delete a user (admin or account owner)",
+                "operationId": "deleteUser",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not authorized to delete this user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/forgot-password": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Request password reset",
+                "description": "Send a password reset link to the user's email",
+                "operationId": "forgotPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ForgotPasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Reset link sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Email not found or invalid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reset-password": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Confirm password reset",
+                "description": "Reset user's password using the received token",
+                "operationId": "resetPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResetPasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid token or validation data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ErrorResponse": {
+                "description": "General error response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "An error occurred"
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationErrorResponse": {
+                "description": "Validation error response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "type": "object",
+                        "example": {
+                            "email": [
+                                "The email field is required."
+                            ]
+                        },
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "FavoriteRequest": {
+                "title": "Favorite Request",
+                "description": "Datos necesarios para añadir un favorito",
+                "required": [
+                    "item_type",
+                    "tmdb_id"
+                ],
+                "properties": {
+                    "item_type": {
+                        "type": "string",
+                        "enum": [
+                            "movie",
+                            "series"
+                        ],
+                        "example": "movie"
+                    },
+                    "tmdb_id": {
+                        "type": "integer",
+                        "example": 550
+                    }
+                },
+                "type": "object"
+            },
+            "FavoriteResponse": {
+                "description": "Favorite item response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Favorite item retrieved successfully"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/Favorite"
+                    }
+                },
+                "type": "object"
+            },
+            "Favorite": {
+                "title": "Favorite",
+                "description": "Información de un favorito",
+                "required": [
+                    "id",
+                    "user_id",
+                    "tmdb_id",
+                    "item_type"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tmdb_id": {
+                        "type": "integer",
+                        "example": 550
+                    },
+                    "item_type": {
+                        "type": "string",
+                        "enum": [
+                            "movie",
+                            "series"
+                        ],
+                        "example": "movie"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Fight Club"
+                    },
+                    "poster_path": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "release_date": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-05-10T15:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "MovieCastResponse": {
+                "description": "Movie cast and crew response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/MovieCast"
+                    }
+                },
+                "type": "object"
+            },
+            "MovieCast": {
+                "description": "Movie cast and crew information",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 550
+                    },
+                    "cast": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 819
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Edward Norton"
+                                },
+                                "character": {
+                                    "type": "string",
+                                    "example": "The Narrator"
+                                },
+                                "profile_path": {
+                                    "type": "string",
+                                    "example": "/5XBzD5WuTyVQZeS4VI25z2moMeY.jpg",
+                                    "nullable": true
+                                },
+                                "order": {
+                                    "type": "integer",
+                                    "example": 0
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "crew": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 7467
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "David Fincher"
+                                },
+                                "job": {
+                                    "type": "string",
+                                    "example": "Director"
+                                },
+                                "department": {
+                                    "type": "string",
+                                    "example": "Directing"
+                                },
+                                "profile_path": {
+                                    "type": "string",
+                                    "example": "/dcYtGQxqQxQxQxQxQxQxQxQxQxQx.jpg",
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "MovieCreatorResponse": {
+                "description": "Movie creator/director response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "profile_path": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "job": {
+                                "type": "string",
+                                "example": "Director"
+                            },
+                            "department": {
+                                "type": "string",
+                                "example": "Directing"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "MovieDetailResponse": {
+                "description": "Movie details response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/MovieDetails"
+                    }
+                },
+                "type": "object"
+            },
+            "MovieDetails": {
+                "description": "Complete movie details",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 550
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Fight Club"
+                    },
+                    "overview": {
+                        "type": "string",
+                        "example": "An insomniac office worker and a devil-may-care soapmaker..."
+                    },
+                    "release_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1999-10-15"
+                    },
+                    "poster_path": {
+                        "type": "string",
+                        "example": "/8kNruSfhk5IoE4eZOc4UpvDn6tq.jpg",
+                        "nullable": true
+                    },
+                    "vote_average": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 8.4
+                    },
+                    "backdrop_path": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "genres": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "runtime": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "tagline": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "MovieImage": {
+                "description": "Movie image information",
+                "properties": {
+                    "file_path": {
+                        "type": "string",
+                        "example": "/8kNruSfhk5IoE4eZOc4UpvDn6tq.jpg"
+                    },
+                    "width": {
+                        "type": "integer",
+                        "example": 1920
+                    },
+                    "height": {
+                        "type": "integer",
+                        "example": 1080
+                    },
+                    "aspect_ratio": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1.78
+                    }
+                },
+                "type": "object"
+            },
+            "MovieImagesResponse": {
+                "description": "Movie images response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "properties": {
+                            "backdrops": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/MovieImage"
+                                }
+                            },
+                            "posters": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/MovieImage"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "MovieItem": {
+                "description": "Basic movie information",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 550
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Fight Club"
+                    },
+                    "overview": {
+                        "type": "string",
+                        "example": "An insomniac office worker and a devil-may-care soapmaker..."
+                    },
+                    "release_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1999-10-15"
+                    },
+                    "poster_path": {
+                        "type": "string",
+                        "example": "/8kNruSfhk5IoE4eZOc4UpvDn6tq.jpg",
+                        "nullable": true
+                    },
+                    "vote_average": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 8.4
+                    }
+                },
+                "type": "object"
+            },
+            "MovieProvidersResponse": {
+                "description": "Movie streaming providers response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "properties": {
+                            "results": {
+                                "properties": {
+                                    "ES": {
+                                        "properties": {
+                                            "link": {
+                                                "type": "string"
+                                            },
+                                            "flatrate": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/WatchProvider"
+                                                }
+                                            },
+                                            "rent": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/WatchProvider"
+                                                }
+                                            },
+                                            "buy": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/WatchProvider"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "MovieReview": {
+                "description": "Movie review information",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "5d4b0c4b3d4b0c4b3d4b0c4b"
+                    },
+                    "author": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "This movie was amazing..."
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "rating": {
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 10,
+                        "minimum": 0,
+                        "example": 8.5
+                    }
+                },
+                "type": "object"
+            },
+            "MovieReviewsResponse": {
+                "description": "Movie reviews response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MovieReview"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "MovieVideoResponse": {
+                "description": "Movie videos response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MovieVideo"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "MovieVideo": {
+                "description": "Movie video information",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "5d4b0c4b3d4b0c4b3d4b0c4b"
+                    },
+                    "key": {
+                        "type": "string",
+                        "example": "dQw4w9WgXcQ"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Official Trailer"
+                    },
+                    "site": {
+                        "type": "string",
+                        "example": "YouTube"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "Trailer"
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatedMovieResponse": {
+                "description": "Paginated response containing movie items",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PaginatedResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/MovieItem"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "WatchProvider": {
+                "description": "Streaming provider information",
+                "properties": {
+                    "provider_id": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "provider_name": {
+                        "type": "string",
+                        "example": "Netflix"
+                    },
+                    "logo_path": {
+                        "type": "string",
+                        "example": "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg"
+                    }
+                },
+                "type": "object"
+            },
+            "ReviewListResponse": {
+                "description": "List of reviews response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Reviews retrieved successfully"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Review"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ReviewRequest": {
+                "description": "Data required to create a review",
+                "required": [
+                    "item_type",
+                    "tmdb_id",
+                    "rating"
+                ],
+                "properties": {
+                    "item_type": {
+                        "type": "string",
+                        "enum": [
+                            "movie",
+                            "series"
+                        ],
+                        "example": "movie"
+                    },
+                    "tmdb_id": {
+                        "type": "integer",
+                        "example": 550
+                    },
+                    "rating": {
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 10,
+                        "minimum": 0,
+                        "example": 8.5
+                    },
+                    "review": {
+                        "type": "string",
+                        "example": "An excellent movie...",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ReviewResponse": {
+                "description": "Single review response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Review operation successful"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/Review"
+                    }
+                },
+                "type": "object"
+            },
+            "Review": {
+                "description": "Review information",
+                "required": [
+                    "id",
+                    "user_id",
+                    "tmdb_id",
+                    "item_type",
+                    "rating"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "photo_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "tmdb_id": {
+                        "type": "integer",
+                        "example": 550
+                    },
+                    "item_type": {
+                        "type": "string",
+                        "enum": [
+                            "movie",
+                            "series"
+                        ],
+                        "example": "movie"
+                    },
+                    "rating": {
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 10,
+                        "minimum": 0,
+                        "example": 8.5
+                    },
+                    "review": {
+                        "type": "string",
+                        "example": "An excellent movie...",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Fight Club"
+                    },
+                    "poster_path": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ReviewUpdateRequest": {
+                "description": "Data required to update a review",
+                "required": [
+                    "rating"
+                ],
+                "properties": {
+                    "rating": {
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 10,
+                        "minimum": 0,
+                        "example": 8.5
+                    },
+                    "review": {
+                        "type": "string",
+                        "example": "An excellent movie...",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatedSeriesResponse": {
+                "description": "Paginated response of TV series",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 2000
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SeriesItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SeriesCastResponse": {
+                "description": "TV series cast response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 123
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Kit Harington"
+                                },
+                                "character": {
+                                    "type": "string",
+                                    "example": "Jon Snow"
+                                },
+                                "profile_path": {
+                                    "type": "string",
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SeriesDetails": {
+                "description": "Complete TV series details",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SeriesItem"
+                    },
+                    {
+                        "properties": {
+                            "number_of_seasons": {
+                                "type": "integer",
+                                "example": 8
+                            },
+                            "number_of_episodes": {
+                                "type": "integer",
+                                "example": 73
+                            },
+                            "status": {
+                                "type": "string",
+                                "example": "Ended"
+                            },
+                            "genres": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "SeriesImagesResponse": {
+                "description": "TV series images response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "properties": {
+                            "backdrops": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "file_path": {
+                                            "type": "string"
+                                        },
+                                        "width": {
+                                            "type": "integer"
+                                        },
+                                        "height": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "posters": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "file_path": {
+                                            "type": "string"
+                                        },
+                                        "width": {
+                                            "type": "integer"
+                                        },
+                                        "height": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "SeriesItem": {
+                "description": "Basic TV series information",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1399
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Game of Thrones"
+                    },
+                    "overview": {
+                        "type": "string",
+                        "example": "Seven noble families fight for control of the mythical land of Westeros..."
+                    },
+                    "first_air_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2011-04-17"
+                    },
+                    "poster_path": {
+                        "type": "string",
+                        "example": "/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg",
+                        "nullable": true
+                    },
+                    "vote_average": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 8.4
+                    }
+                },
+                "type": "object"
+            },
+            "SeriesProvidersResponse": {
+                "description": "TV series streaming providers response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "properties": {
+                            "results": {
+                                "properties": {
+                                    "ES": {
+                                        "properties": {
+                                            "link": {
+                                                "type": "string"
+                                            },
+                                            "flatrate": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "provider_id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "provider_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "logo_path": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "SeriesReviewsResponse": {
+                "description": "TV series reviews response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Review"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SeriesVideoResponse": {
+                "description": "TV series videos response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "5c9d44ff0e0a267cd516988f"
+                                },
+                                "key": {
+                                    "type": "string",
+                                    "example": "KPLWWIOCOOQ"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Official Trailer"
+                                },
+                                "site": {
+                                    "type": "string",
+                                    "example": "YouTube"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "example": "Trailer"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryResponse": {
+                "description": "Response containing list of categories/genres",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 28
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Action"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatedResponse": {
+                "description": "Base schema for paginated responses",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 2000
+                    }
+                },
+                "type": "object"
+            },
+            "ForgotPasswordRequest": {
+                "description": "Request body for password reset link",
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    }
+                },
+                "type": "object"
+            },
+            "PasswordResetResponse": {
+                "description": "Response after password reset or reset link sent",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "passwords.sent"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Password reset link sent successfully"
+                    }
+                },
+                "type": "object"
+            },
+            "ResetPasswordRequest": {
+                "description": "Request body for resetting password",
+                "required": [
+                    "token",
+                    "email",
+                    "password",
+                    "password_confirmation"
+                ],
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "example": "reset-token-123"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "newpassword123"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "newpassword123"
+                    }
+                },
+                "type": "object"
+            },
+            "UserCreateRequest": {
+                "description": "Request body for creating a user",
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "is_admin"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123"
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "UserListResponse": {
+                "description": "Users list response",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PaginatedResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "UserResponse": {
+                "description": "Single user response",
+                "properties": {
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    },
+                    "photo_url": {
+                        "type": "string",
+                        "example": "https://example.com/photo.jpg",
+                        "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "description": "User information",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "UserUpdateRequest": {
+                "description": "Request body for updating a user",
+                "required": [
+                    "name",
+                    "email"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123",
+                        "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Authentication using Laravel Sanctum. Include the token in the Authorization header as 'Bearer {token}'",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authentication and session management endpoints"
+        },
+        {
+            "name": "Favorites",
+            "description": "Endpoints for managing user favorites"
+        },
+        {
+            "name": "Movies",
+            "description": "Endpoints for movie management"
+        },
+        {
+            "name": "Reviews",
+            "description": "Operaciones relacionadas con reseñas de películas y series"
+        },
+        {
+            "name": "Series",
+            "description": "Endpoints for series management"
+        },
+        {
+            "name": "TMDB",
+            "description": "Operaciones generales de TMDB - categorías y contenido trending"
+        },
+        {
+            "name": "Users",
+            "description": "Endpoints for user management"
+        }
+    ]
+}
