@@ -121,6 +121,9 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
     <main className="profile-page">
       <div className="profile-page__container">
         <h1 className="profile-page__title">Mi Cuenta</h1>
+        <p className="profile-page__welcome text-gray-400 mb-6">
+          ¡Bienvenido/a, <span className="text-pixela-accent font-medium">{user.name}</span>! Aquí puedes gestionar tu perfil y preferencias.
+        </p>
         <ProfileTabs
           activeTab={activeTab}
           onTabChange={handleTabChange}
