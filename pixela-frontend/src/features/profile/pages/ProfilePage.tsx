@@ -33,7 +33,6 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
   const [user, setUser] = useState<UserResponse>(initialUser);
   const [redirecting, setRedirecting] = useState(false);
 
-  // Estado para favoritos
   const [favorites, setFavorites] = useState<FavoriteWithDetails[]>([]);
   const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
@@ -88,8 +87,8 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
       }
 
       const updatedUser = await usersAPI.update(userData);
-      //Los errores de lint (en user) no afectan al funcionamiento del código
-      const userToSet = updatedUser.user ? updatedUser.user : updatedUser;
+      // La respuesta de la API puede venir en dos formatos, manejamos ambos casos
+      const userToSet = (updatedUser as any).user || updatedUser;
 
       // Si se actualizó la contraseña, redirigir
       if (data.password) {
@@ -122,6 +121,9 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
     <main className="profile-page">
       <div className="profile-page__container">
         <h1 className="profile-page__title">Mi Cuenta</h1>
+        <p className="profile-page__welcome text-gray-400 mb-6">
+          ¡Bienvenido/a, <span className="text-pixela-accent font-medium">{user.name}</span>! Aquí puedes gestionar tu perfil y preferencias.
+        </p>
         <ProfileTabs
           activeTab={activeTab}
           onTabChange={handleTabChange}
@@ -180,11 +182,11 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
               title="Usuarios"
               headerAction={
                 <button
-                  className="w-8 h-8 flex items-center justify-center rounded-full border-2 border-pixela-accent text-pixela-accent hover:bg-pixela-accent/10 transition-colors ml-2"
+                  className="px-4 py-1.5 flex items-center justify-center rounded-md bg-pixela-accent text-white text-sm font-medium hover:bg-pixela-accent/90 transition-colors"
                   title="Registrar nuevo usuario"
                   onClick={() => setShowCreateModal(true)}
                 >
-                  +
+                  Agregar nuevo usuario
                 </button>
               }
             >
