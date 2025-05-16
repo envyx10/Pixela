@@ -26,8 +26,8 @@
     gap: $spacing-sm;
     background-color: #ec1b69;
     color: $text-primary;
-    padding: $spacing-sm $spacing-lg;
-    border-radius: 9999px; // rounded-full
+    padding: $spacing-xs $spacing-lg;
+    border-radius: $border-radius-md;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s;
