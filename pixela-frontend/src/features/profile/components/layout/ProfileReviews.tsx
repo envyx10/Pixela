@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { reviewsAPI } from '@/api/reviews/reviews';
 import { Review } from '@/api/reviews/types';
 import { FiLoader, FiAlertCircle, FiStar, FiEdit, FiCheck, FiX } from 'react-icons/fi';
 import { FaTrash } from 'react-icons/fa';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
@@ -154,15 +155,23 @@ export function ProfileReviews() {
           className="flex items-center bg-pixela-dark-opacity/50 hover:bg-pixela-dark-opacity/70 transition-all duration-300 -mr-6"
         >
           {/* Imagen del poster si existe */}
-          <div className="relative w-[100px] h-[150px] flex-shrink-0">
+          <div className="relative w-[100px] h-[150px] flex-shrink-0 group">
             {review.poster_path ? (
-              <Image
-                src={`${TMDB_IMAGE_BASE_URL}${review.poster_path}`}
-                alt={review.title || (review.item_type === 'movie' ? 'Película' : 'Serie')}
-                fill
-                className="object-cover"
-                sizes="100px"
-              />
+              <Link 
+                href={`/${review.item_type === 'movie' ? 'movies' : 'series'}/${review.tmdb_id}`}
+                className="block w-full h-full"
+              >
+                <Image
+                  src={`${TMDB_IMAGE_BASE_URL}${review.poster_path}`}
+                  alt={review.title || (review.item_type === 'movie' ? 'Película' : 'Serie')}
+                  fill
+                  className="object-cover cursor-pointer transition-all duration-300 group-hover:scale-105"
+                  sizes="100px"
+                />
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">Ver detalles</span>
+                </div>
+              </Link>
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-pixela-dark text-gray-500 text-sm text-center px-2">
                 Sin imagen
