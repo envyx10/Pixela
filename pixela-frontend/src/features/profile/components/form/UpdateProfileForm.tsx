@@ -69,13 +69,15 @@ export const UpdateProfileForm = ({
                   className="profile-edit__avatar-image"
                   width={120}
                   height={120}
+                  priority
                 />
               ) : (
-                <span className="profile-edit__avatar-placeholder">
-                  {initialData.name.charAt(0).toUpperCase()}
-                </span>
+                <div className="profile-edit__avatar-placeholder">
+                  <span>{initialData.name.charAt(0).toUpperCase()}</span>
+                </div>
               )}
             </div>
+            <div className="profile-edit__avatar-overlay" />
             <input
               type="file"
               accept="image/*"
@@ -90,7 +92,7 @@ export const UpdateProfileForm = ({
             onClick={handleAvatarClick}
             className="profile-edit__upload-button"
           >
-            Subir foto
+            {profileImage ? 'Cambiar foto' : 'Subir foto'}
           </button>
           {imageError && (
             <p className="profile-edit__error">{imageError}</p>
@@ -161,17 +163,17 @@ export const UpdateProfileForm = ({
 
           <div className="profile-edit__actions">
             <button
+              type="submit"
+              className="profile-edit__button profile-edit__button--submit"
+            >
+              Guardar Cambios
+            </button>
+            <button
               type="button"
               onClick={onCancel}
               className="profile-edit__button profile-edit__button--cancel"
             >
               Descartar
-            </button>
-            <button
-              type="submit"
-              className="profile-edit__button profile-edit__button--submit"
-            >
-              Guardar Cambios
             </button>
           </div>
         </form>
