@@ -38,11 +38,7 @@ class AuthController extends Controller
      */
     public function user(Request $request): JsonResponse
     {
-        return response()->json([
-            'success' => true,
-            'message' => 'User information retrieved successfully',
-            'user' => $request->user()
-        ]);
+        return response()->json($request->user());
     }
 
     /**
@@ -80,23 +76,22 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        // Revoke all API tokens
+        // Revoca todos los tokens de API
         if ($user = $request->user()) {
             $user->tokens()->delete();
         }
 
-        // Invalidate current session
+        // Invalida la sesión actual
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Clear session cookie
+        // Limpia la cookie de sesión
         Cookie::queue(Cookie::forget('pixela_session'));
 
         return response()
             ->json([
-                'success' => true,
-                'data' => ['message' => 'Successfully logged out'],
+                'data' => ['message' => 'Sesión cerrada.'],
                 'meta' => ['timestamp' => now()],
             ], 200);
     }

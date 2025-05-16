@@ -7,7 +7,7 @@
 /storage/pail
 /vendor
 .env
-.env.example
+!.env.example
 .env.backup
 .env.production
 .phpactor.json

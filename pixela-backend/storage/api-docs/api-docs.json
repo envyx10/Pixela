@@ -3,6 +3,13 @@
     "info": {
         "title": "Pixela API Documentation",
         "description": "API Documentation for Pixela - A platform for tracking and managing your movie and series watching history",
+        "contact": {
+            "email": "admin@pixela.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
         "version": "1.0.0"
     },
     "servers": [
@@ -3344,16 +3351,35 @@
             "UserResponse": {
                 "description": "Single user response",
                 "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
                     },
-                    "message": {
+                    "name": {
                         "type": "string",
-                        "example": "User operation successful"
+                        "example": "John Doe"
                     },
-                    "user": {
-                        "$ref": "#/components/schemas/User"
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    },
+                    "photo_url": {
+                        "type": "string",
+                        "example": "https://example.com/photo.jpg",
+                        "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"

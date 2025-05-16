@@ -49,10 +49,7 @@ class UserController extends Controller
     public function list(Request $request): JsonResponse
     {
         if (!$request->user()->is_admin) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You are not authorized to list users'
-            ], 403);
+            return response()->json(['message' => 'You are not authorized to list users'], 403);
         }
 
         $users = User::all()->map(function ($user) {
@@ -69,7 +66,6 @@ class UserController extends Controller
         });
 
         return response()->json([
-            'success' => true,
             'message' => 'Users listed successfully',
             'users' => $users
         ], 200);
@@ -112,10 +108,7 @@ class UserController extends Controller
     public function create(Request $request): JsonResponse
     {
         if (!$request->user()->is_admin) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You are not authorized to create users'
-            ], 403);
+            return response()->json(['message' => 'You are not authorized to create users'], 403);
         }
 
         $request->validate([
@@ -133,7 +126,6 @@ class UserController extends Controller
         ]);
 
         return response()->json([
-            'success' => true,
             'message' => 'User created successfully',
             'user' => $user
         ], 201);
@@ -185,10 +177,7 @@ class UserController extends Controller
         $authUser = $request->user();
 
         if (!$authUser->is_admin && $authUser->user_id !== $user->user_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You are not authorized to update this user'
-            ], 403);
+            return response()->json(['message' => 'You are not authorized to update this user'], 403);
         }
 
         $request->validate([
@@ -247,15 +236,11 @@ class UserController extends Controller
     public function delete(Request $request, User $user): JsonResponse
     {
         if (!$request->user()->is_admin && $request->user()->user_id !== $user->user_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You are not authorized to delete this user'
-            ], 403);
+            return response()->json(['message' => 'You are not authorized to delete this user'], 403);
         }
 
         $user->delete();
         return response()->json([
-            'success' => true,
             'message' => 'User deleted successfully',
             'user' => $user
         ], 200);
