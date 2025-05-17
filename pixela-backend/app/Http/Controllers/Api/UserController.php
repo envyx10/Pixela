@@ -185,6 +185,7 @@ class UserController extends Controller
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->user_id, 'user_id')],
             'password' => ['nullable', Rules\Password::defaults()],
             'is_admin' => ['nullable', 'boolean'],
+            'photo_url' => ['nullable', 'string'],
         ]);
 
         $user->update([
@@ -192,6 +193,7 @@ class UserController extends Controller
             'email'    => $request->email,
             'password' => $request->password ? Hash::make($request->password) : $user->password,
             'is_admin' => $request->is_admin ?? $user->is_admin,
+            'photo_url' => $request->photo_url ?? $user->photo_url,
         ]);
 
         return response()->json([

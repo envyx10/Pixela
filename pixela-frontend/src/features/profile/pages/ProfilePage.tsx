@@ -86,9 +86,9 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
         userData.password = '';
       }
 
-      const updatedUser = await usersAPI.update(userData);
+      const response = await usersAPI.update(userData);
       // La respuesta de la API puede venir en dos formatos, manejamos ambos casos
-      const userToSet = (updatedUser as any).user || updatedUser;
+      const userToSet = (response as any).user || response;
 
       // Si se actualizó la contraseña, redirigir
       if (data.password) {

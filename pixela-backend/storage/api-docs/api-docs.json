@@ -3400,6 +3400,11 @@
                         "format": "email",
                         "example": "john@example.com"
                     },
+                    "photo_url": {
+                        "description": "Base64 encoded profile image",
+                        "type": "string",
+                        "nullable": true
+                    },
                     "email_verified_at": {
                         "type": "string",
                         "format": "date-time",

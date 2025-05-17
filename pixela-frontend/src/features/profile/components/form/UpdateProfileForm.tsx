@@ -34,11 +34,46 @@ export const UpdateProfileForm = ({
         return;
       }
       
+      // Validar el tamaño del archivo (máximo 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        setImageError('La imagen no debe superar los 2MB');
+        return;
+      }
+      
       setImageError(null);
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target?.result) {
-          setProfileImage(e.target.result as string);
+          // Redimensionar la imagen antes de guardarla
+          const img = new window.Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_SIZE = 300; // Tamaño máximo en píxeles
+            let width = img.width;
+            let height = img.height;
+            
+            if (width > height) {
+              if (width > MAX_SIZE) {
+                height = Math.round((height * MAX_SIZE) / width);
+                width = MAX_SIZE;
+              }
+            } else {
+              if (height > MAX_SIZE) {
+                width = Math.round((width * MAX_SIZE) / height);
+                height = MAX_SIZE;
+              }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, width, height);
+            
+            // Convertir a base64 con calidad reducida
+            const resizedImage = canvas.toDataURL('image/jpeg', 0.7);
+            setProfileImage(resizedImage);
+          };
+          img.src = e.target.result as string;
         }
       };
       reader.readAsDataURL(file);
@@ -52,7 +87,12 @@ export const UpdateProfileForm = ({
   };
 
   const onFormSubmit = (data: ProfileFormData) => {
-    onSubmit({ ...data, photo_url: profileImage });
+    // Asegurarse de que la imagen se envíe solo si ha cambiado
+    const formData = {
+      ...data,
+      photo_url: profileImage !== initialData.photo_url ? profileImage : undefined
+    };
+    onSubmit(formData);
   };
 
   return (
