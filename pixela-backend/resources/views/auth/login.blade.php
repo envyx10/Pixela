@@ -19,7 +19,6 @@
                 required 
                 autofocus 
                 autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2 text-[14px] font-['Outfit']" />
         </div>
 
         <!-- Password -->
@@ -33,8 +32,14 @@
                 placeholder="Contraseña"
                 required 
                 autocomplete="current-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2 text-[14px] font-['Outfit']" />
         </div>
+
+        <!-- Mensaje de error de autenticación -->
+        @if ($errors->has('email'))
+            <div class="text-[#ec1b69] text-[14px] font-['Outfit']">
+                {{ __('auth.failed') }}
+            </div>
+        @endif
 
         <!-- Remember Me -->
         <div class="flex items-center mb-6">
@@ -57,14 +62,14 @@
         <!-- Enlaces de ayuda -->
         <div class="flex flex-col gap-4">
             @if (Route::has('password.request'))
-                <a class="text-[15px] font-['Outfit'] text-gray-400 hover:text-[#ec1b69] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 focus:ring-offset-[#181818] rounded-md px-2 -ml-2" href="{{ route('password.request') }}">
+                <a class="text-[15px] font-['Outfit'] text-gray-400 hover:text-[#ec1b69] transition-colors duration-300" href="{{ route('password.request') }}">
                     {{ __('¿Olvidaste tu contraseña?') }}
                 </a>
             @endif
             
             <div class="text-[15px] font-['Outfit'] text-gray-400">
                 {{ __('¿No tienes cuenta?') }}
-                <a class="ml-1 text-[#ec1b69] hover:text-[#ec1b69]/80 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ec1b69] focus:ring-offset-[#181818] rounded-md px-2 py-1" href="{{ route('register') }}">
+                <a class="ml-2 text-[#ec1b69] hover:text-[#ec1b69]/80 transition-colors duration-300" href="{{ route('register') }}">
                     {{ __('Regístrate') }}
                 </a>
             </div>

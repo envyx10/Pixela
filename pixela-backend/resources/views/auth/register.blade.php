@@ -65,14 +65,21 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-[14px] font-['Outfit']" />
         </div>
 
-        <div class="flex items-center justify-between mt-8">
+        <!-- Mensaje de éxito -->
+        @if (session('status'))
+            <div class="text-green-500 text-[14px] font-['Outfit']">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        <div class="flex items-center gap-10 mt-8">
             <div class="w-1/2">
                 <x-rounded-button>
                     Registrar
                 </x-rounded-button>
             </div>
             
-            <a class="text-[14px] font-['Outfit'] text-gray-500 hover:text-[#ec1b69] transition-colors duration-300" href="{{ route('login') }}">
+            <a class="text-[14px] font-['Outfit'] text-[#ec1b69] hover:text-[#ec1b69]/80 transition-colors duration-300" href="{{ route('login') }}">
                 {{ __('¿Ya tienes cuenta?') }}
             </a>
         </div>

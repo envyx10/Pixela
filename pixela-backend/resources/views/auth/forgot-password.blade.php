@@ -28,14 +28,14 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2 text-[14px] font-['Outfit']" />
         </div>
 
-        <div class="flex items-center justify-between mt-8">
+        <div class="flex items-center gap-10 mt-8">
             <div class="w-1/2">
                 <x-rounded-button>
                     {{ __('Enviar enlace') }}
                 </x-rounded-button>
             </div>
             
-            <a class="text-[14px] font-['Outfit'] text-gray-500 hover:text-[#ec1b69] transition-colors duration-300" href="{{ route('login') }}">
+            <a class="text-[14px] font-['Outfit'] text-[#ec1b69] hover:text-[#ec1b69]/80 transition-colors duration-300" href="{{ route('login') }}">
                 {{ __('Volver al login') }}
             </a>
         </div>
