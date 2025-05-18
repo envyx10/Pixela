@@ -4,7 +4,7 @@ import Image from "next/image";
 import clsx from 'clsx';
 import { useHeroStore } from "../store";
 
-const styles = {
+const STYLES = {
   carousel: {
     base: "absolute inset-0 w-full h-full",
     imageContainer: {
@@ -40,11 +40,11 @@ interface ImageCarouselProps {
  */
 const VisualOverlays = () => (
   <>
-    <div className={clsx(styles.overlays.base, styles.overlays.darkOverlay)} />
-    <div className={clsx(styles.overlays.base, styles.overlays.gradientOverlay)} />
-    <div className={styles.overlays.topGradient} />
-    <div className={styles.overlays.topGradient} />
-    <div className={styles.overlays.bottomGradient} />
+    <div className={clsx(STYLES.overlays.base, STYLES.overlays.darkOverlay)} />
+    <div className={clsx(STYLES.overlays.base, STYLES.overlays.gradientOverlay)} />
+    <div className={STYLES.overlays.topGradient} />
+    <div className={STYLES.overlays.topGradient} />
+    <div className={STYLES.overlays.bottomGradient} />
   </>
 );
 
@@ -58,11 +58,11 @@ const OptimizedHeroImage = ({
   src: string; 
   index: number;
 }) => (
-  <div className={styles.image.container}>
+  <div className={STYLES.image.container}>
     <Image
       src={src}
       alt={`Hero background image ${index + 1}`}
-      className={styles.image.base}
+      className={STYLES.image.base}
       style={{ objectPosition: 'center 35%' }}
       width={1920}
       height={1080}
@@ -83,11 +83,11 @@ export const ImageCarousel = ({ images }: ImageCarouselProps) => {
   const { currentImageIndex, fadeIn } = useHeroStore();
 
   return (
-    <div className={styles.carousel.base}>
+    <div className={STYLES.carousel.base}>
       <div
         className={clsx(
-          styles.carousel.imageContainer.base,
-          fadeIn ? styles.carousel.imageContainer.fadeIn : styles.carousel.imageContainer.fadeOut
+          STYLES.carousel.imageContainer.base,
+          fadeIn ? STYLES.carousel.imageContainer.fadeIn : STYLES.carousel.imageContainer.fadeOut
         )}
         aria-hidden="true"
         role="presentation"

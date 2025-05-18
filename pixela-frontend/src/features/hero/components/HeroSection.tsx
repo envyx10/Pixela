@@ -3,7 +3,7 @@ import { useEffect, useCallback, useMemo } from "react";
 import { ImageCarousel, NavigationControls, ProgressIndicator, ContentSection} from "../components/index";
 import { useHeroStore } from "../store";
 
-const styles = {
+const STYLES = {
   hero: {
     base: "relative w-full h-screen overflow-hidden"
   }
@@ -88,7 +88,7 @@ export const HeroSection = ({
   useProgressBar();
   
   return (
-    <div className={styles.hero.base}>
+    <div className={STYLES.hero.base}>
       <ImageCarousel images={images} />
       <NavigationControls imagesLength={imagesLength}/>
       <ProgressIndicator images={images}/>

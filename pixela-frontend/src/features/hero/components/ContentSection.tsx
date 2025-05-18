@@ -3,7 +3,7 @@ import { FiChevronDown } from "react-icons/fi";
 import { HeroContent } from "../type";
 import clsx from "clsx";
 
-const styles = {
+const STYLES = {
   accentLine: {
     base: "w-24 h-1 bg-pixela-accent",
     withMargin: "mb-8"
@@ -36,7 +36,7 @@ interface AccentLineProps {
  * Componente que muestra una línea de acento decorativa
  */
 const AccentLine = ({ className }: AccentLineProps) => (
-  <div className={clsx(styles.accentLine.base, className)} />
+  <div className={clsx(STYLES.accentLine.base, className)} />
 );
 
 /**
@@ -51,9 +51,9 @@ interface HeroTitleProps {
  * Componente que muestra el título principal del hero
  */
 const HeroTitle = ({ title, accentTitle }: HeroTitleProps) => (
-  <h1 className={styles.heroTitle.base}>
+  <h1 className={STYLES.heroTitle.base}>
     {title}<br />
-    <span className={styles.heroTitle.accent}>{accentTitle}</span>
+    <span className={STYLES.heroTitle.accent}>{accentTitle}</span>
   </h1>
 );
 
@@ -71,12 +71,12 @@ interface SecondaryButtonProps {
 const SecondaryButton = ({ text, href }: SecondaryButtonProps) => (
   <Link 
     href={href}
-    className={styles.secondaryButton.base}
+    className={STYLES.secondaryButton.base}
   >
-    <span className={styles.secondaryButton.text}>
+    <span className={STYLES.secondaryButton.text}>
       {text}
     </span>
-    <FiChevronDown className={styles.secondaryButton.icon} />
+    <FiChevronDown className={STYLES.secondaryButton.icon} />
   </Link>
 );
 
@@ -91,20 +91,20 @@ export const ContentSection = ({
   secondaryButtonText,
 }: HeroContent) => {
   return (
-    <div className={styles.contentSection.base}>
-      <div className={styles.contentSection.container}>
-        <AccentLine className={styles.accentLine.withMargin} />
+    <div className={STYLES.contentSection.base}>
+      <div className={STYLES.contentSection.container}>
+        <AccentLine className={STYLES.accentLine.withMargin} />
         
         <HeroTitle 
           title={title} 
           accentTitle={accentTitle} 
         />
         
-        <p className={styles.contentSection.description}>
+        <p className={STYLES.contentSection.description}>
           {description}
         </p>
         
-        <div className={styles.contentSection.buttonsContainer}>
+        <div className={STYLES.contentSection.buttonsContainer}>
           <SecondaryButton 
             text={secondaryButtonText} 
             href="#tendencias" 

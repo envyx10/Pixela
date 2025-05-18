@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { useHeroStore } from "../store";
 import { FiPlay, FiPause } from "react-icons/fi";
 
-const styles = {
+const STYLES = {
   progress: {
     container: "absolute bottom-28 left-1/2 transform -translate-x-1/2 z-20 w-full max-w-xl",
     content: "flex flex-col items-center gap-4",
@@ -47,8 +47,8 @@ const SlideDot = ({
   <button
     onClick={onClick}
     className={clsx(
-      styles.dot.base,
-      isActive ? styles.dot.active : styles.dot.inactive
+      STYLES.dot.base,
+      isActive ? STYLES.dot.active : STYLES.dot.inactive
     )}
     aria-label={`Ir a imagen ${index + 1}`}
   />
@@ -58,9 +58,9 @@ const SlideDot = ({
  * Componente que muestra la barra de progreso del carrusel
  */
 const ProgressBar = ({ progress }: { progress: number }) => (
-  <div className={styles.bar.container}>
+  <div className={STYLES.bar.container}>
     <div 
-      className={styles.bar.fill}
+      className={STYLES.bar.fill}
       style={{ width: `${progress}%` }}
     />
   </div>
@@ -78,12 +78,12 @@ const PlaybackControl = ({
 }) => (
   <button 
     onClick={onToggle} 
-    className={styles.playback.button}
+    className={STYLES.playback.button}
     aria-label={isPlaying ? "Pausar" : "Reproducir"}
   >
     {isPlaying ? 
-      <FiPause className={styles.playback.icon} /> : 
-      <FiPlay className={styles.playback.icon} />
+      <FiPause className={STYLES.playback.icon} /> : 
+      <FiPlay className={STYLES.playback.icon} />
     }
   </button>
 );
@@ -102,11 +102,11 @@ export const ProgressIndicator = ({ images }: ProgressIndicatorProps) => {
   } = useHeroStore();
 
   return (
-    <div className={styles.progress.container}>
-      <div className={styles.progress.content}>
+    <div className={STYLES.progress.container}>
+      <div className={STYLES.progress.content}>
         <ProgressBar progress={progress} />
         
-        <div className={styles.progress.controls}>
+        <div className={STYLES.progress.controls}>
           <PlaybackControl 
             isPlaying={isPlaying} 
             onToggle={() => setIsPlaying(!isPlaying)} 
@@ -123,7 +123,7 @@ export const ProgressIndicator = ({ images }: ProgressIndicatorProps) => {
             ))}
           </div>
           
-          <div className={styles.progress.counter}>
+          <div className={STYLES.progress.counter}>
             {currentImageIndex + 1}/{images.length}
           </div>
         </div>

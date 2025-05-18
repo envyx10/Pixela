@@ -2,7 +2,7 @@ import { useHeroStore } from "../store";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import clsx from 'clsx';
 
-const styles = {
+const STYLES = {
   navigation: {
     button: {
       container: {
@@ -37,17 +37,17 @@ interface NavigationButtonProps {
  */
 const NavigationButton = ({ direction, onClick }: NavigationButtonProps) => {
   const Icon = direction === 'prev' ? FiChevronLeft : FiChevronRight;
-  const position = direction === 'prev' ? styles.navigation.button.container.left : styles.navigation.button.container.right;
+  const position = direction === 'prev' ? STYLES.navigation.button.container.left : STYLES.navigation.button.container.right;
   const label = direction === 'prev' ? 'Imagen anterior' : 'Imagen siguiente';
 
   return (
-    <div className={clsx(styles.navigation.button.container.base, position)}>
+    <div className={clsx(STYLES.navigation.button.container.base, position)}>
       <button 
         onClick={onClick}
-        className={styles.navigation.button.base}
+        className={STYLES.navigation.button.base}
         aria-label={label}
       >
-        <Icon className={styles.navigation.button.icon} />
+        <Icon className={STYLES.navigation.button.icon} />
       </button>
     </div>
   );
