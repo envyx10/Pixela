@@ -9,13 +9,43 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use GuzzleHttp\Client;
 
+/**
+ * @OA\Tag(
+ *     name="Reviews",
+ *     description="Operaciones relacionadas con reseñas de películas y series"
+ * )
+ */
+
 class ReviewController extends Controller
 {
     /**
-     * Add a review for a movie or series
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * @OA\Post(
+     *     path="/api/reviews",
+     *     summary="Añadir una nueva reseña",
+     *     description="Crea una nueva reseña para una película o serie",
+     *     operationId="addReview",
+     *     tags={"Reviews"},
+     *     security={{ "sanctum": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ReviewRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Reseña creada exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/ReviewResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="La reseña ya existe o datos inválidos",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autenticado",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
      */
     public function add(Request $request): JsonResponse
     {
@@ -51,10 +81,40 @@ class ReviewController extends Controller
 
 
     /**
-     * Update a review
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * @OA\Put(
+     *     path="/api/reviews/{review}",
+     *     summary="Actualizar una reseña",
+     *     description="Actualiza una reseña existente",
+     *     operationId="updateReview",
+     *     tags={"Reviews"},
+     *     security={{ "sanctum": {} }},
+     *     @OA\Parameter(
+     *         name="review",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la reseña",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ReviewUpdateRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reseña actualizada exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/ReviewResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado para actualizar esta reseña",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autenticado",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
      */
     public function update(Request $request, Review $review): JsonResponse
     {
@@ -83,9 +143,24 @@ class ReviewController extends Controller
 
 
     /**
-     * Lists all reviews of the user
-     *
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/api/reviews",
+     *     summary="Listar reseñas del usuario",
+     *     description="Obtiene todas las reseñas del usuario autenticado",
+     *     operationId="listReviews",
+     *     tags={"Reviews"},
+     *     security={{ "sanctum": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de reseñas recuperada exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/ReviewListResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autenticado",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
      */
     public function list(Request $request): JsonResponse
     {
@@ -146,10 +221,39 @@ class ReviewController extends Controller
     }
 
     /**
-     * Remove a review
-     *
-     * @param int $id
-     * @return JsonResponse
+     * @OA\Delete(
+     *     path="/api/reviews/{review}",
+     *     summary="Eliminar una reseña",
+     *     description="Elimina una reseña específica",
+     *     operationId="deleteReview",
+     *     tags={"Reviews"},
+     *     security={{ "sanctum": {} }},
+     *     @OA\Parameter(
+     *         name="review",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la reseña",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reseña eliminada exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Review deleted successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado para eliminar esta reseña",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autenticado",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
      */
     public function delete(Request $request, Review $review): JsonResponse
     {

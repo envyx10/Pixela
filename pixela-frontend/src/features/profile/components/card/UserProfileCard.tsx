@@ -53,7 +53,6 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
 
   const handleSubmitProfile = (data: UpdateProfileData) => {
     console.log('Datos actualizados:', data);
-    // Aquí iría la lógica para actualizar el perfil en el backend
     setIsEditing(false);
   };
 

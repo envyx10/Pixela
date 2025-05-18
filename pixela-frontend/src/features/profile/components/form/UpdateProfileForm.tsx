@@ -73,6 +73,7 @@ export const UpdateProfileForm: FC<UpdateProfileFormProps> = ({
    */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
@@ -102,7 +103,12 @@ export const UpdateProfileForm: FC<UpdateProfileFormProps> = ({
    * @param {ProfileFormData} data - Datos del formulario
    */
   const onFormSubmit = (data: ProfileFormData) => {
-    onSubmit({ ...data, photo_url: profileImage });
+    // Asegurarse de que la imagen se envíe solo si ha cambiado
+    const formData = {
+      ...data,
+      photo_url: profileImage !== initialData.photo_url ? profileImage : undefined
+    };
+    onSubmit(formData);
   };
 
   return (

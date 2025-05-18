@@ -9,13 +9,44 @@ use Illuminate\Support\Facades\Cache;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * @OA\Tag(
+ *     name="Favorites",
+ *     description="User favorites list management operations"
+ * )
+ */
+
+// Los schemas se han movido a app/OpenApi/Schemas/Favorite.php
 class FavoriteController extends Controller
 {
     /**
-     * Add a movie or series to the user's favorites list
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * @OA\Post(
+     *     path="/api/favorites",
+     *     summary="Add to favorites",
+     *     description="Add a movie or series to user's favorites list",
+     *     operationId="addFavorite",
+     *     tags={"Favorites"},
+     *     security={{ "sanctum": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/FavoriteRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Favorite added successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/FavoriteResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Favorite already exists",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
      */
     public function add(Request $request): JsonResponse
     {
@@ -48,10 +79,44 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Remove a movie or series from the user's favorites list
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * @OA\Delete(
+     *     path="/api/favorites/{favorite}",
+     *     summary="Remove from favorites",
+     *     description="Remove a movie or series from user's favorites list",
+     *     operationId="deleteFavorite",
+     *     tags={"Favorites"},
+     *     security={{ "sanctum": {} }},
+     *     @OA\Parameter(
+     *         name="favorite",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the favorite to delete",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Favorite removed successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Favorite item removed successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Not authorized to delete this favorite",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Favorite not found",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
      */
     public function delete(Request $request, Favorite $favorite): JsonResponse
     {
@@ -60,10 +125,7 @@ class FavoriteController extends Controller
         if ($favorite->user_id !== $user->user_id) {
             return response()->json([
                 'success' => false,
-                'message' => 'You are not authorized to delete this favorite.',
-                'favorite_id' => $favorite->favorite_id,
-                'favorite_user_id' => $favorite->user_id,
-                'user_id' => $user->user_id,
+                'message' => 'You are not authorized to delete this favorite'
             ], 403);
         }
 
@@ -76,9 +138,32 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Obtain all favorites of the user with details
-     *
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/api/favorites",
+     *     summary="List favorites",
+     *     description="Get user's complete favorites list with details for each item",
+     *     operationId="listFavorites",
+     *     tags={"Favorites"},
+     *     security={{ "sanctum": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Favorites list retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Favorites with details retrieved successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/Favorite")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
      */
     public function listWithDetails(Request $request): JsonResponse
     {
