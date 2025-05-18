@@ -1,15 +1,99 @@
 import { useEffect, useState } from 'react';
+import type { FC } from 'react';
 import { reviewsAPI } from '@/api/reviews/reviews';
-import { Review } from '@/api/reviews/types';
+import type { Review } from '@/api/reviews/types';
 import { FiLoader, FiAlertCircle, FiStar, FiEdit, FiCheck, FiX } from 'react-icons/fi';
 import { FaTrash } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
+import clsx from 'clsx';
 
+/**
+ * URL base para las imágenes de TMDB
+ */
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
-// Componente para mostrar y editar medias estrellas
-const StarEdit = ({ value, onChange, disabled }: { value: number, onChange: (v: number) => void, disabled?: boolean }) => (
+/**
+ * Mensajes de error constantes
+ */
+const ERROR_MESSAGES = {
+  LOAD: 'No se pudieron cargar las reseñas.',
+  DELETE: 'No se pudo eliminar la reseña',
+  UPDATE: 'No se pudo actualizar la reseña'
+} as const;
+
+/**
+ * Estilos constantes para el componente ProfileReviews
+ */
+const STYLES = {
+  container: '[&_.content-panel__content]:!block space-y-2',
+  loadingContainer: 'flex items-center justify-center p-8',
+  loadingIcon: 'w-8 h-8 text-pixela-primary animate-spin',
+  errorContainer: 'flex items-center justify-center p-8 text-red-500',
+  errorIcon: 'w-6 h-6 mr-2',
+  emptyContainer: 'flex flex-col items-center justify-center p-8 text-gray-400',
+  emptyIcon: 'w-12 h-12 mb-4',
+  emptyText: 'text-lg font-outfit',
+  reviewItem: clsx(
+    'flex items-center bg-pixela-dark-opacity/50',
+    'hover:bg-pixela-dark-opacity/70 transition-all duration-300 -mr-6'
+  ),
+  posterContainer: 'relative w-[100px] h-[150px] flex-shrink-0 group',
+  posterImage: 'object-cover cursor-pointer transition-all duration-300 group-hover:scale-105',
+  posterOverlay: clsx(
+    'absolute inset-0 bg-black/60 opacity-0',
+    'group-hover:opacity-100 transition-opacity duration-300',
+    'flex items-center justify-center'
+  ),
+  overlayText: 'text-white text-sm font-medium',
+  noImageContainer: 'w-full h-full flex items-center justify-center bg-pixela-dark text-gray-500 text-sm text-center px-2',
+  infoContainer: 'flex flex-grow items-center justify-between pl-6 pr-8 py-4',
+  contentContainer: 'flex flex-col gap-1 w-full',
+  titleContainer: 'flex items-center gap-2',
+  title: 'text-lg font-semibold text-white font-outfit',
+  rating: 'flex items-center text-yellow-400 ml-2',
+  ratingIcon: 'w-4 h-4 mr-1',
+  reviewText: 'text-gray-300 text-sm mt-1',
+  date: 'text-xs text-gray-400 mt-1',
+  actionsContainer: 'flex items-center gap-2 ml-6',
+  actionButton: clsx(
+    'p-3 text-gray-400 hover:text-[#ec1b69]',
+    'transition-colors duration-200'
+  ),
+  actionIcon: 'w-5 h-5',
+  editContainer: 'flex flex-col gap-2 mt-1',
+  textarea: clsx(
+    'w-full rounded bg-[#181818]',
+    'border border-gray-600 text-white p-2',
+    'resize-none'
+  ),
+  editActions: 'flex gap-2 mt-1',
+  editButton: clsx(
+    'p-2 text-gray-400 hover:text-[#ec1b69]',
+    'transition-colors duration-200'
+  ),
+  saveIcon: 'w-5 h-5 text-green-500 hover:text-green-400 transition-colors duration-200'
+} as const;
+
+/**
+ * Props para el componente StarEdit
+ * @interface StarEditProps
+ */
+interface StarEditProps {
+  /** Valor actual de la puntuación */
+  value: number;
+  /** Función para actualizar la puntuación */
+  onChange: (v: number) => void;
+  /** Indica si el componente está deshabilitado */
+  disabled?: boolean;
+}
+
+/**
+ * Componente para mostrar y editar medias estrellas
+ * @param {StarEditProps} props - Props del componente
+ * @returns {JSX.Element} Componente StarEdit
+ */
+const StarEdit: FC<StarEditProps> = ({ value, onChange, disabled }) => (
   <div className="flex items-center gap-1">
     {[1, 2, 3, 4, 5].map((star) => {
       const starValue = star * 2;
@@ -17,7 +101,6 @@ const StarEdit = ({ value, onChange, disabled }: { value: number, onChange: (v: 
       const isHalf = value === starValue - 1;
       return (
         <span key={star} className="relative group w-6 h-6">
-          {/* Media estrella (izquierda) */}
           <button
             type="button"
             aria-label={`Puntuar con ${star - 0.5} estrellas`}
@@ -26,7 +109,6 @@ const StarEdit = ({ value, onChange, disabled }: { value: number, onChange: (v: 
             onClick={() => !disabled && onChange(star * 2 - 1)}
             disabled={disabled}
           />
-          {/* Estrella completa (derecha) */}
           <button
             type="button"
             aria-label={`Puntuar con ${star} estrellas`}
@@ -51,15 +133,17 @@ const StarEdit = ({ value, onChange, disabled }: { value: number, onChange: (v: 
   </div>
 );
 
-export function ProfileReviews() {
+/**
+ * Componente que muestra la lista de reseñas del usuario
+ * @returns {JSX.Element} Componente ProfileReviews
+ */
+export const ProfileReviews: FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Estados para edición y borrado
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>('');
-  const [editRating, setEditRating] = useState<number>(5); // 5 = 5.0
+  const [editRating, setEditRating] = useState<number>(5);
   const [savingId, setSavingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -68,38 +152,49 @@ export function ProfileReviews() {
     setError(null);
     reviewsAPI.list()
       .then(setReviews)
-      .catch(() => setError('No se pudieron cargar las reseñas.'))
+      .catch(() => setError(ERROR_MESSAGES.LOAD))
       .finally(() => setLoading(false));
   }, []);
 
-  // Eliminar review
+  /**
+   * Maneja la eliminación de una reseña
+   * @param {number} reviewId - ID de la reseña a eliminar
+   */
   const handleDelete = async (reviewId: number) => {
     setDeletingId(reviewId);
     try {
       await reviewsAPI.delete(reviewId);
       setReviews(prev => prev.filter(r => r.id !== reviewId));
-    } catch (err) {
-      setError('No se pudo eliminar la reseña');
+    } catch {
+      setError(ERROR_MESSAGES.DELETE);
     } finally {
       setDeletingId(null);
     }
   };
 
-  // Iniciar edición
+  /**
+   * Inicia la edición de una reseña
+   * @param {Review} review - Reseña a editar
+   */
   const handleEdit = (review: Review) => {
     setEditingId(review.id);
     setEditText(review.review);
-    setEditRating(Number(review.rating)); // rating ya es decimal (0-10)
+    setEditRating(Number(review.rating));
   };
 
-  // Cancelar edición
+  /**
+   * Cancela la edición de una reseña
+   */
   const handleCancelEdit = () => {
     setEditingId(null);
     setEditText('');
     setEditRating(5);
   };
 
-  // Guardar edición
+  /**
+   * Guarda los cambios de una reseña
+   * @param {Review} review - Reseña a actualizar
+   */
   const handleSaveEdit = async (review: Review) => {
     setSavingId(review.id);
     try {
@@ -108,14 +203,13 @@ export function ProfileReviews() {
         review: editText,
         rating: editRating
       });
-      // Vuelve a pedir la lista completa para refrescar todos los campos
       const updatedReviews = await reviewsAPI.list();
       setReviews(updatedReviews);
       setEditingId(null);
       setEditText('');
       setEditRating(5);
-    } catch (err) {
-      setError('No se pudo actualizar la reseña');
+    } catch {
+      setError(ERROR_MESSAGES.UPDATE);
     } finally {
       setSavingId(null);
     }
@@ -123,16 +217,16 @@ export function ProfileReviews() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <FiLoader className="w-8 h-8 text-pixela-primary animate-spin" />
+      <div className={STYLES.loadingContainer}>
+        <FiLoader className={STYLES.loadingIcon} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-8 text-red-500">
-        <FiAlertCircle className="w-6 h-6 mr-2" />
+      <div className={STYLES.errorContainer}>
+        <FiAlertCircle className={STYLES.errorIcon} />
         <span>{error}</span>
       </div>
     );
@@ -140,22 +234,18 @@ export function ProfileReviews() {
 
   if (reviews.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-gray-400">
-        <FiAlertCircle className="w-12 h-12 mb-4" />
-        <p className="text-lg font-outfit">No hay reseñas.</p>
+      <div className={STYLES.emptyContainer}>
+        <FiAlertCircle className={STYLES.emptyIcon} />
+        <p className={STYLES.emptyText}>No hay reseñas.</p>
       </div>
     );
   }
 
   return (
-    <div className="[&_.content-panel__content]:!block space-y-2">
+    <div className={STYLES.container}>
       {reviews.map((review) => (
-        <div
-          key={review.id}
-          className="flex items-center bg-pixela-dark-opacity/50 hover:bg-pixela-dark-opacity/70 transition-all duration-300 -mr-6"
-        >
-          {/* Imagen del poster si existe */}
-          <div className="relative w-[100px] h-[150px] flex-shrink-0 group">
+        <div key={review.id} className={STYLES.reviewItem}>
+          <div className={STYLES.posterContainer}>
             {review.poster_path ? (
               <Link 
                 href={`/${review.item_type === 'movie' ? 'movies' : 'series'}/${review.tmdb_id}`}
@@ -165,30 +255,29 @@ export function ProfileReviews() {
                   src={`${TMDB_IMAGE_BASE_URL}${review.poster_path}`}
                   alt={review.title || (review.item_type === 'movie' ? 'Película' : 'Serie')}
                   fill
-                  className="object-cover cursor-pointer transition-all duration-300 group-hover:scale-105"
+                  className={STYLES.posterImage}
                   sizes="100px"
                 />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">Ver detalles</span>
+                <div className={STYLES.posterOverlay}>
+                  <span className={STYLES.overlayText}>Ver detalles</span>
                 </div>
               </Link>
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-pixela-dark text-gray-500 text-sm text-center px-2">
+              <div className={STYLES.noImageContainer}>
                 Sin imagen
               </div>
             )}
           </div>
 
-          {/* Información de la reseña */}
-          <div className="flex flex-grow items-center justify-between pl-6 pr-8 py-4">
-            <div className="flex flex-col gap-1 w-full">
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-semibold text-white font-outfit">
+          <div className={STYLES.infoContainer}>
+            <div className={STYLES.contentContainer}>
+              <div className={STYLES.titleContainer}>
+                <span className={STYLES.title}>
                   {review.title || `${review.item_type === 'movie' ? 'Película' : 'Serie'} #${review.tmdb_id}`}
                 </span>
-                <span className="flex items-center text-yellow-400 ml-2">
+                <span className={STYLES.rating}>
                   {editingId !== review.id && (
-                    <FiStar className="w-4 h-4 mr-1" />
+                    <FiStar className={STYLES.ratingIcon} />
                   )}
                   {editingId === review.id
                     ? (
@@ -204,67 +293,65 @@ export function ProfileReviews() {
                   }
                 </span>
               </div>
-              {/* Texto o textarea editable */}
               {editingId === review.id ? (
-                <div className="flex flex-col gap-2 mt-1">
+                <div className={STYLES.editContainer}>
                   <textarea
-                    className="w-full rounded bg-[#181818] border border-gray-600 text-white p-2 resize-none"
+                    className={STYLES.textarea}
                     rows={3}
                     value={editText}
                     onChange={e => setEditText(e.target.value)}
                     disabled={savingId === review.id}
                   />
-                  <div className="flex gap-2 mt-1">
+                  <div className={STYLES.editActions}>
                     <button
-                      className="p-2 text-gray-400 hover:text-[#ec1b69] transition-colors duration-200"
+                      className={STYLES.editButton}
                       title="Guardar"
                       onClick={() => handleSaveEdit(review)}
                       disabled={savingId === review.id}
                     >
                       {savingId === review.id ? (
-                        <FiLoader className="w-5 h-5 animate-spin" />
+                        <FiLoader className={STYLES.actionIcon} />
                       ) : (
-                        <FiCheck className="w-5 h-5 text-green-500 hover:text-green-400 transition-colors duration-200" />
+                        <FiCheck className={STYLES.saveIcon} />
                       )}
                     </button>
                     <button
-                      className="p-2 text-gray-400 hover:text-[#ec1b69] transition-colors duration-200"
+                      className={STYLES.editButton}
                       title="Cancelar"
                       onClick={handleCancelEdit}
                       disabled={savingId === review.id}
                     >
-                      <FiX className="w-5 h-5" />
+                      <FiX className={STYLES.actionIcon} />
                     </button>
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-300 text-sm mt-1">{review.review}</p>
+                <p className={STYLES.reviewText}>{review.review}</p>
               )}
-              <span className="text-xs text-gray-400 mt-1">
+              <span className={STYLES.date}>
                 {review.created_at ? new Date(review.created_at).toLocaleDateString() : ''}
               </span>
             </div>
-            {/* Botones de editar y borrar */}
-            <div className="flex items-center gap-2 ml-6">
+            <div className={STYLES.actionsContainer}>
               {editingId !== review.id && (
                 <button
-                  className="p-3 text-gray-400 hover:text-[#ec1b69] transition-colors duration-200"
+                  className={STYLES.actionButton}
                   title="Editar reseña"
                   onClick={() => handleEdit(review)}
                 >
-                  <FiEdit className="w-5 h-5" />
+                  <FiEdit className={STYLES.actionIcon} />
                 </button>
               )}
               <button
-                className="p-3 text-gray-400 hover:text-[#ec1b69] transition-colors duration-200"
+                className={STYLES.actionButton}
                 title="Eliminar reseña"
                 disabled={deletingId === review.id}
                 onClick={() => handleDelete(review.id)}
               >
                 {deletingId === review.id ? (
-                  <FiLoader className="w-5 h-5 animate-spin" />
+                  <FiLoader className={STYLES.actionIcon} />
                 ) : (
-                  <FaTrash className="w-5 h-5" />
+                  <FaTrash className={STYLES.actionIcon} />
                 )}
               </button>
             </div>
@@ -273,4 +360,4 @@ export function ProfileReviews() {
       ))}
     </div>
   );
-}
+};

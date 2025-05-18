@@ -1,18 +1,59 @@
+import type { FC } from 'react';
 import Image from 'next/image';
 import { FiUser, FiMail, FiX } from 'react-icons/fi';
 import { IoKeyOutline } from 'react-icons/io5';
-
 import { useForm } from 'react-hook-form';
 import { useRef, useState } from 'react';
+import clsx from 'clsx';
 
 import { ProfileFormData, UpdateProfileFormProps } from '@/features/profile/types/profileTypes';
 import { InputField } from '@/features/profile/components/form/InputField';
 
-export const UpdateProfileForm = ({
+/**
+ * Estilos constantes para el componente UpdateProfileForm
+ */
+const STYLES = {
+  container: 'profile-edit',
+  avatarColumn: 'profile-edit__avatar-column',
+  avatarSection: 'profile-edit__avatar-section',
+  avatarContainer: 'profile-edit__avatar-container',
+  avatarPreview: 'profile-edit__avatar-preview',
+  avatarImage: 'profile-edit__avatar-image',
+  avatarPlaceholder: 'profile-edit__avatar-placeholder',
+  avatarOverlay: 'profile-edit__avatar-overlay',
+  fileInput: 'profile-edit__file-input',
+  uploadButton: 'profile-edit__upload-button',
+  error: 'profile-edit__error',
+  formColumn: 'profile-edit__form-column',
+  header: 'profile-edit__header',
+  title: 'profile-edit__title',
+  closeButton: 'profile-edit__close-button',
+  fields: 'profile-edit__fields',
+  fieldGroup: 'profile-edit__field-group',
+  inputLabel: 'profile-input__label',
+  inputIcon: 'profile-input__icon',
+  actions: 'profile-edit__actions',
+  button: (variant: 'submit' | 'cancel') => clsx(
+    'profile-edit__button',
+    `profile-edit__button--${variant}`
+  )
+} as const;
+
+/**
+ * Validación de email usando regex
+ */
+const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+/**
+ * Componente de formulario para actualizar el perfil de usuario
+ * @param {UpdateProfileFormProps} props - Props del componente
+ * @returns {JSX.Element} Componente UpdateProfileForm
+ */
+export const UpdateProfileForm: FC<UpdateProfileFormProps> = ({
   initialData,
   onCancel,
   onSubmit
-}: UpdateProfileFormProps) => {
+}) => {
   const { register, handleSubmit, formState: { errors } } = useForm<ProfileFormData>({
     defaultValues: {
       name: initialData.name,
@@ -21,67 +62,76 @@ export const UpdateProfileForm = ({
       password: ''
     }
   });
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [profileImage, setProfileImage] = useState<string | undefined>(initialData.photo_url);
   const [imageError, setImageError] = useState<string | null>(null);
 
+  /**
+   * Maneja el cambio de archivo de imagen
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Evento de cambio
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Validar que el archivo sea una imagen
-      if (!file.type.startsWith('image/')) {
-        setImageError('El archivo debe ser una imagen válida');
-        return;
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setImageError('El archivo debe ser una imagen válida');
+      return;
+    }
+    
+    setImageError(null);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setProfileImage(e.target.result as string);
       }
-      
-      setImageError(null);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setProfileImage(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+    };
+    reader.readAsDataURL(file);
   };
 
+  /**
+   * Maneja el clic en el avatar para abrir el selector de archivos
+   */
   const handleAvatarClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    fileInputRef.current?.click();
   };
 
+  /**
+   * Maneja el envío del formulario
+   * @param {ProfileFormData} data - Datos del formulario
+   */
   const onFormSubmit = (data: ProfileFormData) => {
     onSubmit({ ...data, photo_url: profileImage });
   };
 
   return (
-    <div className="profile-edit">
+    <div className={STYLES.container}>
       {/* Columna del avatar */}
-      <div className="profile-edit__avatar-column">
-        <div className="profile-edit__avatar-section">
-          <div className="profile-edit__avatar-container" onClick={handleAvatarClick}>
-            <div className="profile-edit__avatar-preview">
+      <div className={STYLES.avatarColumn}>
+        <div className={STYLES.avatarSection}>
+          <div className={STYLES.avatarContainer} onClick={handleAvatarClick}>
+            <div className={STYLES.avatarPreview}>
               {profileImage ? (
                 <Image
                   src={profileImage}
                   alt="Foto de perfil"
-                  className="profile-edit__avatar-image"
+                  className={STYLES.avatarImage}
                   width={120}
                   height={120}
                   priority
                 />
               ) : (
-                <div className="profile-edit__avatar-placeholder">
+                <div className={STYLES.avatarPlaceholder}>
                   <span>{initialData.name.charAt(0).toUpperCase()}</span>
                 </div>
               )}
             </div>
-            <div className="profile-edit__avatar-overlay" />
+            <div className={STYLES.avatarOverlay} />
             <input
               type="file"
               accept="image/*"
-              className="profile-edit__file-input"
+              className={STYLES.fileInput}
               ref={fileInputRef}
               onChange={handleFileChange}
               aria-label="Subir foto de perfil"
@@ -90,49 +140,45 @@ export const UpdateProfileForm = ({
           <button
             type="button"
             onClick={handleAvatarClick}
-            className="profile-edit__upload-button"
+            className={STYLES.uploadButton}
           >
             {profileImage ? 'Cambiar foto' : 'Subir foto'}
           </button>
           {imageError && (
-            <p className="profile-edit__error">{imageError}</p>
+            <p className={STYLES.error}>{imageError}</p>
           )}
         </div>
       </div>
 
       {/* Columna del formulario */}
-      <div className="profile-edit__form-column">
-        <div className="profile-edit__header">
-          <h2 className="profile-edit__title">
-            Editar Perfil
-          </h2>
+      <div className={STYLES.formColumn}>
+        <div className={STYLES.header}>
+          <h2 className={STYLES.title}>Editar Perfil</h2>
           <button
             type="button"
             onClick={onCancel}
-            className="profile-edit__close-button"
+            className={STYLES.closeButton}
             aria-label="Cerrar"
           >
             <FiX />
           </button>
         </div>
 
-        {/* Campos del formulario */}
-        <form onSubmit={handleSubmit(onFormSubmit)} className="profile-edit__fields">
-          {/* Campo de username */}
-          <div className="profile-edit__field-group">
-            <label className="profile-input__label">Username</label>
+        <form onSubmit={handleSubmit(onFormSubmit)} className={STYLES.fields}>
+          <div className={STYLES.fieldGroup}>
+            <label className={STYLES.inputLabel}>Username</label>
             <InputField
               type="text"
               name="name"
               placeholder="Username"
               register={register('name', { required: true })}
-              icon={<FiUser className="profile-input__icon" />}
+              icon={<FiUser className={STYLES.inputIcon} />}
               error={errors.name}
             />
           </div>
 
-          <div className="profile-edit__field-group">
-            <label className="profile-input__label">Email</label>
+          <div className={STYLES.fieldGroup}>
+            <label className={STYLES.inputLabel}>Email</label>
             <InputField
               type="email"
               name="email"
@@ -140,38 +186,38 @@ export const UpdateProfileForm = ({
               register={register('email', { 
                 required: true,
                 pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  value: EMAIL_REGEX,
                   message: "Formato de email inválido"
                 }
               })}
-              icon={<FiMail className="profile-input__icon" />}
+              icon={<FiMail className={STYLES.inputIcon} />}
               error={errors.email}
             />
           </div>
 
-          <div className="profile-edit__field-group">
-            <label className="profile-input__label">Contraseña</label>
+          <div className={STYLES.fieldGroup}>
+            <label className={STYLES.inputLabel}>Contraseña</label>
             <InputField
               type="password"
               name="password"
               placeholder="Contraseña"
               register={register('password')}
-              icon={<IoKeyOutline className="profile-input__icon" />}
+              icon={<IoKeyOutline className={STYLES.inputIcon} />}
               helperText="Deja este campo vacío si no deseas cambiar tu contraseña actual"
             />
           </div>
 
-          <div className="profile-edit__actions">
+          <div className={STYLES.actions}>
             <button
               type="submit"
-              className="profile-edit__button profile-edit__button--submit"
+              className={STYLES.button('submit')}
             >
               Guardar Cambios
             </button>
             <button
               type="button"
               onClick={onCancel}
-              className="profile-edit__button profile-edit__button--cancel"
+              className={STYLES.button('cancel')}
             >
               Descartar
             </button>
