@@ -1,4 +1,7 @@
-// Contenido de la sección de contenido
+/**
+ ** Interfaz que define la 
+ ** estructura del contenido del hero
+ */
 export interface HeroContent {
     title: string;
     accentTitle: string;
@@ -7,20 +10,23 @@ export interface HeroContent {
     images: string[];
   }
   
-// Estado global manejado por Zustand
+/**
+** Estado global manejado por Zustand
+**/
 export interface HeroState {
-    currentImageIndex: number;
-    fadeIn: boolean;
-    isPlaying: boolean;
-    progress: number;
-  
-    setCurrentImageIndex: (index: number) => void;
-    setFadeIn: (state: boolean) => void;
-    setIsPlaying: (state: boolean) => void;
-    setProgress: (progress: number | ((prev: number) => number)) => void;
-  
-    prevImage: (imagesLength: number) => void;
-    nextImage: (imagesLength: number) => void;
-    handleSlideChange: (index: number) => void;
-    resetProgress: () => void;
-  }
+
+  currentImageIndex: number;
+  fadeIn: boolean;
+  isPlaying: boolean;
+  progress: number;
+
+  /** Acciones */
+  setCurrentImageIndex: (index: number) => void;
+  setFadeIn: (state: boolean) => void;
+  setIsPlaying: (state: boolean) => void;
+  setProgress: (progress: number | ((prev: number) => number)) => void;
+  prevImage: (imagesLength: number) => void;
+  nextImage: (imagesLength: number) => void;
+  handleSlideChange: (index: number) => void;
+  resetProgress: () => void;
+}
