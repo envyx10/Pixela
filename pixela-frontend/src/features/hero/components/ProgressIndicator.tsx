@@ -2,6 +2,28 @@ import clsx from 'clsx';
 import { useHeroStore } from "../store";
 import { FiPlay, FiPause } from "react-icons/fi";
 
+const styles = {
+  progress: {
+    container: "absolute bottom-28 left-1/2 transform -translate-x-1/2 z-20 w-full max-w-xl",
+    content: "flex flex-col items-center gap-4",
+    controls: "flex items-center justify-between w-full",
+    counter: "text-pixela-light/70 text-sm font-medium"
+  },
+  bar: {
+    container: "w-full h-1 bg-pixela-light/20 rounded-full overflow-hidden",
+    fill: "h-full bg-pixela-accent"
+  },
+  dot: {
+    base: "h-2 rounded-full transition-all duration-300",
+    active: "bg-pixela-accent w-6",
+    inactive: "bg-pixela-light/50 w-2 hover:bg-pixela-light/70"
+  },
+  playback: {
+    button: "p-2 rounded-full bg-pixela-dark/40 backdrop-blur-sm text-pixela-light hover:text-pixela-accent hover:bg-pixela-dark/60 transition-all duration-300",
+    icon: "h-4 w-4"
+  }
+} as const;
+
 /**
  * Props para el componente ProgressIndicator
  * @property {string[]} images - Array de URLs de imágenes para el carrusel
@@ -25,8 +47,8 @@ const SlideDot = ({
   <button
     onClick={onClick}
     className={clsx(
-      "h-2 rounded-full transition-all duration-300",
-      isActive ? "bg-pixela-accent w-6" : "bg-pixela-light/50 w-2 hover:bg-pixela-light/70"
+      styles.dot.base,
+      isActive ? styles.dot.active : styles.dot.inactive
     )}
     aria-label={`Ir a imagen ${index + 1}`}
   />
@@ -36,9 +58,9 @@ const SlideDot = ({
  * Componente que muestra la barra de progreso del carrusel
  */
 const ProgressBar = ({ progress }: { progress: number }) => (
-  <div className="w-full h-1 bg-pixela-light/20 rounded-full overflow-hidden">
+  <div className={styles.bar.container}>
     <div 
-      className="h-full bg-pixela-accent" 
+      className={styles.bar.fill}
       style={{ width: `${progress}%` }}
     />
   </div>
@@ -56,10 +78,13 @@ const PlaybackControl = ({
 }) => (
   <button 
     onClick={onToggle} 
-    className="p-2 rounded-full bg-pixela-dark/40 backdrop-blur-sm text-pixela-light hover:text-pixela-accent hover:bg-pixela-dark/60 transition-all duration-300"
+    className={styles.playback.button}
     aria-label={isPlaying ? "Pausar" : "Reproducir"}
   >
-    {isPlaying ? <FiPause className="h-4 w-4" /> : <FiPlay className="h-4 w-4" />}
+    {isPlaying ? 
+      <FiPause className={styles.playback.icon} /> : 
+      <FiPlay className={styles.playback.icon} />
+    }
   </button>
 );
 
@@ -77,11 +102,11 @@ export const ProgressIndicator = ({ images }: ProgressIndicatorProps) => {
   } = useHeroStore();
 
   return (
-    <div className="absolute bottom-28 left-1/2 transform -translate-x-1/2 z-20 w-full max-w-xl">
-      <div className="flex flex-col items-center gap-4">
+    <div className={styles.progress.container}>
+      <div className={styles.progress.content}>
         <ProgressBar progress={progress} />
         
-        <div className="flex items-center justify-between w-full">
+        <div className={styles.progress.controls}>
           <PlaybackControl 
             isPlaying={isPlaying} 
             onToggle={() => setIsPlaying(!isPlaying)} 
@@ -98,7 +123,7 @@ export const ProgressIndicator = ({ images }: ProgressIndicatorProps) => {
             ))}
           </div>
           
-          <div className="text-pixela-light/70 text-sm font-medium">
+          <div className={styles.progress.counter}>
             {currentImageIndex + 1}/{images.length}
           </div>
         </div>

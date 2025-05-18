@@ -1,6 +1,29 @@
 import Link from "next/link";
 import { FiChevronDown } from "react-icons/fi";
 import { HeroContent } from "../type";
+import clsx from "clsx";
+
+const styles = {
+  accentLine: {
+    base: "w-24 h-1 bg-pixela-accent",
+    withMargin: "mb-8"
+  },
+  heroTitle: {
+    base: "text-7xl font-bold text-pixela-light mb-6 tracking-tight leading-[1.1]",
+    accent: "text-pixela-accent"
+  },
+  secondaryButton: {
+    base: "group flex items-center transition-all duration-300",
+    text: "font-medium text-pixela-light group-hover:text-white group-hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.7)] transition-all duration-300 mr-2",
+    icon: "h-6 w-6 animate-bounce text-pixela-light group-hover:text-pixela-accent opacity-80 group-hover:opacity-100"
+  },
+  contentSection: {
+    base: "absolute inset-x-0 bottom-0 z-10",
+    container: "max-w-[83.333%] mx-auto pb-36",
+    description: "text-xl text-pixela-light/80 max-w-lg mb-12",
+    buttonsContainer: "flex items-center gap-8"
+  }
+} as const;
 
 /**
  * Props para el componente AccentLine
@@ -12,8 +35,8 @@ interface AccentLineProps {
 /**
  * Componente que muestra una línea de acento decorativa
  */
-const AccentLine = ({ className = "" }: AccentLineProps) => (
-  <div className={`w-24 h-1 bg-pixela-accent ${className}`} />
+const AccentLine = ({ className }: AccentLineProps) => (
+  <div className={clsx(styles.accentLine.base, className)} />
 );
 
 /**
@@ -28,9 +51,9 @@ interface HeroTitleProps {
  * Componente que muestra el título principal del hero
  */
 const HeroTitle = ({ title, accentTitle }: HeroTitleProps) => (
-  <h1 className="text-7xl font-bold text-pixela-light mb-6 tracking-tight leading-[1.1]">
+  <h1 className={styles.heroTitle.base}>
     {title}<br />
-    <span className="text-pixela-accent">{accentTitle}</span>
+    <span className={styles.heroTitle.accent}>{accentTitle}</span>
   </h1>
 );
 
@@ -48,12 +71,12 @@ interface SecondaryButtonProps {
 const SecondaryButton = ({ text, href }: SecondaryButtonProps) => (
   <Link 
     href={href}
-    className="group flex items-center transition-all duration-300"
+    className={styles.secondaryButton.base}
   >
-    <span className="font-medium text-pixela-light group-hover:text-white group-hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.7)] transition-all duration-300 mr-2">
+    <span className={styles.secondaryButton.text}>
       {text}
     </span>
-    <FiChevronDown className="h-6 w-6 animate-bounce text-pixela-light group-hover:text-pixela-accent opacity-80 group-hover:opacity-100" />
+    <FiChevronDown className={styles.secondaryButton.icon} />
   </Link>
 );
 
@@ -68,20 +91,20 @@ export const ContentSection = ({
   secondaryButtonText,
 }: HeroContent) => {
   return (
-    <div className="absolute inset-x-0 bottom-0 z-10">
-      <div className="max-w-[83.333%] mx-auto pb-36">
-        <AccentLine className="mb-8" />
+    <div className={styles.contentSection.base}>
+      <div className={styles.contentSection.container}>
+        <AccentLine className={styles.accentLine.withMargin} />
         
         <HeroTitle 
           title={title} 
           accentTitle={accentTitle} 
         />
         
-        <p className="text-xl text-pixela-light/80 max-w-lg mb-12">
+        <p className={styles.contentSection.description}>
           {description}
         </p>
         
-        <div className="flex items-center gap-8">
+        <div className={styles.contentSection.buttonsContainer}>
           <SecondaryButton 
             text={secondaryButtonText} 
             href="#tendencias" 
