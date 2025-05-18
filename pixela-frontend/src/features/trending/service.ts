@@ -1,6 +1,45 @@
-import { SeriesResponse, MoviesResponse, TrendingSerie, TrendingMovie } from "@/features/trending/type";
+import { TrendingSerie, TrendingMovie } from "@/features/trending/type";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL;
+const DEFAULT_LIMIT = 20;
+const DEFAULT_OFFSET = 0;
+
+type MediaType = 'series' | 'movies';
+
+interface FetchOptions {
+    limit?: number;
+    offset?: number;
+}
+
+/**
+ * Función base para realizar peticiones a la API de tendencias
+ * @param mediaType Tipo de contenido (series o películas)
+ * @param options Opciones de paginación
+ * @returns Datos de la respuesta
+ */
+async function fetchTrendingMedia<T>(
+    mediaType: MediaType,
+    options: FetchOptions = {}
+): Promise<T[]> {
+    const { limit = DEFAULT_LIMIT, offset = DEFAULT_OFFSET } = options;
+    const endpoint = `${API_BASE_URL}/api/${mediaType}/trending`;
+
+    try {
+        console.log(`Fetching trending ${mediaType} from: ${endpoint}?limit=${limit}&offset=${offset}`);
+        const response = await fetch(`${endpoint}?limit=${limit}&offset=${offset}`);
+        
+        if (!response.ok) {
+            throw new Error(`Error de API: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.data;
+
+    } catch (error) {
+        console.error(`Error fetching trending ${mediaType}:`, error);
+        return [];
+    }
+}
 
 /**
  * Obtiene las series en tendencia
@@ -8,23 +47,11 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL;
  * @param offset Punto de inicio para la paginación
  * @returns Lista de series en tendencia
  */
-export async function getTrendingSeries(limit = 20, offset = 0): Promise<TrendingSerie[]> {
-    try {
-        console.log(`Fetching trending series from: ${API_BASE_URL}/api/series/trending?limit=${limit}&offset=${offset}`);
-        const response = await fetch(`${API_BASE_URL}/api/series/trending?limit=${limit}&offset=${offset}`);
-        
-        if (!response.ok) {
-            throw new Error(`Error de API: ${response.status} ${response.statusText}`);
-        }
-
-        const data: SeriesResponse = await response.json();
-        return data.data;
-
-    } catch (error) {
-        console.error('Error fetching trending series:', error);
-        // Devolver un array vacío en caso de error para evitar fallos en la UI
-        return [];
-    }
+export async function getTrendingSeries(
+    limit = DEFAULT_LIMIT,
+    offset = DEFAULT_OFFSET
+): Promise<TrendingSerie[]> {
+    return fetchTrendingMedia<TrendingSerie>('series', { limit, offset });
 }
 
 /**
@@ -33,21 +60,9 @@ export async function getTrendingSeries(limit = 20, offset = 0): Promise<Trendin
  * @param offset Punto de inicio para la paginación
  * @returns Lista de películas en tendencia
  */
-export async function getTrendingMovies(limit = 20, offset = 0): Promise<TrendingMovie[]> {
-    try {
-        console.log(`Fetching trending movies from: ${API_BASE_URL}/api/movies/trending?limit=${limit}&offset=${offset}`);
-        const response = await fetch(`${API_BASE_URL}/api/movies/trending?limit=${limit}&offset=${offset}`);
-        
-        if (!response.ok) {
-            throw new Error(`Error de API: ${response.status} ${response.statusText}`);
-        }
-
-        const data: MoviesResponse = await response.json();
-        return data.data;
-
-    } catch (error) {
-        console.error('Error fetching trending movies:', error);
-        // Devolver un array vacío en caso de error para evitar fallos en la UI
-        return [];
-    }
+export async function getTrendingMovies(
+    limit = DEFAULT_LIMIT,
+    offset = DEFAULT_OFFSET
+): Promise<TrendingMovie[]> {
+    return fetchTrendingMedia<TrendingMovie>('movies', { limit, offset });
 } 
