@@ -118,57 +118,6 @@
             }
         },
         "/api/favorites": {
-            "get": {
-                "tags": [
-                    "Favorites"
-                ],
-                "summary": "List favorites",
-                "description": "Get user's complete favorites list with details for each item",
-                "operationId": "listFavorites",
-                "responses": {
-                    "200": {
-                        "description": "Favorites list retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Favorites with details retrieved successfully"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Favorite"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
             "post": {
                 "tags": [
                     "Favorites"
@@ -287,6 +236,59 @@
                     },
                     "404": {
                         "description": "Favorite not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/favorites/details": {
+            "get": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "List favorites",
+                "description": "Get user's complete favorites list with details for each item",
+                "operationId": "listFavorites",
+                "responses": {
+                    "200": {
+                        "description": "Favorites list retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Favorites with details retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Favorite"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -918,12 +920,12 @@
                 "tags": [
                     "Reviews"
                 ],
-                "summary": "Listar reseñas del usuario",
-                "description": "Obtiene todas las reseñas del usuario autenticado",
+                "summary": "List user reviews",
+                "description": "Gets all the reviews of the authenticated user",
                 "operationId": "listReviews",
                 "responses": {
                     "200": {
-                        "description": "Lista de reseñas recuperada exitosamente",
+                        "description": "Reviews list retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -933,7 +935,7 @@
                         }
                     },
                     "401": {
-                        "description": "No autenticado",
+                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -953,8 +955,8 @@
                 "tags": [
                     "Reviews"
                 ],
-                "summary": "Añadir una nueva reseña",
-                "description": "Crea una nueva reseña para una película o serie",
+                "summary": "Add a new review",
+                "description": "Creates a new review for a movie or series",
                 "operationId": "addReview",
                 "requestBody": {
                     "required": true,
@@ -968,7 +970,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Reseña creada exitosamente",
+                        "description": "Review created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -978,7 +980,7 @@
                         }
                     },
                     "400": {
-                        "description": "La reseña ya existe o datos inválidos",
+                        "description": "Review already exists or invalid data",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -988,7 +990,7 @@
                         }
                     },
                     "401": {
-                        "description": "No autenticado",
+                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1010,14 +1012,14 @@
                 "tags": [
                     "Reviews"
                 ],
-                "summary": "Actualizar una reseña",
-                "description": "Actualiza una reseña existente",
+                "summary": "Update a review",
+                "description": "Updates an existing review",
                 "operationId": "updateReview",
                 "parameters": [
                     {
                         "name": "review",
                         "in": "path",
-                        "description": "ID de la reseña",
+                        "description": "Review ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1036,7 +1038,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Reseña actualizada exitosamente",
+                        "description": "Review updated successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1046,7 +1048,7 @@
                         }
                     },
                     "403": {
-                        "description": "No autorizado para actualizar esta reseña",
+                        "description": "Unauthorized to update this review",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1056,7 +1058,7 @@
                         }
                     },
                     "401": {
-                        "description": "No autenticado",
+                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1076,14 +1078,14 @@
                 "tags": [
                     "Reviews"
                 ],
-                "summary": "Eliminar una reseña",
-                "description": "Elimina una reseña específica",
+                "summary": "Delete a review",
+                "description": "Deletes a specific review",
                 "operationId": "deleteReview",
                 "parameters": [
                     {
                         "name": "review",
                         "in": "path",
-                        "description": "ID de la reseña",
+                        "description": "Review ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1092,7 +1094,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Reseña eliminada exitosamente",
+                        "description": "Review deleted successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1112,7 +1114,7 @@
                         }
                     },
                     "403": {
-                        "description": "No autorizado para eliminar esta reseña",
+                        "description": "Unauthorized to delete this review",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1122,7 +1124,7 @@
                         }
                     },
                     "401": {
-                        "description": "No autenticado",
+                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1710,12 +1712,12 @@
                 "tags": [
                     "TMDB"
                 ],
-                "summary": "Obtener todas las categorías/géneros",
-                "description": "Retorna la lista completa de categorías/géneros disponibles en TMDB",
+                "summary": "Get all categories/genres",
+                "description": "Returns the complete list of categories/genres available in TMDB",
                 "operationId": "getAllCategories",
                 "responses": {
                     "200": {
-                        "description": "Lista de categorías recuperada exitosamente",
+                        "description": "Categories list retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1725,7 +1727,7 @@
                         }
                     },
                     "500": {
-                        "description": "Error del servidor",
+                        "description": "Server error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1742,14 +1744,14 @@
                 "tags": [
                     "TMDB"
                 ],
-                "summary": "Obtener contenido trending",
-                "description": "Retorna una lista paginada de películas y series que son tendencia",
+                "summary": "Get trending content",
+                "description": "Returns a paginated list of movies and series that are trending",
                 "operationId": "getAllTrending",
                 "parameters": [
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Número de página (por defecto: 1)",
+                        "description": "Page number (default: 1)",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -1759,7 +1761,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Lista de contenido trending recuperada exitosamente",
+                        "description": "Trending content list retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1822,7 +1824,7 @@
                         }
                     },
                     "500": {
-                        "description": "Error del servidor",
+                        "description": "Server error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2078,90 +2080,6 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/api/forgot-password": {
-            "post": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Request password reset",
-                "description": "Send a password reset link to the user's email",
-                "operationId": "forgotPassword",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ForgotPasswordRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Reset link sent successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PasswordResetResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Email not found or invalid",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/reset-password": {
-            "post": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Confirm password reset",
-                "description": "Reset user's password using the received token",
-                "operationId": "resetPassword",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ResetPasswordRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Password reset successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PasswordResetResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Invalid token or validation data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     },
@@ -3474,7 +3392,7 @@
         },
         {
             "name": "Reviews",
-            "description": "Operaciones relacionadas con reseñas de películas y series"
+            "description": "Operations related to movie and series reviews"
         },
         {
             "name": "Series",
@@ -3482,7 +3400,7 @@
         },
         {
             "name": "TMDB",
-            "description": "Operaciones generales de TMDB - categorías y contenido trending"
+            "description": "General TMDB operations - categories and trending content"
         },
         {
             "name": "Users",

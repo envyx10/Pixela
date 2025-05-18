@@ -7,7 +7,6 @@ import { ActionButtons } from "@/shared/components/ActionButtons";
 import { MediaInfoDetails } from "./MediaInfoDetails";
 import { useRouter } from 'next/navigation';
 
-
 /**
  * Constantes para la configuración del componente
  */

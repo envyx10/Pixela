@@ -15,8 +15,6 @@ use Illuminate\Http\JsonResponse;
  *     description="User favorites list management operations"
  * )
  */
-
-// Los schemas se han movido a app/OpenApi/Schemas/Favorite.php
 class FavoriteController extends Controller
 {
     /**
@@ -139,7 +137,7 @@ class FavoriteController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/favorites",
+     *     path="/api/favorites/details",
      *     summary="List favorites",
      *     description="Get user's complete favorites list with details for each item",
      *     operationId="listFavorites",

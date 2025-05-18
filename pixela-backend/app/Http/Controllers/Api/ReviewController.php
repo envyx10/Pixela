@@ -12,7 +12,7 @@ use GuzzleHttp\Client;
 /**
  * @OA\Tag(
  *     name="Reviews",
- *     description="Operaciones relacionadas con reseñas de películas y series"
+ *     description="Operations related to movie and series reviews"
  * )
  */
 
@@ -21,8 +21,8 @@ class ReviewController extends Controller
     /**
      * @OA\Post(
      *     path="/api/reviews",
-     *     summary="Añadir una nueva reseña",
-     *     description="Crea una nueva reseña para una película o serie",
+     *     summary="Add a new review",
+     *     description="Creates a new review for a movie or series",
      *     operationId="addReview",
      *     tags={"Reviews"},
      *     security={{ "sanctum": {} }},
@@ -32,17 +32,17 @@ class ReviewController extends Controller
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Reseña creada exitosamente",
+     *         description="Review created successfully",
      *         @OA\JsonContent(ref="#/components/schemas/ReviewResponse")
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="La reseña ya existe o datos inválidos",
+     *         description="Review already exists or invalid data",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="No autenticado",
+     *         description="Unauthorized",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
@@ -83,8 +83,8 @@ class ReviewController extends Controller
     /**
      * @OA\Put(
      *     path="/api/reviews/{review}",
-     *     summary="Actualizar una reseña",
-     *     description="Actualiza una reseña existente",
+     *     summary="Update a review",
+     *     description="Updates an existing review",
      *     operationId="updateReview",
      *     tags={"Reviews"},
      *     security={{ "sanctum": {} }},
@@ -92,7 +92,7 @@ class ReviewController extends Controller
      *         name="review",
      *         in="path",
      *         required=true,
-     *         description="ID de la reseña",
+     *         description="Review ID",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
@@ -101,17 +101,17 @@ class ReviewController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Reseña actualizada exitosamente",
+     *         description="Review updated successfully",
      *         @OA\JsonContent(ref="#/components/schemas/ReviewResponse")
      *     ),
      *     @OA\Response(
      *         response=403,
-     *         description="No autorizado para actualizar esta reseña",
+     *         description="Unauthorized to update this review",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="No autenticado",
+     *         description="Unauthorized",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
@@ -145,19 +145,19 @@ class ReviewController extends Controller
     /**
      * @OA\Get(
      *     path="/api/reviews",
-     *     summary="Listar reseñas del usuario",
-     *     description="Obtiene todas las reseñas del usuario autenticado",
+     *     summary="List user reviews",
+     *     description="Gets all the reviews of the authenticated user",
      *     operationId="listReviews",
      *     tags={"Reviews"},
      *     security={{ "sanctum": {} }},
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de reseñas recuperada exitosamente",
+     *         description="Reviews list retrieved successfully",
      *         @OA\JsonContent(ref="#/components/schemas/ReviewListResponse")
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="No autenticado",
+     *         description="Unauthorized",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
@@ -223,8 +223,8 @@ class ReviewController extends Controller
     /**
      * @OA\Delete(
      *     path="/api/reviews/{review}",
-     *     summary="Eliminar una reseña",
-     *     description="Elimina una reseña específica",
+     *     summary="Delete a review",
+     *     description="Deletes a specific review",
      *     operationId="deleteReview",
      *     tags={"Reviews"},
      *     security={{ "sanctum": {} }},
@@ -232,12 +232,12 @@ class ReviewController extends Controller
      *         name="review",
      *         in="path",
      *         required=true,
-     *         description="ID de la reseña",
+     *         description="Review ID",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Reseña eliminada exitosamente",
+     *         description="Review deleted successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Review deleted successfully")
@@ -245,12 +245,12 @@ class ReviewController extends Controller
      *     ),
      *     @OA\Response(
      *         response=403,
-     *         description="No autorizado para eliminar esta reseña",
+     *         description="Unauthorized to delete this review",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="No autenticado",
+     *         description="Unauthorized",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
