@@ -5,7 +5,7 @@ namespace App\Transformers;
 class SeriesTransformer
 {
     /**
-     * Transforma los datos de una única serie.
+     * Transforms all the data of a series.
      *
      * @param array $series
      * @return array
@@ -25,7 +25,7 @@ class SeriesTransformer
     }
 
     /**
-     * Transforma un conjunto de series.
+     * Transforms a collection of series.
      *
      * @param array $series
      * @return array

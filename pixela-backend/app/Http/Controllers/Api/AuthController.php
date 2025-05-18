@@ -76,17 +76,17 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        // Revoca todos los tokens de API
+        // Revokes all API tokens
         if ($user = $request->user()) {
             $user->tokens()->delete();
         }
 
-        // Invalida la sesión actual
+        // Invalidates the current session
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Limpia la cookie de sesión
+        // Clears the session cookie
         Cookie::queue(Cookie::forget('pixela_session'));
 
         return response()

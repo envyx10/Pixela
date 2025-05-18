@@ -12,7 +12,7 @@ use Exception;
 /**
  * @OA\Tag(
  *     name="TMDB",
- *     description="Operaciones generales de TMDB - categorías y contenido trending"
+ *     description="General TMDB operations - categories and trending content"
  * )
  */
 class TmdbController extends Controller
@@ -38,18 +38,18 @@ class TmdbController extends Controller
     /**
      * @OA\Get(
      *     path="/api/tmdb/categories",
-     *     summary="Obtener todas las categorías/géneros",
-     *     description="Retorna la lista completa de categorías/géneros disponibles en TMDB",
+     *     summary="Get all categories/genres",
+     *     description="Returns the complete list of categories/genres available in TMDB",
      *     operationId="getAllCategories",
      *     tags={"TMDB"},
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de categorías recuperada exitosamente",
+     *         description="Categories list retrieved successfully",
      *         @OA\JsonContent(ref="#/components/schemas/CategoryResponse")
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Error del servidor",
+     *         description="Server error",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
@@ -75,20 +75,20 @@ class TmdbController extends Controller
     /**
      * @OA\Get(
      *     path="/api/tmdb/trending",
-     *     summary="Obtener contenido trending",
-     *     description="Retorna una lista paginada de películas y series que son tendencia",
+     *     summary="Get trending content",
+     *     description="Returns a paginated list of movies and series that are trending",
      *     operationId="getAllTrending",
      *     tags={"TMDB"},
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
      *         required=false,
-     *         description="Número de página (por defecto: 1)",
+     *         description="Page number (default: 1)",
      *         @OA\Schema(type="integer", default=1)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de contenido trending recuperada exitosamente",
+     *         description="Trending content list retrieved successfully",
      *         @OA\JsonContent(
      *             allOf={
      *                 @OA\Schema(ref="#/components/schemas/PaginatedResponse"),
@@ -113,7 +113,7 @@ class TmdbController extends Controller
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Error del servidor",
+     *         description="Server error",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )

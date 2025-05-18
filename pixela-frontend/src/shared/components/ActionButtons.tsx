@@ -20,7 +20,7 @@ const STYLES = {
     },
     favorite: {
       active: 'p-3 rounded font-medium transition duration-300 flex items-center gap-2 shadow-lg bg-pixela-accent text-white hover:bg-pixela-accent/90',
-      inactive: 'p-3 rounded font-medium transition duration-300 flex items-center gap-2 shadow-lg'
+      inactive: 'p-3 rounded font-medium transition duration-300 flex items-center gap-2 shadow-lg border border-pixela-accent/40'
     }
   },
   icon: {
