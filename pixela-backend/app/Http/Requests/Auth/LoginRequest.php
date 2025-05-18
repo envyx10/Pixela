@@ -31,7 +31,7 @@ class LoginRequest extends FormRequest
                 'required', 
                 'string', 
                 'email',
-                'exists:users,email'
+                /* 'exists:users,email' */
             ],
             'password' => [
                 'required', 
