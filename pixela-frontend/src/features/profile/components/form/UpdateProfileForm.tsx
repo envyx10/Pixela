@@ -73,22 +73,55 @@ export const UpdateProfileForm: FC<UpdateProfileFormProps> = ({
    */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    if (file) {
 
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      setImageError('El archivo debe ser una imagen válida');
-      return;
-    }
-    
-    setImageError(null);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        setProfileImage(e.target.result as string);
+      if (!file.type.startsWith('image/')) {
+        setImageError('El archivo debe ser una imagen válida');
+        return;
       }
-    };
-    reader.readAsDataURL(file);
+
+      if (file.size > 2 * 1024 * 1024) {
+        setImageError('La imagen no debe superar los 2MB');
+        return;
+      }
+      
+      setImageError(null);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+
+          const img = new window.Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_SIZE = 300;
+            let width = img.width;
+            let height = img.height;
+            
+            if (width > height) {
+              if (width > MAX_SIZE) {
+                height = Math.round((height * MAX_SIZE) / width);
+                width = MAX_SIZE;
+              }
+            } else {
+              if (height > MAX_SIZE) {
+                width = Math.round((width * MAX_SIZE) / height);
+                height = MAX_SIZE;
+              }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, width, height);
+            
+            const resizedImage = canvas.toDataURL('image/jpeg', 0.7);
+            setProfileImage(resizedImage);
+          };
+          img.src = e.target.result as string;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   /**
