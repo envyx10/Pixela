@@ -7,6 +7,15 @@ import {
   PARTICLE_COUNTS 
 } from './constants/particles';
 
+const STYLES = {
+  container: 'absolute inset-0 w-full h-full overflow-hidden',
+  particle: {
+    small: 'absolute rounded-full bg-[#ff007f]',
+    medium: 'absolute rounded-full bg-gradient-to-r from-[#ff007f]/60 to-[#ff00ff]/60',
+    glow: 'absolute rounded-full'
+  }
+} as const;
+
 /**
  * Genera un array de partículas basado en la configuración proporcionada
  * @param count - Número de partículas a generar
@@ -48,19 +57,19 @@ const ParticleElement = ({ particle, category }: { particle: Particle; category:
         return {
           ...baseStyles,
           animation: `floatParticle ${particle.duration}s infinite ease-in-out`,
-          className: 'absolute rounded-full bg-[#ff007f]'
+          className: STYLES.particle.small
         };
       case 'medium':
         return {
           ...baseStyles,
           animation: `pulseAndFloat ${particle.duration}s infinite ease-in-out`,
-          className: 'absolute rounded-full bg-gradient-to-r from-[#ff007f]/60 to-[#ff00ff]/60'
+          className: STYLES.particle.medium
         };
       case 'glow':
         return {
           ...baseStyles,
           animation: `glowAndFloat ${particle.duration}s infinite ease-in-out`,
-          className: 'absolute rounded-full',
+          className: STYLES.particle.glow,
           background: 'radial-gradient(circle, rgba(255,0,127,0.8) 0%, rgba(255,0,127,0) 70%)',
           filter: 'blur(1px)'
         };
@@ -89,7 +98,7 @@ export const FooterParticles = () => {
   }), []);
 
   return (
-    <div className="absolute inset-0 w-full h-full overflow-hidden">
+    <div className={STYLES.container}>
       {Object.entries(particles).map(([category, particleList]) => 
         particleList.map(particle => (
           <ParticleElement 

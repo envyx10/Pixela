@@ -1,8 +1,29 @@
 'use client';
 
 import { useMemo } from 'react';
+import clsx from 'clsx';
 import { BackgroundEffectProps, TriangleElement, PixelElement, FlowLine, Bubble } from './types/background-effects';
 import { BACKGROUND_CONFIG, DECORATIVE_STYLES } from './constants/background-effects';
+
+const STYLES = {
+  container: 'absolute top-0 left-0 w-full h-full opacity-0 transition-opacity duration-1000',
+  animatedContainer: 'opacity-30',
+  backgroundBlur: {
+    pink: 'absolute top-[10%] left-[5%] w-64 h-64 rounded-full bg-[#ff007f]/10 filter blur-[80px] animate-pulse-slow',
+    purple: 'absolute bottom-[20%] right-[10%] w-80 h-80 rounded-full bg-purple-500/10 filter blur-[100px] animate-pulse-slow animation-delay-1000',
+    blue: 'absolute top-[40%] right-[25%] w-40 h-40 rounded-full bg-blue-500/10 filter blur-[60px] animate-pulse-slow animation-delay-2000'
+  },
+  pixelGrid: 'absolute inset-0 w-full h-full',
+  flowLinesContainer: 'absolute inset-0 w-full h-full overflow-hidden',
+  flowLine: 'absolute bg-gradient-to-r from-[#ff007f]/5 to-transparent',
+  bubble: 'absolute bottom-0 rounded-full bg-[#ff007f]/20 backdrop-blur-md',
+  decorativeContainer: 'absolute inset-0 overflow-hidden pointer-events-none',
+  triangle: 'absolute opacity-20',
+  pixel: 'absolute bg-[#ff007f]',
+  logo: 'pointer-events-none select-none absolute inset-0 w-full h-full flex items-center justify-center font-black uppercase tracking-tighter z-0 leading-none text-transparent transition-opacity duration-1000',
+  animatedLogo: 'opacity-40',
+  hiddenLogo: 'opacity-0'
+} as const;
 
 /**
  * Componente que renderiza los efectos visuales de fondo del footer
@@ -59,15 +80,15 @@ export const FooterBackgroundEffects = ({ isAnimated }: BackgroundEffectProps) =
   return (
     <>
       {/* Elementos decorativos de fondo */}
-      <div className={`absolute top-0 left-0 w-full h-full opacity-0 transition-opacity duration-1000 ${isAnimated ? 'opacity-30' : ''}`}>
-        <div className="absolute top-[10%] left-[5%] w-64 h-64 rounded-full bg-[#ff007f]/10 filter blur-[80px] animate-pulse-slow" />
-        <div className="absolute bottom-[20%] right-[10%] w-80 h-80 rounded-full bg-purple-500/10 filter blur-[100px] animate-pulse-slow animation-delay-1000" />
-        <div className="absolute top-[40%] right-[25%] w-40 h-40 rounded-full bg-blue-500/10 filter blur-[60px] animate-pulse-slow animation-delay-2000" />
+      <div className={clsx(STYLES.container, isAnimated && STYLES.animatedContainer)}>
+        <div className={STYLES.backgroundBlur.pink} />
+        <div className={STYLES.backgroundBlur.purple} />
+        <div className={STYLES.backgroundBlur.blue} />
       </div>
       
       {/* Grid de píxeles decorativo animado */}
       <div 
-        className="absolute inset-0 w-full h-full" 
+        className={STYLES.pixelGrid}
         style={{
           backgroundImage: "radial-gradient(circle, #ff007f 1px, transparent 1px)",
           backgroundSize: "30px 30px",
@@ -77,11 +98,11 @@ export const FooterBackgroundEffects = ({ isAnimated }: BackgroundEffectProps) =
       />
       
       {/* Líneas de flujo estilo digital */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden">
+      <div className={STYLES.flowLinesContainer}>
         {flowLines.map(line => (
           <div 
             key={`line-${line.id}`}
-            className="absolute bg-gradient-to-r from-[#ff007f]/5 to-transparent"
+            className={STYLES.flowLine}
             style={{
               height: `${line.height}px`,
               width: `${line.width}%`,
@@ -99,7 +120,7 @@ export const FooterBackgroundEffects = ({ isAnimated }: BackgroundEffectProps) =
         {bubbles.map(bubble => (
           <div 
             key={`bubble-${bubble.id}`}
-            className="absolute bottom-0 rounded-full bg-[#ff007f]/20 backdrop-blur-md"
+            className={STYLES.bubble}
             style={{
               width: `${bubble.size}px`,
               height: `${bubble.size}px`,
@@ -113,12 +134,12 @@ export const FooterBackgroundEffects = ({ isAnimated }: BackgroundEffectProps) =
       </div>
 
       {/* Elementos digitales decorativos */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className={STYLES.decorativeContainer}>
         {/* Triángulos pequeños */}
         {triangleElements.map(triangle => (
           <div 
             key={`triangle-${triangle.id}`}
-            className="absolute opacity-20"
+            className={STYLES.triangle}
             style={{
               width: `${triangle.size}px`,
               height: `${triangle.size}px`,
@@ -138,7 +159,7 @@ export const FooterBackgroundEffects = ({ isAnimated }: BackgroundEffectProps) =
         {pixelElements.map(pixel => (
           <div 
             key={`pixel-${pixel.id}`}
-            className="absolute bg-[#ff007f]"
+            className={STYLES.pixel}
             style={{
               width: `${pixel.size}px`,
               height: `${pixel.size}px`,
@@ -154,7 +175,7 @@ export const FooterBackgroundEffects = ({ isAnimated }: BackgroundEffectProps) =
       
       {/* Fondo decorativo: PIXELA gigante */}
       <span
-        className={`pointer-events-none select-none absolute inset-0 w-full h-full flex items-center justify-center font-black uppercase tracking-tighter z-0 leading-none text-transparent transition-opacity duration-1000 ${isAnimated ? 'opacity-40' : 'opacity-0'}`}
+        className={clsx(STYLES.logo, isAnimated ? STYLES.animatedLogo : STYLES.hiddenLogo)}
         style={{
           lineHeight: 1,
           fontSize: "clamp(200px, 30vw, 500px)",
