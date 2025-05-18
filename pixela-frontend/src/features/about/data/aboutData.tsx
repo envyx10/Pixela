@@ -35,17 +35,17 @@ export interface FeatureCard {
 export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Envyx10",
-    role: "Desarrollador Full Stack",
-    image: "/team/envyx10.jpg",
+    role: "Desarrollador Frontend",
+    image: "/about/img/aboutus-envyx10.jpg",
     linkedin: "https://linkedin.com/in/tu-perfil",
     favoriteSeries: "Black Mirror",
     favoriteMovie: "Interstellar",
     quote: "Cada línea de código es una historia por contar, cada proyecto una nueva aventura cinematográfica."
   },
   {
-    name: "rxy_94",
-    role: "Desarrollador Full Stack",
-    image: "/team/companero.jpg",
+    name: "Ruyi",
+    role: "Desarrolladora Backend",
+    image: "/about/img/aboutus-ruyi.jpg",
     linkedin: "https://linkedin.com/in/tu-perfil",
     favoriteSeries: "The Office",
     favoriteMovie: "Interstellar",

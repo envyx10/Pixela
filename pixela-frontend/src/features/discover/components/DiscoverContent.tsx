@@ -6,10 +6,10 @@ import { DiscoverSelector } from './DiscoverSelector';
 import { IoIosArrowForward } from 'react-icons/io';
 
 const STYLES = {
-  container: "relative w-full min-h-screen bg-pixela-dark flex flex-col overflow-hidden",
-  gradientContainer: "absolute inset-0 w-full h-full z-0 pointer-events-none overflow-visible",
-  mainGradient: "absolute top-1/2 left-[60%] -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-pixela-accent/20 blur-[150px]",
-  secondaryGradient: "absolute top-1/2 left-[70%] -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-pixela-accent/30 blur-[100px]",
+  container: "relative w-full min-h-screen bg-pixela-dark flex flex-col",
+  gradientContainer: "absolute inset-0 w-full h-full z-0 pointer-events-none",
+  mainGradient: "absolute top-1/2 left-[65%] -translate-x-1/2 -translate-y-1/2 w-[1100px] h-[1100px] rounded-full bg-gradient-to-r from-pixela-accent/50 via-pixela-accent/20 to-transparent blur-[300px] opacity-70",
+  secondaryGradient: "absolute top-1/2 left-[65%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-gradient-to-l from-pixela-accent/60 via-pixela-accent/30 to-transparent blur-[250px] opacity-60",
   contentContainer: "flex-grow flex flex-col justify-center relative z-10",
   mainContent: "w-[80%] mx-auto flex items-center gap-8",
   leftSection: "w-[50%] pr-8",
@@ -21,7 +21,9 @@ const STYLES = {
   buttonContent: "relative z-10 flex items-center",
   buttonIcon: "w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300",
   buttonHover: "absolute inset-0 bg-white/20 w-0 group-hover:w-full transition-all duration-300",
-  rightSection: "w-[50%]"
+  rightSection: "w-[50%]",
+  mainTitle: "text-3xl font-semibold mb-4",
+  finalText: "mt-6 text-xl font-medium"
 } as const;
 
 /**
@@ -34,8 +36,8 @@ export const DiscoverContent = () => {
     return (
         <div id="discover" className={STYLES.container}>
             <div className={STYLES.gradientContainer}>
-                <div className={STYLES.mainGradient} />
-                <div className={STYLES.secondaryGradient} />
+                <div className={STYLES.mainGradient} style={{ maskImage: 'radial-gradient(circle at center, black 30%, transparent 70%)' }} />
+                <div className={STYLES.secondaryGradient} style={{ maskImage: 'radial-gradient(circle at center, black 40%, transparent 60%)' }} />
             </div>
             
             <div className={STYLES.contentContainer}>
@@ -45,9 +47,20 @@ export const DiscoverContent = () => {
                             Descubre
                         </h2>
                         <p className={STYLES.description}>
-                            Explora nuestro exclusivo catálogo y encuentra tu próxima obsesión cinematográfica.
+                            <span className={STYLES.mainTitle}>
+                                Descubre historias que te atrapan
+                            </span>
                             <span className={STYLES.descriptionHighlight}>
-                                Con historias cuidadosamente seleccionadas para inspirarte.
+                                Explora un universo de películas y series seleccionadas para cautivar tus sentidos.
+                            </span>
+                            <span className={STYLES.descriptionHighlight}>
+                                Sumérgete en narrativas inolvidables, personajes que se quedan contigo y mundos que despiertan tu imaginación.
+                            </span>
+                            <span className={STYLES.descriptionHighlight}>
+                                Ya sea que busques emoción, misterio, romance o inspiración, aquí empieza tu próximo viaje cinematográfico.
+                            </span>
+                            <span className={STYLES.finalText}>
+                                Déjate llevar. Elige lo inesperado. Descubre lo que el cine puede hacer por ti.
                             </span>
                         </p>
                         <div className={STYLES.actionsContainer}>
