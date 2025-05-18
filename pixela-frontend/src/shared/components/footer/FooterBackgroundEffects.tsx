@@ -1,64 +1,59 @@
+'use client';
+
 import { useMemo } from 'react';
+import { BackgroundEffectProps, TriangleElement, PixelElement, FlowLine, Bubble } from './types/background-effects';
+import { BACKGROUND_CONFIG, DECORATIVE_STYLES } from './constants/background-effects';
 
-type BackgroundEffectProps = {
-  isAnimated: boolean;
-};
-
-export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAnimated }) => {
+/**
+ * Componente que renderiza los efectos visuales de fondo del footer
+ * @param {BackgroundEffectProps} props - Propiedades del componente
+ * @returns {JSX.Element} Componente de efectos de fondo
+ */
+export const FooterBackgroundEffects = ({ isAnimated }: BackgroundEffectProps) => {
   // Generar elementos decorativos con useMemo para evitar recálculos
-  const triangleElements = useMemo(() => {
-    return Array.from({ length: 8 }, (_, i) => {
-      const size = Math.random() * 6 + 4;
-      return {
-        id: i,
-        size,
-        top: Math.random() * 90 + 5,
-        left: Math.random() * 90 + 5,
-        rotation: Math.random() * 360,
-        duration: Math.random() * 15 + 25,
-        delay: Math.random() * 5
-      };
-    });
+  const triangleElements = useMemo<TriangleElement[]>(() => {
+    return Array.from({ length: BACKGROUND_CONFIG.triangles.count }, (_, i) => ({
+      id: i,
+      size: Math.random() * (BACKGROUND_CONFIG.triangles.sizeRange.max - BACKGROUND_CONFIG.triangles.sizeRange.min) + BACKGROUND_CONFIG.triangles.sizeRange.min,
+      top: Math.random() * (BACKGROUND_CONFIG.triangles.positionRange.max - BACKGROUND_CONFIG.triangles.positionRange.min) + BACKGROUND_CONFIG.triangles.positionRange.min,
+      left: Math.random() * (BACKGROUND_CONFIG.triangles.positionRange.max - BACKGROUND_CONFIG.triangles.positionRange.min) + BACKGROUND_CONFIG.triangles.positionRange.min,
+      rotation: Math.random() * (BACKGROUND_CONFIG.triangles.rotationRange.max - BACKGROUND_CONFIG.triangles.rotationRange.min) + BACKGROUND_CONFIG.triangles.rotationRange.min,
+      duration: Math.random() * (BACKGROUND_CONFIG.triangles.durationRange.max - BACKGROUND_CONFIG.triangles.durationRange.min) + BACKGROUND_CONFIG.triangles.durationRange.min,
+      delay: Math.random() * (BACKGROUND_CONFIG.triangles.delayRange.max - BACKGROUND_CONFIG.triangles.delayRange.min) + BACKGROUND_CONFIG.triangles.delayRange.min
+    }));
   }, []);
 
-  const pixelElements = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => {
-      const size = Math.random() * 3 + 2;
-      return {
-        id: i,
-        size,
-        top: Math.random() * 100,
-        left: Math.random() * 100,
-        duration: Math.random() * 10 + 20,
-        delay: Math.random() * 5
-      };
-    });
+  const pixelElements = useMemo<PixelElement[]>(() => {
+    return Array.from({ length: BACKGROUND_CONFIG.pixels.count }, (_, i) => ({
+      id: i,
+      size: Math.random() * (BACKGROUND_CONFIG.pixels.sizeRange.max - BACKGROUND_CONFIG.pixels.sizeRange.min) + BACKGROUND_CONFIG.pixels.sizeRange.min,
+      top: Math.random() * (BACKGROUND_CONFIG.pixels.positionRange.max - BACKGROUND_CONFIG.pixels.positionRange.min) + BACKGROUND_CONFIG.pixels.positionRange.min,
+      left: Math.random() * (BACKGROUND_CONFIG.pixels.positionRange.max - BACKGROUND_CONFIG.pixels.positionRange.min) + BACKGROUND_CONFIG.pixels.positionRange.min,
+      duration: Math.random() * (BACKGROUND_CONFIG.pixels.durationRange.max - BACKGROUND_CONFIG.pixels.durationRange.min) + BACKGROUND_CONFIG.pixels.durationRange.min,
+      delay: Math.random() * (BACKGROUND_CONFIG.pixels.delayRange.max - BACKGROUND_CONFIG.pixels.delayRange.min) + BACKGROUND_CONFIG.pixels.delayRange.min
+    }));
   }, []);
 
-  const flowLines = useMemo(() => {
-    return Array.from({ length: 8 }, (_, i) => {
-      return {
-        id: i,
-        height: Math.random() * 1 + 0.5,
-        width: Math.random() * 15 + 10,
-        top: Math.random() * 100,
-        left: Math.random() * 50,
-        rotation: Math.random() * 20 - 10,
-        duration: Math.random() * 4 + 8,
-        delay: Math.random() * 3
-      };
-    });
+  const flowLines = useMemo<FlowLine[]>(() => {
+    return Array.from({ length: BACKGROUND_CONFIG.flowLines.count }, (_, i) => ({
+      id: i,
+      height: Math.random() * (BACKGROUND_CONFIG.flowLines.heightRange.max - BACKGROUND_CONFIG.flowLines.heightRange.min) + BACKGROUND_CONFIG.flowLines.heightRange.min,
+      width: Math.random() * (BACKGROUND_CONFIG.flowLines.widthRange.max - BACKGROUND_CONFIG.flowLines.widthRange.min) + BACKGROUND_CONFIG.flowLines.widthRange.min,
+      top: Math.random() * (BACKGROUND_CONFIG.flowLines.positionRange.max - BACKGROUND_CONFIG.flowLines.positionRange.min) + BACKGROUND_CONFIG.flowLines.positionRange.min,
+      left: Math.random() * (BACKGROUND_CONFIG.flowLines.positionRange.max - BACKGROUND_CONFIG.flowLines.positionRange.min) + BACKGROUND_CONFIG.flowLines.positionRange.min,
+      rotation: Math.random() * (BACKGROUND_CONFIG.flowLines.rotationRange.max - BACKGROUND_CONFIG.flowLines.rotationRange.min) + BACKGROUND_CONFIG.flowLines.rotationRange.min,
+      duration: Math.random() * (BACKGROUND_CONFIG.flowLines.durationRange.max - BACKGROUND_CONFIG.flowLines.durationRange.min) + BACKGROUND_CONFIG.flowLines.durationRange.min,
+      delay: Math.random() * (BACKGROUND_CONFIG.flowLines.delayRange.max - BACKGROUND_CONFIG.flowLines.delayRange.min) + BACKGROUND_CONFIG.flowLines.delayRange.min
+    }));
   }, []);
 
-  const bubbles = useMemo(() => {
-    return Array.from({ length: 5 }, (_, i) => {
-      return {
-        id: i,
-        size: Math.random() * 6 + 2,
-        left: 5 + (i * 20) + Math.random() * 10,
-        delay: Math.random() * 5
-      };
-    });
+  const bubbles = useMemo<Bubble[]>(() => {
+    return Array.from({ length: BACKGROUND_CONFIG.bubbles.count }, (_, i) => ({
+      id: i,
+      size: Math.random() * (BACKGROUND_CONFIG.bubbles.sizeRange.max - BACKGROUND_CONFIG.bubbles.sizeRange.min) + BACKGROUND_CONFIG.bubbles.sizeRange.min,
+      left: BACKGROUND_CONFIG.bubbles.positionRange.min + (i * 20) + Math.random() * 10,
+      delay: Math.random() * (BACKGROUND_CONFIG.bubbles.delayRange.max - BACKGROUND_CONFIG.bubbles.delayRange.min) + BACKGROUND_CONFIG.bubbles.delayRange.min
+    }));
   }, []);
 
   return (
@@ -94,7 +89,7 @@ export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAni
               left: `${line.left}%`,
               opacity: 0.3,
               transform: `rotate(${line.rotation}deg)`,
-              filter: 'blur(0.5px)',
+              ...DECORATIVE_STYLES.blur,
               animation: `flowLine ${line.duration}s infinite ease-in-out`,
               animationDelay: `${line.delay}s`
             }}
@@ -166,9 +161,7 @@ export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAni
           letterSpacing: "-0.05em",
           userSelect: "none",
           whiteSpace: "nowrap",
-          backgroundImage: "linear-gradient(135deg, #181818 60%, #ff007f 300%)",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
+          ...DECORATIVE_STYLES.gradient
         }}
         aria-hidden
       >

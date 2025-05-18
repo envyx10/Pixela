@@ -3,32 +3,17 @@
 import Link from 'next/link';
 import FooterNewsletter from './FooterNewsletter';
 import FooterSocialLinks from './FooterSocialLinks';
-
-// Definición de enlaces para menús
-type FooterLink = {
-  name: string;
-  href: string;
-};
-
-// Enlaces para las columnas - Extraídos como constantes para evitar re-creación en cada render
-const explorerLinks: FooterLink[] = [
-  { name: "Inicio", href: "/" },
-  { name: "Tendencias", href: "/" },
-  { name: "Categorías", href: "/" },
-
-];
-
-const companyLinks: FooterLink[] = [
-  { name: "Sobre nosotros", href: "/sobre-nosotros" },
-  { name: "Privacidad", href: "/privacidad" },
-  { name: "Términos", href: "/terminos" },
-  { name: "Contacto", href: "/contacto" }
-];
+import { FOOTER_CONTENT } from './constants/footer-content';
 
 type FooterContentProps = {
   isAnimated: boolean;
 };
 
+/**
+ * Componente principal del footer que contiene toda la estructura y contenido
+ * @param {FooterContentProps} props - Propiedades del componente
+ * @returns {JSX.Element} Componente de footer
+ */
 export const FooterContent: React.FC<FooterContentProps> = ({ isAnimated }) => {
   return (
     <div className="relative z-10 w-full">
@@ -56,19 +41,19 @@ export const FooterContent: React.FC<FooterContentProps> = ({ isAnimated }) => {
               </div>
             </div>
             <p className="text-white/80 text-sm max-w-md leading-relaxed mt-2">
-              Descubriendo historias que nos conectan. Pixela une a los amantes del cine y las series en una experiencia visual donde compartir, opinar y disfrutar del séptimo arte es parte del viaje.
+              {FOOTER_CONTENT.description}
             </p>
             <div className="flex flex-wrap gap-x-8 gap-y-4 mt-3">
               <div className="flex flex-col group">
                 <span className="text-white/50 text-xs uppercase tracking-widest group-hover:text-[#ff007f]/80 transition-colors duration-300">Email</span>
-                <Link href="mailto:pixel@pixela.io" className="text-white hover:text-[#ff007f] transition flex items-center group">
-                  pixel@pixela.io
+                <Link href={`mailto:${FOOTER_CONTENT.contact.email}`} className="text-white hover:text-[#ff007f] transition flex items-center group">
+                  {FOOTER_CONTENT.contact.email}
                   <span className="ml-1 transform translate-x-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">→</span>
                 </Link>
               </div>
               <div className="flex flex-col group">
                 <span className="text-white/50 text-xs uppercase tracking-widest group-hover:text-[#ff007f]/80 transition-colors duration-300">Ubicación</span>
-                <span className="text-white group-hover:text-[#ff007f]/90 transition-colors duration-300">Málaga, España</span>
+                <span className="text-white group-hover:text-[#ff007f]/90 transition-colors duration-300">{FOOTER_CONTENT.contact.location}</span>
               </div>
             </div>
           </div>
@@ -83,8 +68,8 @@ export const FooterContent: React.FC<FooterContentProps> = ({ isAnimated }) => {
               <div className="absolute -bottom-1 left-0 w-8 h-0.5 bg-[#ff007f]/50 rounded-full"></div>
             </h3>
             <ul className="space-y-4">
-              {explorerLinks.map((item, index) => (
-                <li key={index} className="transform hover:translate-x-1 transition-transform duration-300">
+              {FOOTER_CONTENT.links.explorer.map((item) => (
+                <li key={item.name} className="transform hover:translate-x-1 transition-transform duration-300">
                   <Link 
                     href={item.href}
                     className="text-white/70 hover:text-[#ff007f] transition flex items-center group"
@@ -104,8 +89,8 @@ export const FooterContent: React.FC<FooterContentProps> = ({ isAnimated }) => {
               <div className="absolute -bottom-1 left-0 w-8 h-0.5 bg-[#ff007f]/50 rounded-full"></div>
             </h3>
             <ul className="space-y-4">
-              {companyLinks.map((item, index) => (
-                <li key={index} className="transform hover:translate-x-1 transition-transform duration-300">
+              {FOOTER_CONTENT.links.company.map((item) => (
+                <li key={item.name} className="transform hover:translate-x-1 transition-transform duration-300">
                   <Link 
                     href={item.href}
                     className="text-white/70 hover:text-[#ff007f] transition flex items-center group"
@@ -132,7 +117,7 @@ export const FooterContent: React.FC<FooterContentProps> = ({ isAnimated }) => {
         <div className={`pb-12 transition-all duration-700 delay-100 ${isAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <p className="text-white/60 text-sm">
-              © 2025 Pixela.io. Todos los derechos reservados.
+              © {new Date().getFullYear()} Pixela.io. Todos los derechos reservados.
             </p>
             <div className="flex space-x-4 mt-3 sm:mt-0">
               <Link href="/cookies" className="text-white/60 hover:text-[#ff007f] text-sm transition-colors">Política de cookies</Link>

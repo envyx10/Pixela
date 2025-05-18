@@ -2,12 +2,20 @@
 
 import { useState } from 'react';
 
+/**
+ * Componente que maneja la suscripción al newsletter
+ * @returns {JSX.Element} Componente de newsletter
+ */
 export const FooterNewsletter = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState<string>("");
 
+  /**
+   * Maneja el envío del formulario de newsletter
+   * @param {React.FormEvent} e - Evento del formulario
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Lógica para procesar newsletter
+    // TODO: Implementar lógica real de newsletter
     alert(`¡Gracias por suscribirte a Pixela con ${email}!`);
     setEmail("");
   };
@@ -24,6 +32,7 @@ export const FooterNewsletter = () => {
       <form
         className="flex w-full max-w-md mb-6 group"
         onSubmit={handleSubmit}
+        aria-label="Formulario de suscripción al newsletter"
       >
         <div className="w-full relative z-0 group">
           <input
