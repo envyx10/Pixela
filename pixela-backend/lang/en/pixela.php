@@ -28,6 +28,7 @@ return [
     'forgot_password_msg' => 'Introduce your email and we\'ll send you a link to restore your password.',
     'send_link_button' => 'Send link',
     'back_to_login' => 'Back to login',
+    'reset_link_sent' => 'Link sent. Please, check your email.',
     
     # Reset password
     'reset_password' => 'Reset password',

@@ -27,6 +27,7 @@ return [
     'recover_password' => 'Recuperar contraseña',
     'forgot_password_msg' => 'Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.',
     'send_link_button' => 'Enviar enlace',
+    'reset_link_sent' => 'Link enviado. Por favor, verifique su email.',
 
     # Reset password
     'reset_password' => 'Restablecer contraseña',

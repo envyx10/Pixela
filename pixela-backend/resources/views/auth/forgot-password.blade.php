@@ -1,6 +1,4 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4 text-[16px] font-['Outfit'] text-green-500" :status="session('status')" />
     
     <form method="POST" action="{{ route('password.email') }}" class="py-4 space-y-6">
         @csrf
@@ -25,8 +23,11 @@
                 required 
                 autofocus 
                 autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2 text-[14px] font-['Outfit']" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2 text-[#ec1b69] text-[14px] font-['Outfit']" />
         </div>
+
+        <!-- Session Status -->
+        <x-auth-session-status class="mb-4 text-[16px] font-['Outfit'] text-green-500" :status="session('status')" />
 
         <div class="flex items-center gap-10 mt-8">
             <div class="w-1/2">
