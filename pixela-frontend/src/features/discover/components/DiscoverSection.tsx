@@ -10,17 +10,19 @@ interface DiscoverSectionProps {
     movies: TrendingMovie[];
 }
 
+/**
+ * Componente principal de la sección de descubrimiento
+ * Maneja el estado global de series y películas
+ */
 export const DiscoverSection = ({ series, movies }: DiscoverSectionProps) => {
-    const setSeries = useDiscoverStore((state) => state.setSeries);
-    const setMovies = useDiscoverStore((state) => state.setMovies);
+    const { setSeries, setMovies } = useDiscoverStore();
 
     useEffect(() => {
-        if (series && series.length > 0) {
-            setSeries(series);
-        }
-        if (movies && movies.length > 0) {
-            setMovies(movies);
-        }
+        const hasValidSeries = series?.length > 0;
+        const hasValidMovies = movies?.length > 0;
+
+        if (hasValidSeries) setSeries(series);
+        if (hasValidMovies) setMovies(movies);
     }, [series, movies, setSeries, setMovies]);
 
     return <DiscoverContent />;

@@ -28,7 +28,6 @@ const DynamicFooterAnimations = dynamic(
  */
 export default function Footer() {
   // Estados para animaciones y funcionalidad
-  const [menuOpen, setMenuOpen] = useState<number | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [isAnimated, setIsAnimated] = useState(false);
   const [isMounted, setIsMounted] = useState(false);

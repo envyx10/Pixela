@@ -6,15 +6,47 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { SliderNavButton } from '@/shared/components/SliderNavButton';
 import clsx from 'clsx';
 
+const STYLES = {
+  container: 'relative',
+  carousel: {
+    base: 'embla overflow-hidden w-full cursor-grab',
+    dragging: 'cursor-grabbing'
+  },
+  slides: 'embla__container',
+  navButton: 'top-[50%]',
+  icon: 'h-6 w-6'
+} as const;
+
+const CAROUSEL_OPTIONS = {
+  loop: true,
+  align: 'start' as const,
+  skipSnaps: false,
+  dragFree: true,
+  containScroll: 'trimSnaps' as const,
+  slidesToScroll: 1,
+  duration: 50
+} as const;
+
 interface MediaCarouselProps {
+  /** Contenido del carrusel */
   children: ReactNode;
+  /** Habilita el autoplay del carrusel */
   autoplay?: boolean;
+  /** Intervalo de tiempo entre slides en milisegundos */
   autoplayInterval?: number;
+  /** Clases CSS adicionales para los slides */
   slidesClassName?: string;
+  /** Clases CSS adicionales para el contenedor */
   className?: string;
+  /** Índice inicial del carrusel */
   initialIndex?: number;
 }
 
+/**
+ * Componente de carrusel de medios con soporte para autoplay y navegación
+ * @param {MediaCarouselProps} props - Propiedades del componente
+ * @returns {JSX.Element} Componente de carrusel
+ */
 export const MediaCarousel = ({ 
   children, 
   autoplay = true, 
@@ -25,21 +57,13 @@ export const MediaCarousel = ({
 }: MediaCarouselProps) => {
   const [isDragging, setIsDragging] = useState(false);
   
-  // Memoizar opciones del carrusel para evitar recreaciones
   const carouselOptions = useMemo(() => ({
-    loop: true,
-    align: 'start' as const,
-    skipSnaps: false,
-    dragFree: true,
-    containScroll: 'trimSnaps' as const,
-    slidesToScroll: 1,
-    duration: 50,
+    ...CAROUSEL_OPTIONS,
     startIndex: initialIndex
   }), [initialIndex]);
   
   const [emblaRef, emblaApi] = useEmblaCarousel(carouselOptions);
   
-  // Gestión optimizada de eventos de arrastre
   useEffect(() => {
     if (!emblaApi) return;
     
@@ -55,7 +79,6 @@ export const MediaCarousel = ({
     };
   }, [emblaApi]);
   
-  // Autoplay con retraso adaptativo
   useEffect(() => {
     if (!emblaApi || !autoplay) return;
     
@@ -70,13 +93,8 @@ export const MediaCarousel = ({
       }, autoplayInterval);
     };
     
-    // Iniciar autoplay
     startAutoplay();
-    
-    // Reiniciar autoplay después de interacción
     emblaApi.on('pointerUp', startAutoplay);
-    
-    // Pausar cuando la pestaña no está visible
     document.addEventListener('visibilitychange', startAutoplay);
     
     return () => {
@@ -86,7 +104,6 @@ export const MediaCarousel = ({
     };
   }, [emblaApi, autoplay, autoplayInterval]);
   
-  // Funciones de navegación memoizadas
   const scrollPrev = useCallback(() => 
     emblaApi?.scrollPrev(), [emblaApi]);
   
@@ -94,15 +111,15 @@ export const MediaCarousel = ({
     emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <div className={clsx("relative", className)}>
+    <div className={clsx(STYLES.container, className)}>
       <div 
         className={clsx(
-          "embla overflow-hidden w-full cursor-grab",
-          { "cursor-grabbing": isDragging }
+          STYLES.carousel.base,
+          { [STYLES.carousel.dragging]: isDragging }
         )}
         ref={emblaRef}
       >
-        <div className={clsx("embla__container", slidesClassName)}>
+        <div className={clsx(STYLES.slides, slidesClassName)}>
           {children}
         </div>
       </div>
@@ -111,16 +128,18 @@ export const MediaCarousel = ({
         direction="prev"
         onClick={scrollPrev}
         ariaLabel="Anterior"
-        icon={<FiChevronLeft className="h-6 w-6" />}
-        className="top-[50%]"
+        icon={<FiChevronLeft className={STYLES.icon} />}
+        className={STYLES.navButton}
       />
       <SliderNavButton 
         direction="next"
         onClick={scrollNext}
         ariaLabel="Siguiente"
-        icon={<FiChevronRight className="h-6 w-6" />}
-        className="top-[50%]"
+        icon={<FiChevronRight className={STYLES.icon} />}
+        className={STYLES.navButton}
       />
     </div>
   );
-}; 
+};
+
+export default MediaCarousel; 

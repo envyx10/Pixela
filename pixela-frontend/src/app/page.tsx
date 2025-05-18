@@ -7,7 +7,16 @@ import { getTrendingSeries, getTrendingMovies } from "@/features/trending/servic
 import { getDiscoveredSeries, getDiscoveredMovies } from "@/features/discover/service";
 import { getFeaturedBackdrops } from "@/features/hero/services/heroBackdropService";
 
-export default async function Home() {
+/**
+ * Número de elementos a obtener para las secciones de tendencias
+ */
+const TRENDING_ITEMS_LIMIT = 30;
+
+/**
+ * Obtiene todos los datos necesarios para la página principal
+ * @returns Promise con los datos de todas las secciones
+ */
+const fetchHomePageData = async () => {
   const [
     trendingSeries,
     trendingMovies,
@@ -15,12 +24,35 @@ export default async function Home() {
     discoveredMovies,
     featuredBackdrops
   ] = await Promise.all([
-    getTrendingSeries(30),
-    getTrendingMovies(30),
+    getTrendingSeries(TRENDING_ITEMS_LIMIT),
+    getTrendingMovies(TRENDING_ITEMS_LIMIT),
     getDiscoveredSeries(),
     getDiscoveredMovies(),
     getFeaturedBackdrops()
   ]);
+
+  return {
+    trendingSeries,
+    trendingMovies,
+    discoveredSeries,
+    discoveredMovies,
+    featuredBackdrops
+  };
+};
+
+/**
+ * Página principal de la aplicación
+ * 
+ * @returns Componente de la página principal
+ */
+export default async function Home() {
+  const {
+    trendingSeries,
+    trendingMovies,
+    discoveredSeries,
+    discoveredMovies,
+    featuredBackdrops
+  } = await fetchHomePageData();
    
   const dynamicHeroData = {
     ...heroData,
@@ -28,10 +60,16 @@ export default async function Home() {
   };
 
   return (
-    <main>
+    <main className="min-h-screen">
       <HeroSection {...dynamicHeroData} />
-      <TrendingSection series={trendingSeries} movies={trendingMovies} />
-      <DiscoverSection series={discoveredSeries} movies={discoveredMovies} />
+      <TrendingSection 
+        series={trendingSeries} 
+        movies={trendingMovies} 
+      />
+      <DiscoverSection 
+        series={discoveredSeries} 
+        movies={discoveredMovies} 
+      />
       <AboutSection />
     </main>
   );

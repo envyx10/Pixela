@@ -1,24 +1,30 @@
+/* Variables CSS para mantener consistencia */
+:root {
+  --pixela-accent-color: rgba(236, 27, 105, 0.5);
+  --pixela-accent-color-transparent: rgba(236, 27, 105, 0);
+}
+
 /* Estilos para el componente Trending y sus subcomponentes */
 
-/* Estilos básicos de Embla Carousel que no se pueden manejar con Tailwind */
+/* Estilos básicos de Embla Carousel */
 .embla__container {
-    display: flex;
-    user-select: none;
-    -webkit-touch-callout: none;
-    -khtml-user-select: none;
-    -webkit-tap-highlight-color: transparent;
+  display: flex;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -khtml-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Animación de pulso para los botones */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--pixela-accent-color);
   }
-  
-  /* Animación de pulso para los botones - No se puede lograr con Tailwind */
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(236, 27, 105, 0.5);
-    }
-    70% {
-      box-shadow: 0 0 0 10px rgba(236, 27, 105, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(236, 27, 105, 0);
-    }
+  70% {
+    box-shadow: 0 0 0 10px var(--pixela-accent-color-transparent);
   }
+  100% {
+    box-shadow: 0 0 0 0 var(--pixela-accent-color-transparent);
+  }
+}
   

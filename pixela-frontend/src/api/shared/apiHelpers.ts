@@ -1,4 +1,12 @@
 import { BACKEND_URL, API_URL } from './apiEndpoints';
+
+/**
+ * Interfaz para los errores de la API
+ */
+interface APIError extends Error {
+  status: number;
+}
+
 // Estado del token CSRF
 let csrfInitialized = false;
 
@@ -78,7 +86,7 @@ export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): P
         url: fullUrl,
         error: errorText
       });
-      const error: any = new Error(`Error en la respuesta: ${response.status} - ${errorText}`);
+      const error = new Error(`Error en la respuesta: ${response.status} - ${errorText}`) as APIError;
       error.status = response.status;
       throw error;
     }

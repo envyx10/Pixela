@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import { UserResponse } from '@/api/auth/types';
 import { ProfileFormData } from '@/features/profile/types/profileTypes';
 import { authAPI } from '@/api/auth/auth';
-import { FavoriteWithDetails } from '@/api/favorites/types';
-import { favoritesAPI } from '@/api/favorites/favorites';
 import { usersAPI } from '@/api/users/users';
 import { ProfileFavorites } from '../components/layout/ProfileFavorites';
 import { ProfileReviews } from '../components/layout/ProfileReviews';
@@ -21,22 +19,40 @@ import {
 } from '@/features/profile/components';
 import { FiLoader } from 'react-icons/fi';
 import { UserCreateModal } from '../components/form/UserCreateModal';
+import { clsx } from 'clsx';
 
 import '@/styles/profile/main.scss';
 
+const STYLES = {
+  container: 'profile-page',
+  content: 'profile-page__content',
+  title: 'profile-page__title',
+  welcome: 'profile-page__welcome text-gray-400 mb-6',
+  profileSection: 'profile-page__profile-section',
+  profileGrid: 'profile-page__profile-grid',
+  avatarColumn: (scrolled: boolean) => clsx(
+    'profile-page__avatar-column avatar-scroll-effect',
+    { scrolled }
+  ),
+  infoColumn: 'profile-page__info-column',
+  addUserButton: 'px-4 py-1.5 flex items-center justify-center rounded-md bg-pixela-accent text-white text-sm font-medium hover:bg-pixela-accent/90 transition-colors',
+  loadingContainer: 'flex flex-col items-center justify-center p-8 text-pixela-primary',
+  loadingSpinner: 'w-8 h-8 mb-4 animate-spin',
+  loadingText: 'text-lg font-semibold'
+} as const;
+
 type TabType = 'profile' | 'reviews' | 'favorites' | 'users';
 
-const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
+interface ProfileClientProps {
+  user: UserResponse;
+}
+
+const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<UserResponse>(initialUser);
   const [redirecting, setRedirecting] = useState(false);
-
-  const [favorites, setFavorites] = useState<FavoriteWithDetails[]>([]);
-  const [favoritesLoading, setFavoritesLoading] = useState(false);
-  const [favoritesError, setFavoritesError] = useState<string | null>(null);
-
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [refreshUsers, setRefreshUsers] = useState(false);
 
@@ -48,18 +64,6 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (activeTab === 'favorites') {
-      setFavoritesLoading(true);
-      setFavoritesError(null);
-      favoritesAPI.listWithDetails()
-        .then(setFavorites)
-        .catch(() => setFavoritesError('No se pudieron cargar los favoritos.'))
-        .finally(() => setFavoritesLoading(false));
-    }
-  }, [activeTab]);
-
-  // Efecto para la redirección
   useEffect(() => {
     if (redirecting) {
       const timer = setTimeout(() => {
@@ -77,31 +81,25 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
   const handleSubmitProfile = async (data: ProfileFormData) => {
     try {
       const userData = {
-        ...user,
-        ...data,
-        user_id: user.user_id
-      };
+        user_id: user.user_id,
+        name: data.name,
+        email: data.email,
+        password: data.password || '',
+        photo_url: data.photo_url || user.photo_url,
+        is_admin: user.is_admin,
+        created_at: user.created_at,
+        updated_at: new Date().toISOString()
+      } as UserResponse;
 
-      if (!data.password) {
-        userData.password = '';
-      }
+      const updatedUser = await usersAPI.update(userData);
+      const userToSet = 'user' in updatedUser ? updatedUser.user : updatedUser;
 
-      const response = await usersAPI.update(userData);
-      // La respuesta de la API puede venir en dos formatos, manejamos ambos casos
-      const userToSet = (response as any).user || response;
-
-      // Si se actualizó la contraseña, redirigir
       if (data.password) {
         setRedirecting(true);
         return;
       }
 
-      // Inicializar el usuario con los datos actualizados
-      setUser({
-        ...user,
-        ...userToSet,
-        password: '',
-      });
+      setUser(userToSet as UserResponse);
       setIsEditing(false);
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
@@ -110,18 +108,18 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
 
   if (redirecting) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-pixela-primary">
-        <FiLoader className="w-8 h-8 mb-4 animate-spin" />
-        <span className="text-lg font-semibold">Contraseña cambiada, redirigiendo al login...</span>
+      <div className={STYLES.loadingContainer}>
+        <FiLoader className={STYLES.loadingSpinner} />
+        <span className={STYLES.loadingText}>Contraseña cambiada, redirigiendo al login...</span>
       </div>
     );
   }
 
   return (
-    <main className="profile-page">
+    <main className={STYLES.container}>
       <div className="profile-page__container">
-        <h1 className="profile-page__title">Mi Cuenta</h1>
-        <p className="profile-page__welcome text-gray-400 mb-6">
+        <h1 className={STYLES.title}>Mi Cuenta</h1>
+        <p className={STYLES.welcome}>
           ¡Bienvenido/a, <span className="text-pixela-accent font-medium">{user.name}</span>! Aquí puedes gestionar tu perfil y preferencias.
         </p>
         <ProfileTabs
@@ -129,11 +127,11 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
           onTabChange={handleTabChange}
           isAdmin={user.is_admin ?? false}
         />
-        <div className="profile-page__content">
+        <div className={STYLES.content}>
           {activeTab === 'profile' && !isEditing && (
-            <div className="profile-page__profile-section">
-              <div className="profile-page__profile-grid">
-                <div className={`profile-page__avatar-column avatar-scroll-effect ${scrolled ? 'scrolled' : ''}`}>
+            <div className={STYLES.profileSection}>
+              <div className={STYLES.profileGrid}>
+                <div className={STYLES.avatarColumn(scrolled)}>
                   <UserAvatar
                     profileImage={user.photo_url}
                     name={user.name}
@@ -143,7 +141,7 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
                     {user.is_admin ? 'Administrador' : 'Usuario'}
                   </p>
                 </div>
-                <div className="profile-page__info-column">
+                <div className={STYLES.infoColumn}>
                   <ProfileInfo
                     user={{ ...user, user_id: user.user_id }}
                     onEdit={handleEditProfile}
@@ -182,7 +180,7 @@ const ProfileClient = ({ user: initialUser }: { user: UserResponse }) => {
               title="Usuarios"
               headerAction={
                 <button
-                  className="px-4 py-1.5 flex items-center justify-center rounded-md bg-pixela-accent text-white text-sm font-medium hover:bg-pixela-accent/90 transition-colors"
+                  className={STYLES.addUserButton}
                   title="Registrar nuevo usuario"
                   onClick={() => setShowCreateModal(true)}
                 >
@@ -212,7 +210,6 @@ async function getUserData(): Promise<UserResponse> {
     const userData = await authAPI.getUser();
     if (!userData) throw new Error('No se pudieron obtener los datos del usuario');
 
-    // Mapear UserResponse a User
     return {
       user_id: userData.user_id,
       name: userData.name,
@@ -239,7 +236,7 @@ export default function ProfilePage() {
       try {
         const userData = await getUserData();
         setUser(userData);
-      } catch (error) {
+      } catch {
         setError('No se pudieron cargar los datos del usuario. Por favor, intenta nuevamente.');
       } finally {
         setLoading(false);

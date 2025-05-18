@@ -3,9 +3,32 @@
 import { FaInfoCircle, FaBookmark, FaRegComments } from "react-icons/fa";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
+import clsx from 'clsx';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { favoritesAPI } from '@/api/favorites/favorites';
+
+const STYLES = {
+  container: 'flex gap-2 flex-wrap',
+  button: {
+    primary: {
+      hero: 'flex items-center gap-2 bg-pixela-accent hover:bg-pixela-accent/90 text-white px-4 py-2 rounded-md transition-all duration-300 text-sm font-medium',
+      default: 'flex-1 bg-pixela-accent hover:bg-pixela-accent/90 text-pixela-light py-2.5 rounded flex items-center justify-center gap-2 font-medium transition-colors'
+    },
+    secondary: {
+      hero: 'flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md backdrop-blur-sm transition-all duration-300 text-sm font-medium',
+      default: 'w-12 h-12 flex items-center justify-center bg-pixela-dark hover:bg-pixela-dark/80 rounded text-pixela-light transition-colors border border-pixela-accent/40'
+    },
+    favorite: {
+      active: 'p-3 rounded font-medium transition duration-300 flex items-center gap-2 shadow-lg bg-pixela-accent text-white hover:bg-pixela-accent/90',
+      inactive: 'p-3 rounded font-medium transition duration-300 flex items-center gap-2 shadow-lg'
+    }
+  },
+  icon: {
+    hero: 'h-3 w-3',
+    default: 'w-4 h-4',
+    favorite: 'w-5 h-5 transition-all duration-300'
+  }
+} as const;
 
 interface ActionButtonsProps {
   onInfoClick?: () => void;
@@ -24,6 +47,11 @@ interface ActionButtonsProps {
   itemType?: 'movie' | 'series';
 }
 
+/**
+ * Componente que renderiza botones de acción para películas y series
+ * @param {ActionButtonsProps} props - Propiedades del componente
+ * @returns {JSX.Element} Componente de botones de acción
+ */
 export const ActionButtons = ({
   onInfoClick,
   onFollowClick,
@@ -40,15 +68,15 @@ export const ActionButtons = ({
   tmdbId,
   itemType
 }: ActionButtonsProps) => {
-  // Favoritos
   const [isFavorited, setIsFavorited] = useState(false);
   const [favoriteId, setFavoriteId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const { isAuthenticated, checkAuth } = useAuthStore();
+  const isHero = variant === 'hero';
 
   useEffect(() => {
     if (!tmdbId || !itemType || !isAuthenticated) return;
+    
     const checkFavoriteStatus = async () => {
       try {
         const favorites = await favoritesAPI.listWithDetails();
@@ -61,6 +89,7 @@ export const ActionButtons = ({
         console.error('Error checking favorite status:', error);
       }
     };
+    
     checkFavoriteStatus();
   }, [isAuthenticated, tmdbId, itemType]);
 
@@ -70,6 +99,7 @@ export const ActionButtons = ({
       return;
     }
     if (!tmdbId || !itemType) return;
+    
     setIsLoading(true);
     try {
       if (isFavorited && favoriteId) {
@@ -80,7 +110,7 @@ export const ActionButtons = ({
           item_type: itemType,
         });
       }
-      // Refresca el estado real desde la API
+      
       const favorites = await favoritesAPI.listWithDetails();
       const fav = favorites.find(fav =>
         fav.tmdb_id === tmdbId && fav.item_type === itemType
@@ -103,68 +133,61 @@ export const ActionButtons = ({
       window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
       return;
     }
-    if (onReviewsClick) onReviewsClick();
+    onReviewsClick?.();
   };
 
   const handleFollow = tmdbId && itemType ? handleFavorite : (onFollowClick || (() => {}));
 
-  const isHero = variant === 'hero';
-
-  const primaryBtnClass = isHero 
-    ? "flex items-center gap-2 bg-pixela-accent hover:bg-pixela-accent/90 text-white px-4 py-2 rounded-md transition-all duration-300 text-sm font-medium"
-    : "flex-1 bg-pixela-accent hover:bg-pixela-accent/90 text-pixela-light py-2.5 rounded flex items-center justify-center gap-2 font-medium transition-colors";
-    
-  const secondaryBtnClass = isHero
-    ? "flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md backdrop-blur-sm transition-all duration-300 text-sm font-medium"
-    : "w-12 h-12 flex items-center justify-center bg-pixela-dark hover:bg-pixela-dark/80 rounded text-pixela-light transition-colors border border-pixela-accent/40";
-
   const InfoButton = detailsHref ? (
-    <Link href={detailsHref} className={primaryBtnClass}>
-      <FaInfoCircle className={isHero ? "h-3 w-3" : "w-4 h-4"} />
+    <Link 
+      href={detailsHref} 
+      className={clsx(STYLES.button.primary[isHero ? 'hero' : 'default'])}
+    >
+      <FaInfoCircle className={STYLES.icon[isHero ? 'hero' : 'default']} />
       {isHero && <span>{infoLabel || detailsLabel || "Más información"}</span>}
     </Link>
   ) : (
     <button 
-      className={primaryBtnClass}
+      className={clsx(STYLES.button.primary[isHero ? 'hero' : 'default'])}
       onClick={onInfoClick || onDetailsClick || (() => {})}
     >
-      <FaInfoCircle className={isHero ? "h-3 w-3" : "w-4 h-4"} />
+      <FaInfoCircle className={STYLES.icon[isHero ? 'hero' : 'default']} />
       {isHero && <span>{infoLabel || detailsLabel || "Más información"}</span>}
     </button>
   );
 
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className={STYLES.container}>
       {InfoButton}
       <button 
-        className={
+        className={clsx(
           tmdbId && itemType
-            ? `p-3 rounded font-medium transition duration-300 flex items-center gap-2 shadow-lg
-                ${isFavorited
-                  ? 'bg-pixela-accent text-white hover:bg-pixela-accent/90'
-                  : secondaryBtnClass
-                }`
-            : secondaryBtnClass
-        }
+            ? isFavorited 
+              ? STYLES.button.favorite.active 
+              : STYLES.button.favorite.inactive
+            : STYLES.button.secondary[isHero ? 'hero' : 'default']
+        )}
         onClick={handleFollow}
         title={followTitle || followLabel}
         disabled={isLoading}
       >
         <FaBookmark className={
           tmdbId && itemType
-            ? 'w-5 h-5 transition-all duration-300'
-            : isHero ? "h-3 w-3" : "w-4 h-4"
+            ? STYLES.icon.favorite
+            : STYLES.icon[isHero ? 'hero' : 'default']
         } />
         {isHero && <span>{followLabel}</span>}
       </button>
       <button 
-        className={secondaryBtnClass}
+        className={clsx(STYLES.button.secondary[isHero ? 'hero' : 'default'])}
         onClick={handleReviews}
         title={reviewsTitle || reviewsLabel}
       >
-        <FaRegComments className={isHero ? "h-3 w-3" : "w-4 h-4"} />
+        <FaRegComments className={STYLES.icon[isHero ? 'hero' : 'default']} />
         {isHero && <span>{reviewsLabel}</span>}
       </button>
     </div>
   );
 };
+
+export default ActionButtons;

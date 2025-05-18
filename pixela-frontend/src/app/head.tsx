@@ -1,12 +1,26 @@
+/**
+ * Metadatos y configuración del head de la aplicación
+ */
+const METADATA = {
+  title: 'Pixela - Descubre y comparte apasionantes historias cinematográficas',
+  description: 'Pixela es una comunidad para los amantes del cine y las series. Descubre historias que te conectan con grandes producciones audiovisuales.',
+  ogTitle: 'Pixela - Pasión por el cine y las series',
+  ogDescription: 'Descubre, colecciona y comparte experiencias audiovisuales en una comunidad de apasionados del cine y las series.',
+  ogImage: '/images/pixela-og-image.jpg',
+  ogUrl: 'https://pixela.io',
+} as const;
+
+/**
+ * Componente que define los metadatos y configuración del head de la aplicación
+ * 
+ * @returns Componente de head con metadatos y configuración
+ */
 export default function Head() {
   return (
     <>
-      <title>Pixela - Descubre y comparte apasionantes historias cinematográficas</title>
+      <title>{METADATA.title}</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta 
-        name="description" 
-        content="Pixela es una comunidad para los amantes del cine y las series. Descubre historias que te conectan con grandes producciones audiovisuales." 
-      />
+      <meta name="description" content={METADATA.description} />
       <link rel="icon" href="/favicon.ico" />
       
       {/* Precargar fuentes críticas */}
@@ -22,23 +36,11 @@ export default function Head() {
       <link rel="preconnect" href="https://image.tmdb.org" />
       
       {/* Metadatos para redes sociales */}
-      <meta property="og:title" content="Pixela - Pasión por el cine y las series" />
-      <meta 
-        property="og:description" 
-        content="Descubre, colecciona y comparte experiencias audiovisuales en una comunidad de apasionados del cine y las series." 
-      />
-      <meta property="og:image" content="/images/pixela-og-image.jpg" />
-      <meta property="og:url" content="https://pixela.io" />
+      <meta property="og:title" content={METADATA.ogTitle} />
+      <meta property="og:description" content={METADATA.ogDescription} />
+      <meta property="og:image" content={METADATA.ogImage} />
+      <meta property="og:url" content={METADATA.ogUrl} />
       <meta property="og:type" content="website" />
-      
-      {/* Twitter Card */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content="Pixela - Pasión por el cine y las series" />
-      <meta 
-        name="twitter:description" 
-        content="Descubre, colecciona y comparte experiencias audiovisuales en una comunidad de apasionados del cine y las series." 
-      />
-      <meta name="twitter:image" content="/images/pixela-twitter-card.jpg" />
     </>
   );
 } 

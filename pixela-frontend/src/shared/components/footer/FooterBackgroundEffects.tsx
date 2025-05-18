@@ -1,78 +1,94 @@
+'use client';
+
 import { useMemo } from 'react';
+import clsx from 'clsx';
+import { BackgroundEffectProps, TriangleElement, PixelElement, FlowLine, Bubble } from './types/background-effects';
+import { BACKGROUND_CONFIG, DECORATIVE_STYLES } from './constants/background-effects';
 
-type BackgroundEffectProps = {
-  isAnimated: boolean;
-};
+const STYLES = {
+  container: 'absolute top-0 left-0 w-full h-full opacity-0 transition-opacity duration-1000',
+  animatedContainer: 'opacity-30',
+  backgroundBlur: {
+    pink: 'absolute top-[10%] left-[5%] w-64 h-64 rounded-full bg-[#ff007f]/10 filter blur-[80px] animate-pulse-slow',
+    purple: 'absolute bottom-[20%] right-[10%] w-80 h-80 rounded-full bg-purple-500/10 filter blur-[100px] animate-pulse-slow animation-delay-1000',
+    blue: 'absolute top-[40%] right-[25%] w-40 h-40 rounded-full bg-blue-500/10 filter blur-[60px] animate-pulse-slow animation-delay-2000'
+  },
+  pixelGrid: 'absolute inset-0 w-full h-full',
+  flowLinesContainer: 'absolute inset-0 w-full h-full overflow-hidden',
+  flowLine: 'absolute bg-gradient-to-r from-[#ff007f]/5 to-transparent',
+  bubble: 'absolute bottom-0 rounded-full bg-[#ff007f]/20 backdrop-blur-md',
+  decorativeContainer: 'absolute inset-0 overflow-hidden pointer-events-none',
+  triangle: 'absolute opacity-20',
+  pixel: 'absolute bg-[#ff007f]',
+  logo: 'pointer-events-none select-none absolute inset-0 w-full h-full flex items-center justify-center font-black uppercase tracking-tighter z-0 leading-none text-transparent transition-opacity duration-1000',
+  animatedLogo: 'opacity-40',
+  hiddenLogo: 'opacity-0'
+} as const;
 
-export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAnimated }) => {
+/**
+ * Componente que renderiza los efectos visuales de fondo del footer
+ * @param {BackgroundEffectProps} props - Propiedades del componente
+ * @returns {JSX.Element} Componente de efectos de fondo
+ */
+export const FooterBackgroundEffects = ({ isAnimated }: BackgroundEffectProps) => {
   // Generar elementos decorativos con useMemo para evitar recálculos
-  const triangleElements = useMemo(() => {
-    return Array.from({ length: 8 }, (_, i) => {
-      const size = Math.random() * 6 + 4;
-      return {
-        id: i,
-        size,
-        top: Math.random() * 90 + 5,
-        left: Math.random() * 90 + 5,
-        rotation: Math.random() * 360,
-        duration: Math.random() * 15 + 25,
-        delay: Math.random() * 5
-      };
-    });
+  const triangleElements = useMemo<TriangleElement[]>(() => {
+    return Array.from({ length: BACKGROUND_CONFIG.triangles.count }, (_, i) => ({
+      id: i,
+      size: Math.random() * (BACKGROUND_CONFIG.triangles.sizeRange.max - BACKGROUND_CONFIG.triangles.sizeRange.min) + BACKGROUND_CONFIG.triangles.sizeRange.min,
+      top: Math.random() * (BACKGROUND_CONFIG.triangles.positionRange.max - BACKGROUND_CONFIG.triangles.positionRange.min) + BACKGROUND_CONFIG.triangles.positionRange.min,
+      left: Math.random() * (BACKGROUND_CONFIG.triangles.positionRange.max - BACKGROUND_CONFIG.triangles.positionRange.min) + BACKGROUND_CONFIG.triangles.positionRange.min,
+      rotation: Math.random() * (BACKGROUND_CONFIG.triangles.rotationRange.max - BACKGROUND_CONFIG.triangles.rotationRange.min) + BACKGROUND_CONFIG.triangles.rotationRange.min,
+      duration: Math.random() * (BACKGROUND_CONFIG.triangles.durationRange.max - BACKGROUND_CONFIG.triangles.durationRange.min) + BACKGROUND_CONFIG.triangles.durationRange.min,
+      delay: Math.random() * (BACKGROUND_CONFIG.triangles.delayRange.max - BACKGROUND_CONFIG.triangles.delayRange.min) + BACKGROUND_CONFIG.triangles.delayRange.min
+    }));
   }, []);
 
-  const pixelElements = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => {
-      const size = Math.random() * 3 + 2;
-      return {
-        id: i,
-        size,
-        top: Math.random() * 100,
-        left: Math.random() * 100,
-        duration: Math.random() * 10 + 20,
-        delay: Math.random() * 5
-      };
-    });
+  const pixelElements = useMemo<PixelElement[]>(() => {
+    return Array.from({ length: BACKGROUND_CONFIG.pixels.count }, (_, i) => ({
+      id: i,
+      size: Math.random() * (BACKGROUND_CONFIG.pixels.sizeRange.max - BACKGROUND_CONFIG.pixels.sizeRange.min) + BACKGROUND_CONFIG.pixels.sizeRange.min,
+      top: Math.random() * (BACKGROUND_CONFIG.pixels.positionRange.max - BACKGROUND_CONFIG.pixels.positionRange.min) + BACKGROUND_CONFIG.pixels.positionRange.min,
+      left: Math.random() * (BACKGROUND_CONFIG.pixels.positionRange.max - BACKGROUND_CONFIG.pixels.positionRange.min) + BACKGROUND_CONFIG.pixels.positionRange.min,
+      duration: Math.random() * (BACKGROUND_CONFIG.pixels.durationRange.max - BACKGROUND_CONFIG.pixels.durationRange.min) + BACKGROUND_CONFIG.pixels.durationRange.min,
+      delay: Math.random() * (BACKGROUND_CONFIG.pixels.delayRange.max - BACKGROUND_CONFIG.pixels.delayRange.min) + BACKGROUND_CONFIG.pixels.delayRange.min
+    }));
   }, []);
 
-  const flowLines = useMemo(() => {
-    return Array.from({ length: 8 }, (_, i) => {
-      return {
-        id: i,
-        height: Math.random() * 1 + 0.5,
-        width: Math.random() * 15 + 10,
-        top: Math.random() * 100,
-        left: Math.random() * 50,
-        rotation: Math.random() * 20 - 10,
-        duration: Math.random() * 4 + 8,
-        delay: Math.random() * 3
-      };
-    });
+  const flowLines = useMemo<FlowLine[]>(() => {
+    return Array.from({ length: BACKGROUND_CONFIG.flowLines.count }, (_, i) => ({
+      id: i,
+      height: Math.random() * (BACKGROUND_CONFIG.flowLines.heightRange.max - BACKGROUND_CONFIG.flowLines.heightRange.min) + BACKGROUND_CONFIG.flowLines.heightRange.min,
+      width: Math.random() * (BACKGROUND_CONFIG.flowLines.widthRange.max - BACKGROUND_CONFIG.flowLines.widthRange.min) + BACKGROUND_CONFIG.flowLines.widthRange.min,
+      top: Math.random() * (BACKGROUND_CONFIG.flowLines.positionRange.max - BACKGROUND_CONFIG.flowLines.positionRange.min) + BACKGROUND_CONFIG.flowLines.positionRange.min,
+      left: Math.random() * (BACKGROUND_CONFIG.flowLines.positionRange.max - BACKGROUND_CONFIG.flowLines.positionRange.min) + BACKGROUND_CONFIG.flowLines.positionRange.min,
+      rotation: Math.random() * (BACKGROUND_CONFIG.flowLines.rotationRange.max - BACKGROUND_CONFIG.flowLines.rotationRange.min) + BACKGROUND_CONFIG.flowLines.rotationRange.min,
+      duration: Math.random() * (BACKGROUND_CONFIG.flowLines.durationRange.max - BACKGROUND_CONFIG.flowLines.durationRange.min) + BACKGROUND_CONFIG.flowLines.durationRange.min,
+      delay: Math.random() * (BACKGROUND_CONFIG.flowLines.delayRange.max - BACKGROUND_CONFIG.flowLines.delayRange.min) + BACKGROUND_CONFIG.flowLines.delayRange.min
+    }));
   }, []);
 
-  const bubbles = useMemo(() => {
-    return Array.from({ length: 5 }, (_, i) => {
-      return {
-        id: i,
-        size: Math.random() * 6 + 2,
-        left: 5 + (i * 20) + Math.random() * 10,
-        delay: Math.random() * 5
-      };
-    });
+  const bubbles = useMemo<Bubble[]>(() => {
+    return Array.from({ length: BACKGROUND_CONFIG.bubbles.count }, (_, i) => ({
+      id: i,
+      size: Math.random() * (BACKGROUND_CONFIG.bubbles.sizeRange.max - BACKGROUND_CONFIG.bubbles.sizeRange.min) + BACKGROUND_CONFIG.bubbles.sizeRange.min,
+      left: BACKGROUND_CONFIG.bubbles.positionRange.min + (i * 20) + Math.random() * 10,
+      delay: Math.random() * (BACKGROUND_CONFIG.bubbles.delayRange.max - BACKGROUND_CONFIG.bubbles.delayRange.min) + BACKGROUND_CONFIG.bubbles.delayRange.min
+    }));
   }, []);
 
   return (
     <>
       {/* Elementos decorativos de fondo */}
-      <div className={`absolute top-0 left-0 w-full h-full opacity-0 transition-opacity duration-1000 ${isAnimated ? 'opacity-30' : ''}`}>
-        <div className="absolute top-[10%] left-[5%] w-64 h-64 rounded-full bg-[#ff007f]/10 filter blur-[80px] animate-pulse-slow" />
-        <div className="absolute bottom-[20%] right-[10%] w-80 h-80 rounded-full bg-purple-500/10 filter blur-[100px] animate-pulse-slow animation-delay-1000" />
-        <div className="absolute top-[40%] right-[25%] w-40 h-40 rounded-full bg-blue-500/10 filter blur-[60px] animate-pulse-slow animation-delay-2000" />
+      <div className={clsx(STYLES.container, isAnimated && STYLES.animatedContainer)}>
+        <div className={STYLES.backgroundBlur.pink} />
+        <div className={STYLES.backgroundBlur.purple} />
+        <div className={STYLES.backgroundBlur.blue} />
       </div>
       
       {/* Grid de píxeles decorativo animado */}
       <div 
-        className="absolute inset-0 w-full h-full" 
+        className={STYLES.pixelGrid}
         style={{
           backgroundImage: "radial-gradient(circle, #ff007f 1px, transparent 1px)",
           backgroundSize: "30px 30px",
@@ -82,11 +98,11 @@ export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAni
       />
       
       {/* Líneas de flujo estilo digital */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden">
+      <div className={STYLES.flowLinesContainer}>
         {flowLines.map(line => (
           <div 
             key={`line-${line.id}`}
-            className="absolute bg-gradient-to-r from-[#ff007f]/5 to-transparent"
+            className={STYLES.flowLine}
             style={{
               height: `${line.height}px`,
               width: `${line.width}%`,
@@ -94,7 +110,7 @@ export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAni
               left: `${line.left}%`,
               opacity: 0.3,
               transform: `rotate(${line.rotation}deg)`,
-              filter: 'blur(0.5px)',
+              ...DECORATIVE_STYLES.blur,
               animation: `flowLine ${line.duration}s infinite ease-in-out`,
               animationDelay: `${line.delay}s`
             }}
@@ -104,7 +120,7 @@ export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAni
         {bubbles.map(bubble => (
           <div 
             key={`bubble-${bubble.id}`}
-            className="absolute bottom-0 rounded-full bg-[#ff007f]/20 backdrop-blur-md"
+            className={STYLES.bubble}
             style={{
               width: `${bubble.size}px`,
               height: `${bubble.size}px`,
@@ -118,12 +134,12 @@ export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAni
       </div>
 
       {/* Elementos digitales decorativos */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className={STYLES.decorativeContainer}>
         {/* Triángulos pequeños */}
         {triangleElements.map(triangle => (
           <div 
             key={`triangle-${triangle.id}`}
-            className="absolute opacity-20"
+            className={STYLES.triangle}
             style={{
               width: `${triangle.size}px`,
               height: `${triangle.size}px`,
@@ -143,7 +159,7 @@ export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAni
         {pixelElements.map(pixel => (
           <div 
             key={`pixel-${pixel.id}`}
-            className="absolute bg-[#ff007f]"
+            className={STYLES.pixel}
             style={{
               width: `${pixel.size}px`,
               height: `${pixel.size}px`,
@@ -159,16 +175,14 @@ export const FooterBackgroundEffects: React.FC<BackgroundEffectProps> = ({ isAni
       
       {/* Fondo decorativo: PIXELA gigante */}
       <span
-        className={`pointer-events-none select-none absolute inset-0 w-full h-full flex items-center justify-center font-black uppercase tracking-tighter z-0 leading-none text-transparent transition-opacity duration-1000 ${isAnimated ? 'opacity-40' : 'opacity-0'}`}
+        className={clsx(STYLES.logo, isAnimated ? STYLES.animatedLogo : STYLES.hiddenLogo)}
         style={{
           lineHeight: 1,
           fontSize: "clamp(200px, 30vw, 500px)",
           letterSpacing: "-0.05em",
           userSelect: "none",
           whiteSpace: "nowrap",
-          backgroundImage: "linear-gradient(135deg, #181818 60%, #ff007f 300%)",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
+          ...DECORATIVE_STYLES.gradient
         }}
         aria-hidden
       >
