@@ -4,7 +4,7 @@
         @csrf
 
         <!-- Title -->
-        <h2 class="text-[24px] font-['Outfit'] text-white font-bold mb-8">Bienvenido a Pixela | <span class="text-gray-500">Iniciar sesión</span></h2>
+        <h2 class="text-[24px] font-['Outfit'] text-white font-bold mb-8">{{ __('pixela.welcome') }} | <span class="text-gray-500">{{ __('pixela.login') }}</span></h2>
 
         <!-- Email Address -->
         <div class="relative mb-5">
@@ -14,7 +14,7 @@
                 class="block w-full bg-[#181818] text-white/90 text-[16px] font-['Outfit'] pl-10" 
                 type="email" 
                 name="email" 
-                placeholder="Email"
+                placeholder="{{ __('pixela.email') }}"
                 :value="old('email')" 
                 required 
                 autofocus 
@@ -29,7 +29,7 @@
                 class="block w-full bg-[#181818] text-white/90 text-[16px] font-['Outfit'] pl-10" 
                 type="password"
                 name="password"
-                placeholder="Contraseña"
+                placeholder="{{ __('pixela.password') }}"
                 required 
                 autocomplete="current-password" />
         </div>
@@ -41,21 +41,10 @@
             </div>
         @endif
 
-        <!-- Remember Me -->
-        <div class="flex items-center mb-6">
-            <label for="remember_me" class="inline-flex items-center cursor-pointer">
-                <input id="remember_me" type="checkbox" name="remember" 
-                    class="w-4 h-4 rounded border-gray-600 bg-[#181818] text-[#ec1b69] focus:ring-0 focus:ring-offset-0 focus:outline-none">
-                <span class="ml-2 text-[15px] font-['Outfit'] text-gray-400 hover:text-gray-300 transition-colors duration-300">
-                    {{ __('Recuérdame') }}
-                </span>
-            </label>
-        </div>
-
         <!-- Iniciar button -->
         <div class="mb-6">
             <x-rounded-button type="submit" class="w-full h-11 text-base">
-                Iniciar
+                {{ __('pixela.login_button') }}
             </x-rounded-button>
         </div>
         
@@ -63,14 +52,14 @@
         <div class="flex flex-col gap-4">
             @if (Route::has('password.request'))
                 <a class="text-[15px] font-['Outfit'] text-gray-400 hover:text-[#ec1b69] transition-colors duration-300" href="{{ route('password.request') }}">
-                    {{ __('¿Olvidaste tu contraseña?') }}
+                    {{ __('pixela.forgot_password') }}
                 </a>
             @endif
             
             <div class="text-[15px] font-['Outfit'] text-gray-400">
-                {{ __('¿No tienes cuenta?') }}
+                {{ __('pixela.no_account') }}
                 <a class="ml-2 text-[#ec1b69] hover:text-[#ec1b69]/80 transition-colors duration-300" href="{{ route('register') }}">
-                    {{ __('Regístrate') }}
+                    {{ __('pixela.register_link') }}
                 </a>
             </div>
         </div>
