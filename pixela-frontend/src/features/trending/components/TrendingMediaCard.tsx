@@ -7,9 +7,16 @@ import { ActionButtons } from "@/shared/components/ActionButtons";
 import { MediaInfoDetails } from "./MediaInfoDetails";
 import { useRouter } from 'next/navigation';
 
+
 /**
  * Constantes para la configuración del componente
  */
+const STYLES = {
+  card: 'w-[375px] flex flex-col relative group',
+  posterContainer: 'relative w-full h-[528px] overflow-hidden',
+  noiseEffect: 'noise-effect opacity-5'
+} as const;
+
 const HIGH_RATING_THRESHOLD = 7.5;
 const INITIALLY_VISIBLE_ITEMS = 3;
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
@@ -120,18 +127,18 @@ export const TrendingMediaCard = memo(({ media, type, index = 0 }: TrendingMedia
   
   return (
     <div 
-      className="w-[375px] flex flex-col relative group"
+      className={STYLES.card}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative w-full h-[528px] overflow-hidden">
+      <div className={STYLES.posterContainer}>
         <PosterImage 
           posterPath={media.poster_path}
           title={media.title}
           isInitiallyVisible={isInitiallyVisible}
         />
         
-        <div className="noise-effect opacity-5" />
+        <div className={STYLES.noiseEffect} />
         
         {isHovered && (
           <OverlayContent 

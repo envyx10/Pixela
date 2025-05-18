@@ -3,6 +3,19 @@ import { TrendingSerie, TrendingMovie } from "@/features/trending/type";
 import { memo } from "react";
 
 // Constantes
+const STYLES = {
+  container: 'mb-4',
+  title: 'text-pixela-light font-bold text-xl mb-2 font-outfit',
+  infoContainer: 'flex items-center gap-3 mb-3',
+  rating: {
+    container: 'flex items-center',
+    icon: 'text-yellow-400 mr-1',
+    value: 'text-pixela-light font-semibold'
+  },
+  year: 'text-pixela-light/80',
+  badge: 'text-pixela-light/90 bg-pixela-dark/60 px-2 py-0.5 rounded-sm text-xs'
+} as const;
+
 const MEDIA_TYPE_LABELS = {
   series: 'Serie',
   movies: 'Película'
@@ -18,9 +31,9 @@ interface MediaInfoDetailsProps {
 
 // Componentes internos
 const RatingDisplay = memo(({ rating }: { rating: number }) => (
-  <div className="flex items-center">
-    <FaStar className="text-yellow-400 mr-1" />
-    <span className="text-pixela-light font-semibold">
+  <div className={STYLES.rating.container}>
+    <FaStar className={STYLES.rating.icon} />
+    <span className={STYLES.rating.value}>
       {rating?.toFixed(1) || "N/A"}
     </span>
   </div>
@@ -29,7 +42,7 @@ const RatingDisplay = memo(({ rating }: { rating: number }) => (
 RatingDisplay.displayName = 'RatingDisplay';
 
 const MediaTypeBadge = memo(({ type }: { type: MediaType }) => (
-  <span className="text-pixela-light/90 bg-pixela-dark/60 px-2 py-0.5 rounded-sm text-xs">
+  <span className={STYLES.badge}>
     {MEDIA_TYPE_LABELS[type]}
   </span>
 ));
@@ -42,16 +55,16 @@ export const MediaInfoDetails = memo(({ media, type }: MediaInfoDetailsProps) =>
     : (media as TrendingMovie).release_date;
 
   return (
-    <div className="mb-4">
-      <h3 className="text-pixela-light font-bold text-xl mb-2 font-outfit">
+    <div className={STYLES.container}>
+      <h3 className={STYLES.title}>
         {media.title}
       </h3>
       
-      <div className="flex items-center gap-3 mb-3">
+      <div className={STYLES.infoContainer}>
         <RatingDisplay rating={media.vote_average} />
         
         {releaseDate && (
-          <span className="text-pixela-light/80">
+          <span className={STYLES.year}>
             {releaseDate.split('-')[0]}
           </span>
         )}

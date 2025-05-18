@@ -5,11 +5,23 @@ import { useTrendingStore } from '@/features/trending/store';
 import { TrendingMediaCarousel } from '@/features/trending/components/TrendingMediaCarousel';
 import { TrendingButton } from './TrendingButton';
 import { TrendingSerie, TrendingMovie } from '@/features/trending/type';
+import clsx from 'clsx';
 
 // Constantes
+const STYLES = {
+  title: 'text-[128px] font-[900] text-pixela-accent font-outfit tracking-wider uppercase leading-none',
+  container: 'relative w-full min-h-screen bg-pixela-dark flex flex-col',
+  content: 'flex-grow flex flex-col justify-center relative z-10',
+  contentWrapper: 'w-[80%] mx-auto mb-4',
+  contentWrapperWithToggle: 'w-[80%] mx-auto mb-4 flex items-end justify-between',
+  toggleContainer: 'mb-10',
+  toggleWrapper: 'flex bg-white/5 backdrop-blur-sm rounded-full p-1 border border-white/10 relative',
+  loadingContainer: 'relative w-full h-screen bg-pixela-dark flex flex-col justify-center',
+  loadingCard: 'w-[375px] h-[528px] bg-gray-800 flex items-center justify-center',
+  loadingText: 'text-pixela-light'
+} as const;
+
 const TITLE_TEXT = 'Tendencias';
-const CONTENT_WIDTH = '80%';
-const TITLE_SIZE = 'text-[128px]';
 const BUTTON_OPTIONS = [
   { id: 'series', label: 'Series' },
   { id: 'movies', label: 'Películas' }
@@ -25,7 +37,7 @@ type MediaType = 'series' | 'movies';
  * @returns {JSX.Element} Título estilizado
  */
 const TrendingTitle = memo(() => (
-  <h2 className={`${TITLE_SIZE} font-[900] text-pixela-accent font-outfit tracking-wider uppercase leading-none`}>
+  <h2 className={STYLES.title}>
     {TITLE_TEXT}
   </h2>
 ));
@@ -48,8 +60,8 @@ interface TrendingToggleProps {
  * @returns {JSX.Element} Botones de alternancia
  */
 const TrendingToggle = memo(({ activeButton, onButtonChange }: TrendingToggleProps) => (
-  <div className="mb-10">
-    <div className="flex bg-white/5 backdrop-blur-sm rounded-full p-1 border border-white/10 relative">
+  <div className={STYLES.toggleContainer}>
+    <div className={STYLES.toggleWrapper}>
       {BUTTON_OPTIONS.map(({ id, label }) => (
         <TrendingButton 
           key={id}
@@ -70,13 +82,13 @@ TrendingToggle.displayName = 'TrendingToggle';
  * @returns {JSX.Element} Estado de carga
  */
 const LoadingState = memo(() => (
-  <div className="relative w-full h-screen bg-pixela-dark flex flex-col justify-center">
-    <div className={`w-[${CONTENT_WIDTH}] mx-auto mb-4`}>
+  <div className={STYLES.loadingContainer}>
+    <div className={clsx(STYLES.contentWrapper, 'mb-4')}>
       <TrendingTitle />
     </div>
     <div className="flex justify-center">
-      <div className="w-[375px] h-[528px] bg-gray-800 flex items-center justify-center">
-        <p className="text-pixela-light">Cargando...</p>
+      <div className={STYLES.loadingCard}>
+        <p className={STYLES.loadingText}>Cargando...</p>
       </div>
     </div>
   </div>
@@ -102,9 +114,9 @@ interface ContentStateProps {
  * @returns {JSX.Element} Contenido principal
  */
 const ContentState = memo(({ activeButton, activeContent, onButtonChange }: ContentStateProps) => (
-  <div id="tendencias" className="relative w-full min-h-screen bg-pixela-dark flex flex-col">
-    <div className="flex-grow flex flex-col justify-center relative z-10">
-      <div className={`w-[${CONTENT_WIDTH}] mx-auto mb-4 flex items-end justify-between`}>
+  <div id="tendencias" className={STYLES.container}>
+    <div className={STYLES.content}>
+      <div className={STYLES.contentWrapperWithToggle}>
         <TrendingTitle />
         <TrendingToggle 
           activeButton={activeButton}
@@ -114,7 +126,7 @@ const ContentState = memo(({ activeButton, activeContent, onButtonChange }: Cont
       
       <TrendingMediaCarousel 
         content={activeContent} 
-        type={activeButton} 
+        type={activeButton}
       />
     </div>
   </div>

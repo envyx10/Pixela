@@ -1,9 +1,10 @@
 import { type ButtonHTMLAttributes, memo } from 'react';
+import clsx from 'clsx';
 
 /**
  * Constantes de estilo para los botones de tendencias
  */
-const BUTTON_STYLES = {
+const STYLES = {
   base: 'relative z-10 px-6 py-2 text-sm font-medium rounded-full transition-colors duration-300',
   active: 'text-pixela-dark bg-pixela-accent shadow-lg shadow-pixela-accent/20',
   inactive: 'text-white/80 hover:text-white'
@@ -31,11 +32,11 @@ export const TrendingButton = memo(({
   className = '',
   ...props 
 }: TrendingButtonProps) => {
-  const buttonClasses = [
-    BUTTON_STYLES.base,
-    isActive ? BUTTON_STYLES.active : BUTTON_STYLES.inactive,
+  const buttonClasses = clsx(
+    STYLES.base,
+    isActive ? STYLES.active : STYLES.inactive,
     className
-  ].filter(Boolean).join(' ');
+  );
 
   return (
     <button 

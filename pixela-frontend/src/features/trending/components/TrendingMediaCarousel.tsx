@@ -3,10 +3,11 @@ import { MediaCarousel } from '@/shared/components/MediaCarousel';
 import { TrendingMediaCard } from './TrendingMediaCard';
 import { TrendingSerie, TrendingMovie } from '../type';
 
+
 /**
  * Constantes de estilo para el carrusel de medios
  */
-const CAROUSEL_CLASSES = {
+const STYLES = {
   container: 'trending-carousel',
   slides: 'flex gap-0',
   slide: 'relative min-w-[375px] max-w-[375px] w-[375px] flex-none'
@@ -45,7 +46,7 @@ interface TrendingMediaSlideProps {
  * @returns {JSX.Element} Slide individual
  */
 const TrendingMediaSlide = ({ item, type, index }: TrendingMediaSlideProps) => (
-  <div className={CAROUSEL_CLASSES.slide}>
+  <div className={STYLES.slide}>
     <TrendingMediaCard 
       media={item} 
       type={type} 
@@ -62,8 +63,8 @@ const TrendingMediaSlide = ({ item, type, index }: TrendingMediaSlideProps) => (
 export const TrendingMediaCarousel = ({ content, type }: TrendingMediaCarouselProps) => {
   return (
     <MediaCarousel
-      className={CAROUSEL_CLASSES.container}
-      slidesClassName={CAROUSEL_CLASSES.slides}
+      className={STYLES.container}
+      slidesClassName={STYLES.slides}
     >
       {content.map((item, index) => (
         <TrendingMediaSlide
