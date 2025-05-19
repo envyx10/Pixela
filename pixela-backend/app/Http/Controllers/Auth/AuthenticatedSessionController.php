@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        return redirect(env('FRONTEND_URL'));
+        return redirect()->intended(env('FRONTEND_URL'));
     }
 
     /**

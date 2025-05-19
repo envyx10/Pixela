@@ -6,7 +6,7 @@ import AboutSection from "@/features/about/components/AboutSection";
 import { getTrendingSeries, getTrendingMovies } from "@/features/trending/service";
 import { getDiscoveredSeries, getDiscoveredMovies } from "@/features/discover/service";
 import { getFeaturedBackdrops } from "@/features/hero/services/heroBackdropService";
-
+import CleanVerifiedParam from "@/shared/components/CleanVerifiedParam";
 /**
  * Número de elementos a obtener para las secciones de tendencias
  */
@@ -61,6 +61,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen">
+      <CleanVerifiedParam />
       <HeroSection {...dynamicHeroData} />
       <TrendingSection 
         series={trendingSeries} 
