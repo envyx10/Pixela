@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Importar estilos de CinematicSpotlight */
+@import '../styles/cinematic-spotlight.css';
+
 html {
   scroll-behavior: smooth;
 }

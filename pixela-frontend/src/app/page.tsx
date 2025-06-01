@@ -5,6 +5,7 @@ import { DiscoverSection } from "@/features/discover/components/DiscoverSection"
 import { getTrendingSeries, getTrendingMovies } from "@/features/trending/service";
 import { getDiscoveredSeries, getDiscoveredMovies } from "@/features/discover/service";
 import AboutSection from "@/features/about/components/AboutSection";
+import { CinematicSpotlight } from "@/features/cinematic-spotlight";
 
 //TODO Página de inicio o layout principal
 export default async function Home() {
@@ -20,6 +21,7 @@ export default async function Home() {
     <main>
       <HeroSection {...heroData} />
       <TrendingSection series={trendingSeries} movies={trendingMovies} />
+      <CinematicSpotlight />
       <DiscoverSection series={discoveredSeries} movies={discoveredMovies} />
       <AboutSection />
     </main>

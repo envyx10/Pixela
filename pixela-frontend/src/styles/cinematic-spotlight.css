@@ -1,0 +1,309 @@
+/* Cinematic Spotlight Styles - Pixela Edition */
+
+/* Line clamp utility para truncar texto */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth scroll reveal animation */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Custom scrollbar con colores de Pixela */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #181818;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #EC1B69;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d1176b;
+}
+
+/* Backdrop filter effect para cards */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+/* Subtle hover glow effect */
+.card-glow {
+  transition: all 0.3s ease;
+}
+
+.card-glow:hover {
+  box-shadow: 0 0 20px rgba(236, 27, 105, 0.15);
+}
+
+/* Floating animation minimalista */
+@keyframes pixela-float {
+  0%, 100% { 
+    transform: translateY(0px);
+  }
+  50% { 
+    transform: translateY(-5px);
+  }
+}
+
+.pixela-float {
+  animation: pixela-float 8s ease-in-out infinite;
+}
+
+/* Subtle fade-in animation */
+@keyframes pixela-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pixela-fade-in {
+  animation: pixela-fade-in 1s ease-out forwards;
+}
+
+/* Button hover effect con colores de Pixela */
+.pixela-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.pixela-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.pixela-button:hover::before {
+  left: 100%;
+}
+
+/* Grid responsivo mejorado */
+@media (max-width: 768px) {
+  .pixela-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .pixela-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pixela-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Cinematic Spotlight Styles */
+.glitch-effect {
+  position: relative;
+}
+
+.glitch-effect::before,
+.glitch-effect::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch-effect::before {
+  animation: glitch-anim-1 0.3s infinite;
+  color: #ff0080;
+  z-index: -1;
+}
+
+.glitch-effect::after {
+  animation: glitch-anim-2 0.3s infinite;
+  color: #00ffff;
+  z-index: -2;
+}
+
+@keyframes glitch-anim-1 {
+  0% {
+    clip-path: inset(40% 0 61% 0);
+    transform: translate(-2px, -1px);
+    opacity: 1;
+  }
+  20% {
+    clip-path: inset(92% 0 1% 0);
+    transform: translate(-2px, 1px);
+  }
+  40% {
+    clip-path: inset(43% 0 1% 0);
+    transform: translate(-2px, -1px);
+  }
+  60% {
+    clip-path: inset(25% 0 58% 0);
+    transform: translate(-2px, 1px);
+  }
+  80% {
+    clip-path: inset(54% 0 7% 0);
+    transform: translate(-2px, -1px);
+  }
+  100% {
+    clip-path: inset(58% 0 43% 0);
+    transform: translate(-2px, 1px);
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-anim-2 {
+  0% {
+    clip-path: inset(25% 0 58% 0);
+    transform: translate(2px, 1px);
+    opacity: 1;
+  }
+  15% {
+    clip-path: inset(44% 0 39% 0);
+    transform: translate(2px, -1px);
+  }
+  30% {
+    clip-path: inset(96% 0 1% 0);
+    transform: translate(2px, 1px);
+  }
+  45% {
+    clip-path: inset(12% 0 85% 0);
+    transform: translate(2px, -1px);
+  }
+  60% {
+    clip-path: inset(38% 0 40% 0);
+    transform: translate(2px, 1px);
+  }
+  75% {
+    clip-path: inset(69% 0 15% 0);
+    transform: translate(2px, -1px);
+  }
+  100% {
+    clip-path: inset(77% 0 15% 0);
+    transform: translate(2px, 1px);
+    opacity: 0;
+  }
+}
+
+/* Holographic card effect */
+.holographic-card {
+  background: linear-gradient(
+    45deg,
+    transparent 30%, 
+    rgba(139, 92, 246, 0.1) 50%, 
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  animation: holographic-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes holographic-shimmer {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+/* Gradient text animation */
+.gradient-text {
+  background: linear-gradient(
+    270deg,
+    #8B5CF6,
+    #EC4899,
+    #3B82F6,
+    #10B981,
+    #F59E0B
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 4s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Particle glow effect */
+.particle-glow {
+  filter: blur(1px);
+  animation: particle-pulse 2s ease-in-out infinite;
+}
+
+@keyframes particle-pulse {
+  0%, 100% { 
+    filter: blur(1px) brightness(1);
+    transform: scale(1);
+  }
+  50% { 
+    filter: blur(2px) brightness(1.5);
+    transform: scale(1.1);
+  }
+}
+
+/* Magnetic button effect */
+.magnetic-button {
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.magnetic-button:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 20px 40px rgba(139, 92, 246, 0.4),
+    0 0 80px rgba(236, 72, 153, 0.3);
+}
+
+/* 3D perspective for cards */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+/* Neon glow effect */
+.neon-glow {
+  filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0.8))
+          drop-shadow(0 0 10px rgba(139, 92, 246, 0.6))
+          drop-shadow(0 0 15px rgba(139, 92, 246, 0.4));
+}
+
+/* Cyberpunk grid background */
+.cyberpunk-grid {
+  background-image: 
+    linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+} 
