@@ -13,12 +13,12 @@ interface DiscoverGridProps {
 const DISCOVER_LIMIT = 7;
 
 const STYLES = {
-    container: "flex flex-col items-center gap-4",
+    container: "flex flex-col items-center gap-4 [@media(min-width:820px)_and_(max-width:1180px)]:pt-16",
     row: "flex gap-4",
     mobileGridContainer: "grid grid-cols-2 gap-2 px-1 sm:gap-3 sm:px-2 w-full",
     skeletonCard: "bg-gray-800/50 animate-pulse rounded-2xl w-[200px] h-[281px]",
     mobileSkeletonCard: "bg-gray-800/50 animate-pulse rounded-2xl w-full h-[240px] xs:h-[220px] sm:h-[240px]",
-    cardContainer: "flex flex-col items-center gap-4 relative",
+    cardContainer: "flex flex-col items-center gap-4 relative [@media(min-width:820px)_and_(max-width:1180px)]:pt-16",
     firstRow: "[&>*]:animate-float",
     secondRow: "[&>*]:animate-float [&>*:nth-child(2)]:animation-delay-200",
     thirdRow: "[&>*]:animate-float [&>*:nth-child(2)]:animation-delay-200"
