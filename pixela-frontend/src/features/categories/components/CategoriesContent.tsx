@@ -180,9 +180,12 @@ const MediaCard = memo(({
         <div 
             className={STYLES.card}
             style={{
-                animationDelay: `${index * 50}ms`,
                 opacity: 0,
-                animation: 'fadeIn 0.5s ease-out forwards'
+                animationName: 'fadeIn',
+                animationDuration: '0.5s',
+                animationTimingFunction: 'ease-out',
+                animationFillMode: 'forwards',
+                animationDelay: `${index * 50}ms`
             }}
         >
             <div className={STYLES.posterContainer}>
