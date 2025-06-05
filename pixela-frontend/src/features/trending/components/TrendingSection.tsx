@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useTrendingStore } from '@/features/trending/store';
+import { useTrendingStore } from '@/features/trending/store/trendingStore';
 import { TrendingSerie, TrendingMovie } from '@/features/trending/type';
 import { TrendingHeader } from '@/features/trending/components/TrendingHeader';
 

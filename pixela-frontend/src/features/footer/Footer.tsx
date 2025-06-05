@@ -2,25 +2,25 @@
 
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import FooterContent from "./footer/FooterContent";
-import FooterScrollTopButton from "./footer/FooterScrollTopButton";
+import FooterContent from "./components/FooterContent";
+import FooterScrollTopButton from "./components/FooterScrollTopButton";
 
 const STYLES = {
   footer: "relative bg-gradient-to-b from-[#181818] to-[#0a0a0a] overflow-hidden min-h-[420px] flex items-center justify-center"
 } as const;
 
 const DynamicFooterParticles = dynamic(
-  () => import("./footer/FooterParticles"),
+  () => import("./components/FooterParticles"),
   { ssr: false } 
 );
 
 const DynamicFooterBackgroundEffects = dynamic(
-  () => import("./footer/FooterBackgroundEffects"),
+  () => import("./components/FooterBackgroundEffects"),
   { ssr: false } 
 );
 
 const DynamicFooterAnimations = dynamic(
-  () => import("./footer/FooterAnimations"),
+  () => import("./components/FooterAnimations"),
   { ssr: false } 
 );
 
@@ -60,9 +60,7 @@ export default function Footer() {
       {isMounted && (
         <>
           <DynamicFooterBackgroundEffects isAnimated={isAnimated} />
-          
           <DynamicFooterParticles />
-          
           <DynamicFooterAnimations />
         </>
       )}

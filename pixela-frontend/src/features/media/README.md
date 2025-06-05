@@ -19,6 +19,9 @@ src/features/media/
 ├── README.md                    # Este archivo
 ├── pages/
 │   └── MediaPage.tsx            # Página principal de media
+├── store/                       # Gestión de estado con Zustand
+│   ├── mediaStore.ts           # Implementación del store
+│   └── types.ts                # Tipos del store
 ├── types/
 │   ├── index.ts                 # Exportaciones de tipos
 │   ├── content.ts               # Tipos de Serie y Pelicula
@@ -72,14 +75,30 @@ Página principal que orquesta toda la experiencia de media:
 - **Composición**: Combina todas las secciones principales
 - **Props interface**: Recibe objeto Media como entrada
 
-#### Secciones incluidas:
-- HeroSection con backdrop y información principal
-- PosterModal para vista ampliada
-- StreamingProviders para plataformas disponibles
-- CastSection con reparto principal
-- TrailersSection con videos promocionales
-- GallerySection con imágenes y wallpapers
-- ReviewSection con sistema de reseñas
+### Store de Estado
+**Ubicación**: `store/mediaStore.ts`
+
+Store centralizado con Zustand que maneja:
+
+- **Modal del Poster**: Control de visibilidad del modal de imagen grande
+- **Sistema de Reseñas**: Estado de carga, datos y errores
+- **Galería**: Navegación entre tabs y selección de imágenes
+- **Trailers**: Control del reproductor de trailers
+
+#### Uso del Store
+```typescript
+// Acceso al estado del modal
+const { showPosterModal, setShowPosterModal } = useMediaStore();
+
+// Gestión de reseñas
+const { reviews, loadingReviews, errorReviews } = useMediaStore();
+
+// Control de galería
+const { activeGalleryTab, setActiveGalleryTab } = useMediaStore();
+
+// Control de trailers
+const { selectedTrailerId, setSelectedTrailerId } = useMediaStore();
+```
 
 ### HeroSection
 **Ubicación**: `components/hero/HeroSection.tsx`
@@ -261,6 +280,7 @@ Servicios especializados para metadatos específicos por tipo de media.
 - `next/image`: Optimización de imágenes
 - `react-icons/fi`: Iconos Feather
 - `clsx`: Utilidad para clases CSS condicionales
+- `zustand`: Gestión de estado global
 
 ### Internas
 - `@/api/reviews/reviews`: API de reseñas
@@ -279,20 +299,14 @@ import { MediaPage } from '@/features/media';
 
 ### Estructura de datos requerida:
 ```tsx
-const mediaData: Media = {
-  id: "123456",
-  titulo: "Título de la película/serie",
-  sinopsis: "Descripción del contenido...",
-  fecha: "2024-01-01",
-  generos: ["Acción", "Drama"],
-  poster: "/path/to/poster.jpg",
-  backdrop: "/path/to/backdrop.jpg",
-  puntuacion: 8.5,
-  tipo: "pelicula", // o "serie"
-  actores: [...],
-  trailers: [...],
+interface Media {
+  id: string;
+  titulo: string;
+  tipo: 'pelicula' | 'series';
+  poster: string;
+  backdrop: string;
   // ... otros campos
-};
+}
 ```
 
 ## 🛠️ Configuración
@@ -357,6 +371,7 @@ const API_TIMEOUT = 10000; // 10 segundos
 - **Error boundaries**: Fallbacks para fallos de API
 - **Device detection**: Lógica para optimizar por dispositivo
 - **Image optimization**: Múltiples formatos y tamaños
+- **Estado global**: Uso de Zustand para estado compartido
 
 ## 🔧 Extensibilidad
 
@@ -375,4 +390,9 @@ const API_TIMEOUT = 10000; // 10 segundos
 1. Extender `MediaType` en `types/mediaBase.ts`
 2. Crear interfaz específica en `types/content.ts`
 3. Actualizar servicios y componentes según necesidad
-4. Añadir lógica de mapeo en `HeroSection.tsx` 
+4. Añadir lógica de mapeo en `HeroSection.tsx`
+
+### Para modificar el estado global:
+1. Actualizar tipos en `store/types.ts`
+2. Modificar implementación en `store/mediaStore.ts`
+3. Actualizar componentes que usan el store 

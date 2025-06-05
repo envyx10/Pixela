@@ -1,4 +1,12 @@
-// Respuesta de autenticación
+/**
+ * Respuesta de autenticación
+ * @interface AuthResponse
+ * @property {string} token - Token de autenticación
+ * @property {Object} user - Usuario autenticado
+ * @property {number} user.id - ID del usuario
+ * @property {string} user.name - Nombre del usuario
+ * @property {string} user.surname - Apellido del usuario
+ */
 export interface AuthResponse {
     token: string;
     user: {
@@ -13,7 +21,15 @@ export interface AuthResponse {
     };
 }
 
-// Respuesta de usuario
+/**
+ * Respuesta de usuario
+ * @interface UserResponse
+ * @property {number} user_id - ID del usuario
+ * @property {string} name - Nombre del usuario
+ * @property {string} email - Email del usuario
+ * @property {string} photo_url - URL de la imagen del usuario
+ * @property {boolean} is_admin - Si es administrador
+ */
 export interface UserResponse {
     user_id: number;
     name: string;

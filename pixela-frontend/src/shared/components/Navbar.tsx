@@ -6,7 +6,7 @@ import { MdLogout } from 'react-icons/md';
 import { FiUser, FiX } from 'react-icons/fi';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { useState, useEffect } from 'react';
-import { mainNavLinks } from '@/data/links/navigation';
+import { mainNavLinks } from '@/links/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 const STYLES = {
@@ -62,7 +62,7 @@ const NavActionButton = ({
     aria-label={label}
     title={title}
   >
-    <Icon className="h-6 w-6" />
+    <Icon className="w-6 h-6" />
   </button>
 );
 
@@ -89,11 +89,11 @@ const MobileActionButton = ({
       <>
         <span className={STYLES.mobileActionText}>{userName}</span>
         <span className="text-pixela-light/40">|</span>
-        <Icon className="h-6 w-6" />
+        <Icon className="w-6 h-6" />
       </>
     ) : (
       <>
-        <Icon className="h-6 w-6" />
+        <Icon className="w-6 h-6" />
         <span className={STYLES.mobileActionText}>{label}</span>
       </>
     )}
@@ -237,7 +237,7 @@ export const Navbar = () => {
             onClick={toggleMobileMenu}
             aria-label="Abrir menú"
           >
-            <RxHamburgerMenu className="h-8 w-8" />
+            <RxHamburgerMenu className="w-8 h-8" />
           </button>
         </div>
       </nav>
@@ -249,7 +249,7 @@ export const Navbar = () => {
           onClick={closeMobileMenu}
           aria-label="Cerrar menú"
         >
-          <FiX className="h-8 w-8" />
+          <FiX className="w-8 h-8" />
         </button>
 
         {/* Enlaces de navegación para móvil */}

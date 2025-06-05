@@ -1,11 +1,23 @@
-// URLs base
+/**
+ * URL de la API
+ * @namespace API_BASE_URL
+ * @description URL de la API
+ */
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL || 'http://laravel.test/api'; // QUITAR EN PRODUCTION
 export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost'; //Se usa en apiHelpers.ts
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
 
-// PRODUCTION: Cambiar {API_BASE_URL} por {API_URL}
+/**
+ * Endpoints de la API
+ * @namespace API_ENDPOINTS
+ * @description Endpoints de la API
+ */
 export const API_ENDPOINTS = {
-    // Series
+    /**
+     * Series
+     * @namespace SERIES
+     * @description Series
+     */
     SERIES: {
         GET_BY_ID: (id: string) => `${API_BASE_URL}/series/${id}`,
         LIST: `${API_BASE_URL}/series`,
@@ -15,7 +27,11 @@ export const API_ENDPOINTS = {
         GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/series/${id}/watch-providers`,
     },
 
-    // Películas
+    /**
+     * Películas
+     * @namespace PELICULAS
+     * @description Películas
+     */
     PELICULAS: {
         GET_BY_ID: (id: string) => `${API_BASE_URL}/movies/${id}`,
         LIST: `${API_BASE_URL}/movies`,
@@ -25,7 +41,11 @@ export const API_ENDPOINTS = {
         GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/movies/${id}/watch-providers`,
     },
 
-    // Auth
+    /**
+     * Auth
+     * @namespace AUTH
+     * @description Auth
+     */
     AUTH: {
         LOGIN: `${API_URL}/login`,
         LOGOUT: `${API_URL}/logout`,
@@ -33,7 +53,11 @@ export const API_ENDPOINTS = {
         USER: `${API_URL}/user`,
     },
 
-    // Users
+    /**
+     * Users
+     * @namespace USERS
+     * @description Users
+     */
     USERS: {
         LIST: `${API_URL}/users`,
         CREATE: `${API_URL}/users`,
@@ -41,7 +65,11 @@ export const API_ENDPOINTS = {
         DELETE: `${API_URL}/users/:id`,
     },
 
-    // Favorites
+    /**
+     * Favorites
+     * @namespace FAVORITES
+     * @description Favorites
+     */
     FAVORITES: {
         ADD: `${API_URL}/favorites`,
         LIST: `${API_URL}/favorites`,
@@ -49,7 +77,11 @@ export const API_ENDPOINTS = {
         DETAILS: `${API_URL}/favorites/details`,
     },
 
-    // Reviews
+    /**
+     * Reviews
+     * @namespace REVIEWS
+     * @description Reviews
+     */
     REVIEWS: {
         LIST: `${API_URL}/reviews`,
         CREATE: `${API_URL}/reviews`,
@@ -57,7 +89,11 @@ export const API_ENDPOINTS = {
         DELETE: `${API_URL}/reviews/:id`,
     },
 
-    // Categories
+    /**
+     * Categories
+     * @namespace CATEGORIES
+     * @description Categories
+     */
     CATEGORIES: {
         LIST: `${API_URL}/tmdb/categories`,
     }

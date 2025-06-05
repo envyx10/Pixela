@@ -21,7 +21,7 @@ import { FiLoader } from 'react-icons/fi';
 import { UserCreateModal } from '../components/form/UserCreateModal';
 import { clsx } from 'clsx';
 
-import '@/styles/profile/main.scss';
+import '@/shared/styles/profile/main.scss';
 
 const STYLES = {
   container: 'profile-page',
@@ -120,7 +120,7 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
       <div className="profile-page__container">
         <h1 className={STYLES.title}>Mi Cuenta</h1>
         <p className={STYLES.welcome}>
-          ¡Bienvenido/a, <span className="text-pixela-accent font-medium">{user.name}</span>! Aquí puedes gestionar tu perfil y preferencias.
+          ¡Bienvenido/a, <span className="font-medium text-pixela-accent">{user.name}</span>! Aquí puedes gestionar tu perfil y preferencias.
         </p>
         <ProfileTabs
           activeTab={activeTab}

@@ -1,9 +1,10 @@
-// app/not-found.tsx
+
+//TODO: Página de error 404 - Agregar imagen y mejorar la funcionalidad
 
 import Image from 'next/image';
 export default function NotFound() {
   return (
-    <div className="p-0 text-center h-screen w-screen flex flex-col justify-center overflow-hidden relative">
+    <div className="relative flex flex-col justify-center w-screen h-screen p-0 overflow-hidden text-center">
     
       <div className="absolute top-0 left-0 w-full h-full -z-10">
         <Image 

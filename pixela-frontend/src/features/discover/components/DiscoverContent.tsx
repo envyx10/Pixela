@@ -1,10 +1,10 @@
 'use client';
 
-import { useDiscoverStore } from '../store';
+import { useDiscoverStore } from '../store/discoverStore';
 import { DiscoverSelector } from './DiscoverSelector';
 import { IoIosArrowForward } from 'react-icons/io';
 import Link from 'next/link';
-import { useCategoriesStore } from '@/features/categories/store';
+import { useCategoriesStore } from '@/features/categories/store/categoriesStore';
 import { DiscoverGrid } from './DiscoverGrid';
 
 const STYLES = {

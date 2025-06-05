@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import clsx from 'clsx';
-import { useHeroStore } from "../store";
+import { useHeroStore } from "../store/heroStore";
 
 const STYLES = {
   carousel: {

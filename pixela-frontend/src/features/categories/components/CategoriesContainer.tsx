@@ -6,7 +6,7 @@ import { CategoriesContent } from './CategoriesContent';
 import { CategoriesHeader } from './CategoriesHeader';
 import { Pagination } from './Pagination';
 import { Category } from '@/api/categories/categories';
-import { useCategoriesStore } from '../store';
+import { useCategoriesStore } from '../store/categoriesStore';
 import { useContentLoader } from '../hooks/useContentLoader';
 
 const STYLES = {
@@ -138,7 +138,7 @@ export const CategoriesContainer = () => {
                     <div className={STYLES.contentArea}>
                         {/* Botón de categorías para móvil y tablet */}
                         {isInitialized && selectedMediaType !== 'all' && (
-                            <div className="lg:hidden mb-6">
+                            <div className="mb-6 lg:hidden">
                                 <CategoriesList 
                                     onCategorySelect={handleCategorySelect}
                                     selectedCategory={selectedCategory}

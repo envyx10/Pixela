@@ -3,7 +3,12 @@ import { FavoriteWithDetails, Favorite, CreateFavorite } from "./types";
 import { API_ENDPOINTS } from "../shared/apiEndpoints";
 import { fetchFromAPI } from "../shared/apiHelpers";
 
-// API para favoritos
+/**
+ * API para favoritos
+ * Esta funcion se encarga de realizar las operaciones CRUD para los favoritos
+ * @namespace favoritesAPI
+ * @description API para favoritos
+ */
 export const favoritesAPI = {
     async listWithDetails(): Promise<FavoriteWithDetails[]> {
       const response = await fetchFromAPI<{ success: boolean; data: FavoriteWithDetails[] }>(API_ENDPOINTS.FAVORITES.DETAILS);

@@ -2,15 +2,23 @@ import { BACKEND_URL, API_URL } from './apiEndpoints';
 
 /**
  * Interfaz para los errores de la API
+ * @interface APIError
+ * @property {number} status - Código de estado de la respuesta
  */
 interface APIError extends Error {
   status: number;
 }
 
-// Estado del token CSRF
+/**
+ * Estado del token CSRF
+ * @type {boolean}
+ */
 let csrfInitialized = false;
 
-// Opciones por defecto para las peticiones fetch
+/**
+ * Opciones por defecto para las peticiones fetch
+ * @type {RequestInit}
+ */
 export const DEFAULT_FETCH_OPTIONS = {
   headers: {
     'Content-Type': 'application/json',
@@ -19,7 +27,10 @@ export const DEFAULT_FETCH_OPTIONS = {
   cache: 'no-store' as RequestCache
 };
 
-// Helper para obtener el token CSRF
+/**
+ * Helper para obtener el token CSRF
+ * @returns {Promise<void>}
+ */
 async function initCsrf(): Promise<void> {
   if (csrfInitialized) return;
   
@@ -47,26 +58,39 @@ async function initCsrf(): Promise<void> {
   }
 }
 
-// Helper para hacer peticiones a la API
+/**
+ * Helper para hacer peticiones a la API
+ * @param {string} url - URL de la petición
+ * @param {RequestInit} options - Opciones de la petición
+ * @returns {Promise<T>} - Respuesta de la petición
+ */
 export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): Promise<T> {
   try {
-    // Asegurarnos de tener el token CSRF
+    /**
+     * Asegurarnos de tener el token CSRF
+     */
     await initCsrf();
 
-    // Obtener el token CSRF
+    /**
+     * Obtener el token CSRF
+     */
     const token = document.cookie
       .split('; ')
       .find(row => row.startsWith('XSRF-TOKEN='))
       ?.split('=')[1];
 
-    // Construir la URL completa
+    /**
+     * Construir la URL completa
+     */
     const fullUrl = url.startsWith('http') 
       ? url 
       : `${API_URL}${url.startsWith('/') ? url : `/${url}`}`;
     
     console.log('Haciendo petición a:', fullUrl);
     
-    // Realizar la petición
+    /**
+     * Realizar la petición
+     */
     const response = await fetch(fullUrl, {
       ...options,
       credentials: 'include',

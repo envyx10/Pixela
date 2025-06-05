@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useDiscoverStore } from '../store';
+import { useDiscoverStore } from '../store/discoverStore';
 import { TrendingSerie, TrendingMovie } from '../type';
 import { DiscoverContent } from './DiscoverContent';
 

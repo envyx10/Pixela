@@ -1,9 +1,9 @@
 "use client";
 
 import { Media } from '../types';
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { reviewsAPI } from '@/api/reviews/reviews';
-import { Review } from '@/api/reviews/types';
+import { useMediaStore } from '../store/mediaStore';
 
 import {   
   HeroSection, 
@@ -20,13 +20,20 @@ interface MediaPageProps {
 }
 
 export const MediaPage = ({ media }: MediaPageProps) => {
-  const [showPosterModal, setShowPosterModal] = useState(false);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loadingReviews, setLoadingReviews] = useState(true);
-  const [errorReviews, setErrorReviews] = useState<string | null>(null);
-
   const tmdbId = Number(media.id);
   const itemType = media.tipo === 'pelicula' ? 'movie' : 'series';
+
+  // Obtener estado y acciones del store
+  const {
+    showPosterModal,
+    setShowPosterModal,
+    reviews,
+    loadingReviews,
+    errorReviews,
+    setReviews,
+    setLoadingReviews,
+    setErrorReviews
+  } = useMediaStore();
 
   const refreshReviews = useCallback(() => {
     setLoadingReviews(true);
@@ -37,7 +44,7 @@ export const MediaPage = ({ media }: MediaPageProps) => {
       })
       .catch(() => setErrorReviews('No se pudieron cargar las reseñas.'))
       .finally(() => setLoadingReviews(false));
-  }, [tmdbId, itemType]);
+  }, [tmdbId, itemType, setReviews, setLoadingReviews, setErrorReviews]);
 
   useEffect(() => {
     refreshReviews();
@@ -62,8 +69,8 @@ export const MediaPage = ({ media }: MediaPageProps) => {
       />
 
       {/* Content Sections */}
-      <div className="relative z-10 -mt-20 pb-40">
-        <div className="container mx-auto px-4 pt-8 md:pt-0">
+      <div className="relative z-10 pb-40 -mt-20">
+        <div className="container px-4 pt-8 mx-auto md:pt-0">
           {/* Proveedores de Streaming */}
           <StreamingProviders 
             providers={media.proveedores || []}

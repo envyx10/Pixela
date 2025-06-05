@@ -2,7 +2,11 @@ import { API_ENDPOINTS } from "../shared/apiEndpoints";
 import { fetchFromAPI } from "../shared/apiHelpers";
 import { AuthResponse, UserResponse } from "./types";
 
-// API para autenticación
+/**
+ * API para autenticación
+ * @namespace authAPI
+ * @description API para autenticación
+ */
 export const authAPI = {
     async login(email: string, password: string): Promise<AuthResponse> {
         const response = await fetchFromAPI<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, {

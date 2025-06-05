@@ -1,6 +1,6 @@
 'use client';
 
-import { useDiscoverStore } from '../store';
+import { useDiscoverStore } from '../store/discoverStore';
 import { DiscoverCard } from './DiscoverCard';
 import { MediaType } from '../type';
 import clsx from 'clsx';

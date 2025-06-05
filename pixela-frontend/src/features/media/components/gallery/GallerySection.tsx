@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import { Media } from '../../types';
 import { Wallpaper } from '../../types/gallery';
 import { getMediaImages } from '../../services/galleryService';
 import { GalleryGrid } from './GalleryGrid';
 import { GalleryTabs } from './GalleryTabs';
-import { FaTimes } from 'react-icons/fa';
-import { CloseButton } from '../hero/modal/CloseButton';
-import { PosterImage } from '../hero/modal/PosterImage';
+import { useMediaStore } from '../../store/mediaStore';
+import { useState, useEffect } from 'react';
 
 interface GallerySectionProps {
   media: Media;
@@ -20,12 +18,17 @@ export function GallerySection({ media }: GallerySectionProps) {
     posters: []
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<'backdrops' | 'posters'>('backdrops');
-  const [selectedImage, setSelectedImage] = useState<Wallpaper | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [showAll, setShowAll] = useState(false);
+
+  const {
+    activeGalleryTab,
+    setActiveGalleryTab,
+    selectedGalleryImage,
+    setSelectedGalleryImage
+  } = useMediaStore();
 
   // Renderizar el componente solo en el cliente
   useEffect(() => {
@@ -107,9 +110,9 @@ export function GallerySection({ media }: GallerySectionProps) {
       )}
       
       <GalleryTabs 
-        activeTab={activeTab}
+        activeTab={activeGalleryTab}
         onTabChange={tab => {
-          setActiveTab(tab);
+          setActiveGalleryTab(tab);
           setShowAll(false);
         }}
         backdropsCount={images.backdrops.length}
@@ -118,49 +121,52 @@ export function GallerySection({ media }: GallerySectionProps) {
       
       <div className="mt-6">
         <GalleryGrid
-          images={activeTab === 'backdrops' ? images.backdrops : images.posters}
-          type={activeTab}
-          onImageClick={setSelectedImage}
+          images={activeGalleryTab === 'backdrops' ? images.backdrops : images.posters}
+          type={activeGalleryTab}
+          onImageClick={(image) => setSelectedGalleryImage(image.file_path)}
           showAll={showAll}
         />
-        {(images[activeTab].length > 4) && (
+        {(images[activeGalleryTab].length > 4) && (
           <div className="flex justify-start mt-4">
             <button
               className="px-5 py-2 rounded-lg font-semibold bg-pixela-accent hover:bg-pixela-accent-dark text-white shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pixela-accent-dark focus:ring-offset-2"
               onClick={() => setShowAll(v => !v)}
             >
-              {showAll ? 'Mostrar menos' : `Mostrar todos los ${activeTab === 'backdrops' ? 'fondos' : 'pósters'}`}
+              {showAll ? 'Mostrar menos' : `Mostrar todos los ${activeGalleryTab === 'backdrops' ? 'fondos' : 'pósters'}`}
             </button>
           </div>
         )}
       </div>
       
-      {selectedImage && (
+      {selectedGalleryImage && (
         <div 
           className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
+          onClick={() => setSelectedGalleryImage(null)}
         >
           <div className="relative max-w-7xl max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            {activeTab === 'posters' ? (
-              <>
-                <CloseButton onClick={() => setSelectedImage(null)} />
-                <PosterImage src={selectedImage.file_path} alt="Preview" />
-              </>
-            ) : (
-              <>
-                <button
-                  className="absolute -top-10 right-0 text-white hover:text-pixela-accent"
-                  onClick={() => setSelectedImage(null)}
-                >
-                  <FaTimes />
-                </button>
-                <img 
-                  src={selectedImage.file_path} 
-                  alt="Preview"
-                  className="max-h-[90vh] max-w-full object-contain" 
+            <img 
+              src={selectedGalleryImage} 
+              alt="Preview"
+              className="max-h-[90vh] max-w-full object-contain" 
+            />
+            <button
+              className="absolute -top-10 right-0 text-white hover:text-pixela-accent"
+              onClick={() => setSelectedGalleryImage(null)}
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
                 />
-              </>
-            )}
+              </svg>
+            </button>
           </div>
         </div>
       )}

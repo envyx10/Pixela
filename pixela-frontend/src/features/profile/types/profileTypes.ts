@@ -1,4 +1,13 @@
-// Interfaz para los datos del formulario de perfil
+/**
+ * Interfaz para los datos del formulario de perfil
+ * @interface ProfileFormData
+ * @property {string} name - Nombre del usuario
+ * @property {string} email - Email del usuario
+ * @property {string} password - Contraseña del usuario
+ * @property {string} created_at - Fecha de creación del usuario
+ * @property {boolean} is_admin - Si es administrador
+ * @property {string} photo_url - URL de la imagen del usuario
+ */
 export interface ProfileFormData {
   name: string;
   email: string;
@@ -8,7 +17,17 @@ export interface ProfileFormData {
   photo_url?: string;
 }
 
-// Interfaz para el formulario de perfil
+/**
+ * Interfaz para el formulario de perfil
+ * @interface UpdateProfileFormProps
+ * @property {Object} initialData - Datos iniciales del formulario
+ * @property {string} initialData.name - Nombre del usuario
+ * @property {string} initialData.email - Email del usuario
+ * @property {string} initialData.password - Contraseña del usuario 
+ * @property {string} initialData.photo_url - URL de la imagen del usuario
+ * @property {function} onCancel - Función para cancelar el formulario
+ * @property {function} onSubmit - Función para enviar el formulario
+ */
 export interface UpdateProfileFormProps {
   initialData: {
     name: string;
@@ -20,7 +39,11 @@ export interface UpdateProfileFormProps {
   onSubmit: (data: ProfileFormData) => void;
 }
 
-// Interfaz para el error del formulario de perfil
+/**
+ * Interfaz para el error del formulario de perfil
+ * @interface ProfileErrorProps
+ * @property {string} message - Mensaje de error
+ */
 export interface ProfileErrorProps {
   message?: string;
 } 

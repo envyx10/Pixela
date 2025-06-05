@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useCallback, useMemo } from "react";
 import { ImageCarousel, NavigationControls, ProgressIndicator, ContentSection} from "../components/index";
-import { useHeroStore } from "../store";
+import { useHeroStore } from "../store/heroStore";
 
 const STYLES = {
   hero: {

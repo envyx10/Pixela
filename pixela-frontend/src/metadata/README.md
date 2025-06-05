@@ -1,38 +1,97 @@
 # Metadata
 
-Este directorio contiene los metadatos utilizados en toda la aplicación. Los metadatos son información descriptiva sobre las páginas y componentes, como títulos, descripciones, palabras clave SEO, etc.
+Este directorio contiene los metadatos utilizados en toda la aplicación. Los metadatos son información descriptiva sobre las páginas y componentes que se utilizan para SEO y compartir en redes sociales.
 
 ## Estructura
 
-- `/pages`: Contiene los metadatos específicos para cada página
-- `index.ts`: Archivo que exporta todos los metadatos para facilitar su importación
+```
+metadata/
+├── pages/
+│   ├── app.ts         # Metadata general de la aplicación
+│   ├── series.ts      # Metadata para series y detalles de series
+│   ├── movies.ts      # Metadata para películas y detalles de películas
+│   ├── categories.ts  # Metadata para categorías y detalles de categorías
+│   └── not-found.ts   # Metadata para la página 404
+└── index.ts           # Exportaciones centralizadas
+```
+
+## Tipos de Metadata
+
+### Metadata Estática
+Metadata que no cambia y se aplica a páginas específicas:
+```typescript
+export const seriesMetadata: Metadata = {
+  title: 'Series | Pixela',
+  description: 'Descubre las mejores series...',
+  openGraph: {
+    title: 'Series | Pixela',
+    description: 'Descubre las mejores series...',
+    type: 'website',
+  }
+};
+```
+
+### Metadata Dinámica
+Metadata que se genera basada en datos específicos:
+```typescript
+export const seriesDetailsMetadata = (title: string): Metadata => ({
+  title: `${title} | Pixela`,
+  description: `Explora ${title}...`,
+  openGraph: {
+    title: `${title} | Pixela`,
+    description: `Explora ${title}...`,
+    type: 'article',
+  }
+});
+```
 
 ## Uso
 
-Para utilizar los metadatos en una página:
-
+### En páginas estáticas:
 ```typescript
-// Importar metadatos específicos
 import { seriesMetadata } from "@/metadata";
 
-// Asignar como metadata de la página
 export const metadata = seriesMetadata;
+```
+
+### En páginas dinámicas:
+```typescript
+import { seriesDetailsMetadata } from "@/metadata";
+
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const title = await getTitle(params.id);
+  return seriesDetailsMetadata(title);
+}
 ```
 
 ## Beneficios
 
-- **Centralización**: Todos los metadatos están en un solo lugar
-- **Consistencia**: Facilita mantener un formato consistente en toda la aplicación
-- **Mantenibilidad**: Es más fácil actualizar los metadatos cuando están separados de la lógica de la aplicación
-- **Reutilización**: Los metadatos pueden ser reutilizados en diferentes partes de la aplicación
+- **SEO Optimizado**: Títulos y descripciones optimizados para motores de búsqueda
+- **Compartir en Redes**: Metadata OpenGraph para compartir en redes sociales
+- **Consistencia**: Formato uniforme en toda la aplicación
+- **Mantenibilidad**: Centralización de metadata para fácil actualización
+- **Tipado**: Uso de tipos TypeScript para prevenir errores
 
-## Ejemplo
+## Características
 
+- **Títulos Dinámicos**: Inclusión del nombre de la plataforma en todos los títulos
+- **Descripciones Detalladas**: Información relevante para cada sección
+- **OpenGraph**: Soporte para compartir en redes sociales
+- **Robots**: Control sobre indexación en motores de búsqueda
+- **Tipos de Contenido**: Diferenciación entre páginas web y artículos
+
+## Ejemplos de Uso
+
+### Página Principal de Series
 ```typescript
-// /metadata/pages/home.ts
-export const homeMetadata = {
-  title: 'Pixela - Inicio',
-  description: 'Tu plataforma de contenido digital favorita',
-  keywords: 'películas, series, streaming, pixela'
-};
+// Muestra en el navegador: "Series | Pixela"
+// En Google: "Descubre las mejores series de televisión..."
+export const metadata = seriesMetadata;
+```
+
+### Página de Serie Específica
+```typescript
+// Muestra en el navegador: "Breaking Bad | Pixela"
+// En Google: "Explora Breaking Bad. Temporadas, episodios..."
+export const metadata = seriesDetailsMetadata("Breaking Bad");
 ``` 

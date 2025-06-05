@@ -1,13 +1,22 @@
-//* Este documento tiene el objetivo de tener los enlaces de las navegaciones de la aplicacion
-//* para centrarlizar la logica de las navegaciones
 
+
+/**
+ * Interfaz para los enlaces de la barra de navegación
+ * @interface NavLink
+ * @property {string} href - URL del enlace
+ * @property {string} label - Texto del enlace
+ * @property {string} icon - Icono del enlace
+ */ 
 export interface NavLink {
   href: string;
   label: string;
   icon?: string; 
 }
 
-// Enlaces de la barra de navegación principal
+/**
+ * Enlaces de la barra de navegación principal
+ * @type {NavLink[]}
+ */
 export const mainNavLinks: NavLink[] = [
   {
     href: "/",
@@ -31,4 +40,3 @@ export const mainNavLinks: NavLink[] = [
   },
 ];
 
-//TODO: Agregar los enlaces de la barra de navegación del footer o necesarios para la aplicacion

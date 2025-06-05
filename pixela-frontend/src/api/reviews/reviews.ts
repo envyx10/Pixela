@@ -2,7 +2,12 @@ import { Review, CreateReview } from "./types";
 import { API_ENDPOINTS } from "../shared/apiEndpoints";
 import { fetchFromAPI } from "../shared/apiHelpers";
 
-// API para reseñas
+/** 
+ * API para reseñas 
+ * Esta funcion se encarga de realizar las operaciones CRUD para las reseñas
+ * @namespace reviewsAPI
+ * @description API para reseñas
+ */
 export const reviewsAPI = {
     async list(): Promise<Review[]> {
         const response = await fetchFromAPI<{ success: boolean; data: Review[] }>(API_ENDPOINTS.REVIEWS.LIST);

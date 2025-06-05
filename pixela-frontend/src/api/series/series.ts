@@ -1,9 +1,15 @@
 import { Actor } from '@/features/media/types/people';
 import { Serie } from '@/features/media/types/content';
 import { API_ENDPOINTS } from '@/api/shared/apiEndpoints';
-import { DEFAULT_FETCH_OPTIONS, fetchFromAPI } from '@/api/shared/apiHelpers';
+import { DEFAULT_FETCH_OPTIONS} from '@/api/shared/apiHelpers';
 import { mapSerieFromApi } from './mapSerie';
+import { Video, Provider } from './types';
 
+/**
+ * Obtiene los datos de una serie
+ * @param id ID de la serie
+ * @returns {Promise<Serie>} - Serie
+ */
 export async function getSerieById(id: string): Promise<Serie> {
   const apiUrl = API_ENDPOINTS.SERIES.GET_BY_ID(id);
   console.log(`[DEBUG] getSerieById - Intentando conectar con: ${apiUrl}`);
@@ -25,7 +31,13 @@ export async function getSerieById(id: string): Promise<Serie> {
     throw new Error('La serie recibida de la API no contiene un ID válido.');
   }
 
-  // Obtener actores y trailers
+  /**
+   * Obtener actores y trailers
+   * @param id ID de la serie
+   * @returns {Promise<Actor[]>} - Actores
+   * @returns {Promise<any[]>} - Videos
+   * @returns {Promise<any[]>} - Proveedores
+   */
   const serieActores = await getSerieActores(id);
   const serieVideos = await getSerieVideos(id);
   const serieProveedores = await getSerieProveedores(id);
@@ -93,7 +105,7 @@ export async function getSerieActores(id: string): Promise<Actor[]> {
  * @param id ID de la serie
  * @returns Array de videos
  */
-export async function getSerieVideos(id: string): Promise<any[]> {
+export async function getSerieVideos(id: string): Promise<Video[]> {
   const apiUrl = API_ENDPOINTS.SERIES.GET_VIDEOS(id);
   try {
     const response = await fetch(apiUrl, {
@@ -119,7 +131,7 @@ export async function getSerieVideos(id: string): Promise<any[]> {
  * @param region Región para los proveedores (por defecto ES para España)
  * @returns Array de proveedores de streaming
  */
-export async function getSerieProveedores(id: string, region: string = 'ES'): Promise<any[]> {
+export async function getSerieProveedores(id: string, region: string = 'ES'): Promise<Provider[]> {
   const apiUrl = `${API_ENDPOINTS.SERIES.GET_WATCH_PROVIDERS(id)}?region=${region}`;
   try {
     const response = await fetch(apiUrl, {

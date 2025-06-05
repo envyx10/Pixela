@@ -1,9 +1,9 @@
 import { Pelicula } from '@/features/media/types/content';
 import { API_ENDPOINTS } from '@/api/shared/apiEndpoints';
-import { DEFAULT_FETCH_OPTIONS, fetchFromAPI } from '@/api/shared/apiHelpers';
+import { DEFAULT_FETCH_OPTIONS } from '@/api/shared/apiHelpers';
 import { mapPeliculaFromApi } from './mapPelicula';
 import { Actor } from '@/features/media/types/people';
-import { formatImageUrl } from './mapPelicula';
+import { ApiCreator, ApiImage, ApiProvider, ApiTrailer } from './types';
 
 /**
  * Obtiene la película por ID junto con datos adicionales
@@ -33,10 +33,10 @@ export async function getPeliculaById(id: string): Promise<Pelicula> {
 
   // Obtener información adicional de manera segura
   let peliculaActores: Actor[] = [];
-  let peliculaVideos: any[] = [];
-  let peliculaProveedores: any[] = [];
-  let peliculaImagenes: any[] = [];
-  let peliculaCreador = null;
+  let peliculaVideos: ApiTrailer[] = [];
+  let peliculaProveedores: ApiProvider[] = [];
+  let peliculaImagenes: ApiImage[] = [];
+  let peliculaCreador: ApiCreator | null = null;
 
   try {
     peliculaActores = await getPeliculaActores(id);
@@ -123,7 +123,7 @@ export async function getPeliculaActores(id: string): Promise<Actor[]> {
  * @param id ID de la película
  * @returns Array de videos
  */
-export async function getPeliculaVideos(id: string): Promise<any[]> {
+export async function getPeliculaVideos(id: string): Promise<ApiTrailer[]> {
   const apiUrl = API_ENDPOINTS.PELICULAS.GET_VIDEOS(id);
   try {
     const response = await fetch(apiUrl, {
@@ -153,7 +153,7 @@ export async function getPeliculaVideos(id: string): Promise<any[]> {
  * @param region Región para los proveedores (por defecto ES para España)
  * @returns Array de proveedores de streaming
  */
-export async function getPeliculaProveedores(id: string, region: string = 'ES'): Promise<any[]> {
+export async function getPeliculaProveedores(id: string, region: string = 'ES'): Promise<ApiProvider[]> {
   const apiUrl = `${API_ENDPOINTS.PELICULAS.GET_WATCH_PROVIDERS(id)}?region=${region}`;
   try {
     const response = await fetch(apiUrl, {
@@ -197,7 +197,7 @@ export async function getPeliculaProveedores(id: string, region: string = 'ES'):
  * @param id ID de la película
  * @returns Array de imágenes
  */
-export async function getPeliculaImagenes(id: string): Promise<any[]> {
+export async function getPeliculaImagenes(id: string): Promise<ApiImage[]> {
   const apiUrl = API_ENDPOINTS.PELICULAS.GET_IMAGES(id);
   console.log(`[DEBUG] getPeliculaImagenes - Obteniendo imágenes para película ${id}`);
 

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useHeroStore } from "../store";
+import { useHeroStore } from "../store/heroStore";
 import { FiPlay, FiPause } from "react-icons/fi";
 
 const STYLES = {

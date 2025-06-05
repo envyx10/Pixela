@@ -76,17 +76,13 @@ export async function getAllCategories(): Promise<Category[]> {
 export async function getCategoriesForMediaType(mediaType: 'movies' | 'series' | 'all'): Promise<Category[]> {
     const allCategories = await getAllCategories();
     
-    // Si es 'all' o 'movies', devolver todas las categorías
     if (mediaType === 'all' || mediaType === 'movies') {
         return allCategories;
     }
     
-    // Si es 'series', filtrar las categorías específicas de películas
     if (mediaType === 'series') {
         return allCategories.filter(category => {
-            // Filtrar por nombre de categoría
             const isMovieOnlyByName = MOVIE_ONLY_CATEGORIES.includes(category.name);
-            // Filtrar por ID de categoría
             const isMovieOnlyById = MOVIE_ONLY_CATEGORY_IDS.includes(category.id);
             
             return !isMovieOnlyByName && !isMovieOnlyById;

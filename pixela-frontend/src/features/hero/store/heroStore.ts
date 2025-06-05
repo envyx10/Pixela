@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { HeroState } from './type';
+import { HeroState } from '../type';
 
 const FADE_ANIMATION_DURATION = 300;
 
@@ -18,8 +18,8 @@ const FADE_ANIMATION_DURATION = 300;
 export const useHeroStore = create<HeroState>((set) => {
 
   /**
-   ** Función auxiliar que encapsula la lógica común de transición entre imágenes.
-   ** Maneja el estado de fade y la actualización del índice de la imagen actual.
+   * Función auxiliar que encapsula la lógica común de transición entre imágenes.
+   * Maneja el estado de fade y la actualización del índice de la imagen actual.
    * 
    * @param calculateNewIndex - Función que calcula el nuevo índice de la imagen
    */
@@ -43,25 +43,25 @@ export const useHeroStore = create<HeroState>((set) => {
     progress: 0,
 
     /**
-     ** Actualiza el índice de la imagen actual
-     ** @param index - Nuevo índice de la imagen
+     * Actualiza el índice de la imagen actual
+     * @param index - Nuevo índice de la imagen
      */
     setCurrentImageIndex: (index: number) => set({ currentImageIndex: index }),
 
     /**
-     ** Actualiza el estado de la animación de fade
+     * Actualiza el estado de la animación de fade
      * @param newFadeIn - Nuevo estado del fade
      */
     setFadeIn: (newFadeIn: boolean) => set({ fadeIn: newFadeIn }),
 
     /**
-     ** Actualiza el estado de reproducción
+     * Actualiza el estado de reproducción
      * @param newIsPlaying - Nuevo estado de reproducción
      */
     setIsPlaying: (newIsPlaying: boolean) => set({ isPlaying: newIsPlaying }),
 
     /**
-     **	 Actualiza el progreso de la animación
+     * Actualiza el progreso de la animación
      * @param value - Nuevo valor de progreso o función para calcularlo
      */
     setProgress: (value: number | ((prevProgress: number) => number)) =>
@@ -73,12 +73,12 @@ export const useHeroStore = create<HeroState>((set) => {
       })),
 
     /**
-     ** Reinicia el progreso a 0
+     * Reinicia el progreso a 0
      */
     resetProgress: () => set({ progress: 0 }),
 
     /**
-     ** Navega a la imagen anterior
+     * Navega a la imagen anterior
      * @param imagesLength - Número total de imágenes disponibles
      */
     prevImage: (imagesLength: number) => {
@@ -88,7 +88,7 @@ export const useHeroStore = create<HeroState>((set) => {
     },
 
     /**
-     ** Navega a la siguiente imagen
+     * Navega a la siguiente imagen
      * @param imagesLength - Número total de imágenes disponibles
      */
     nextImage: (imagesLength: number) => {
@@ -98,11 +98,11 @@ export const useHeroStore = create<HeroState>((set) => {
     },
 
     /**
-     ** Cambia directamente a una imagen específica
+     * Cambia directamente a una imagen específica
      * @param index - Índice de la imagen a la que se desea navegar
      */
     handleSlideChange: (index: number) => {
       transitionToImage(() => index);
     },
   };
-});
+}); 

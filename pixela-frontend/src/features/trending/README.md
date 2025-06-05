@@ -19,8 +19,10 @@ La feature **Trending** es el sistema de contenido en tendencias de Pixela. Mues
 src/features/trending/
 ├── README.md                       # Este archivo
 ├── type.ts                         # Tipos e interfaces
-├── store.ts                        # Store de Zustand
 ├── service.ts                      # Servicios de API
+├── store/                          # Gestión de estado con Zustand
+│   ├── types.ts                    # Tipos del store
+│   └── trendingStore.ts           # Implementación del store
 └── components/
     ├── trending.css                # Estilos específicos
     ├── TrendingSection.tsx         # Componente principal de orquestación
@@ -38,16 +40,48 @@ src/features/trending/
 
 Componente de orquestación que inicializa el store y gestiona los datos:
 
-- **Inicialización del store**: Carga datos de series y películas
-- **Eliminación de duplicados**: Filtro por ID único
-- **Hook personalizado**: `useTrendingInitialization` para lógica de estado
-- **Renderizado del header**: Delega la visualización a `TrendingHeader`
+- **Inicialización del store**: Carga inicial de series y películas
+- **Deduplicación**: Elimina elementos duplicados por ID
+- **Composición**: Combina header y carrusel
+- **Props interface**: Recibe series y películas como entrada
 
-#### Funcionalidades:
-- Validación de datos antes de almacenar
-- Filtrado de elementos duplicados por ID
-- Manejo de estados vacíos o inválidos
-- Inicialización automática del store global
+### Store de Estado
+**Ubicación**: `store/trendingStore.ts`
+
+Store centralizado con Zustand que maneja:
+
+- **Series en tendencia**: Lista de series populares
+- **Películas en tendencia**: Lista de películas populares
+- **Getters y setters**: Funciones para actualizar y obtener contenido
+- **Filtrado por tipo**: Obtención de contenido según categoría
+
+#### Tipos del Store
+**Ubicación**: `store/types.ts`
+
+```typescript
+interface TrendingStoreState {
+  series: TrendingSerie[];
+  movies: TrendingMovie[];
+  setSeries: (series: TrendingSerie[]) => void;
+  setMovies: (movies: TrendingMovie[]) => void;
+  getContentByType: (type: MediaType) => TrendingSerie[] | TrendingMovie[];
+}
+```
+
+#### Uso del Store
+```typescript
+// Acceso al estado
+const series = useTrendingStore(state => state.series);
+const movies = useTrendingStore(state => state.movies);
+
+// Actualización de estado
+const setSeries = useTrendingStore(state => state.setSeries);
+const setMovies = useTrendingStore(state => state.setMovies);
+
+// Obtención de contenido por tipo
+const getContentByType = useTrendingStore(state => state.getContentByType);
+const activeContent = getContentByType('series');
+```
 
 ### TrendingHeader
 **Ubicación**: `components/TrendingHeader.tsx`
@@ -166,29 +200,6 @@ type MoviesResponse = TrendingResponse<TrendingMovie>;
 ```typescript
 type MediaType = 'series' | 'movies';
 ```
-
-## 🏪 Store (Zustand)
-
-### TrendingStoreState
-**Ubicación**: `store.ts`
-
-Store global para gestión de estado de tendencias:
-
-```typescript
-interface TrendingStoreState {
-  series: TrendingSerie[];
-  movies: TrendingMovie[];
-  setSeries: (series: TrendingSerie[]) => void;
-  setMovies: (movies: TrendingMovie[]) => void;
-  getContentByType: (type: MediaType) => TrendingSerie[] | TrendingMovie[];
-}
-```
-
-#### Funcionalidades:
-- **Estado persistente**: Series y películas en arrays separados
-- **Setters individuales**: Actualización independiente por tipo
-- **Getter dinámico**: Retorna contenido según tipo solicitado
-- **Inmutabilidad**: Usando Zustand para actualizaciones reactivas
 
 ## 🌐 Servicios y API
 

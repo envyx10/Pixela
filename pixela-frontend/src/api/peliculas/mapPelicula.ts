@@ -1,6 +1,7 @@
 import { Pelicula } from '@/features/media/types/content';
 import { Actor } from '@/features/media/types/people';
 import { Trailer } from '@/features/media/types/supplements';
+import { ApiActor, ApiPelicula, ApiTrailer } from './types';
 
 // URL base para imágenes de TMDb
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
@@ -13,69 +14,13 @@ const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
 export const formatImageUrl = (path: string): string =>
   path?.startsWith('/') ? `${TMDB_IMAGE_BASE_URL}${path}` : path || '';
 
-interface MovieData {
-  id: string | number;
-  nombre?: string;
-  titulo?: string;
-  title?: string;
-  descripcion?: string;
-  sinopsis?: string;
-  overview?: string;
-  fecha_estreno?: string;
-  fecha?: string;
-  release_date?: string;
-  generos?: string[] | { nombre?: string; name?: string }[];
-  poster_path?: string;
-  poster?: string;
-  backdrop_path?: string;
-  backdrop?: string;
-  vote_average?: number;
-  puntuacion?: number;
-  duracion?: string | number;
-  runtime?: string | number;
-  actores?: Actor[];
-  trailers?: Trailer[];
-  creador?: {
-    id: string | number;
-    nombre?: string;
-    name?: string;
-    foto?: string;
-    profile_path?: string;
-  };
-}
-
-interface Genre {
-  nombre?: string;
-  name?: string;
-}
-
-interface ActorData {
-  id: string | number;
-  nombre?: string;
-  name?: string;
-  foto?: string;
-  profile_path?: string;
-  personaje?: string;
-  character?: string;
-}
-
-interface TrailerData {
-  id: string | number;
-  nombre?: string;
-  name?: string;
-  key?: string;
-  site?: string;
-  tipo?: string;
-  type?: string;
-}
-
 /**
  * Mapea un actor
  * @param actor
  * @returns 
  */
-const mapActor = (actor: ActorData): Actor => ({
-  id: actor.id.toString(),
+const mapActor = (actor: ApiActor): Actor => ({
+  id: actor.id?.toString() || '',
   nombre: actor.nombre || actor.name || '',
   foto: formatImageUrl(actor.foto || actor.profile_path || ''),
   personaje: actor.personaje || actor.character || '',
@@ -86,8 +31,8 @@ const mapActor = (actor: ActorData): Actor => ({
  * @param trailer
  * @returns 
  */
-const mapTrailer = (trailer: TrailerData): Trailer => ({
-  id: trailer.id.toString(),
+const mapTrailer = (trailer: ApiTrailer): Trailer => ({
+  id: trailer.id?.toString() || '',
   nombre: trailer.nombre || trailer.name || '',
   key: trailer.key || '',
   site: trailer.site || 'YouTube',
@@ -99,7 +44,7 @@ const mapTrailer = (trailer: TrailerData): Trailer => ({
  * @param movieData 
  * @returns 
  */
-export function mapPeliculaFromApi(movieData: MovieData): Pelicula {
+export function mapPeliculaFromApi(movieData: ApiPelicula): Pelicula {
   if (!movieData || !movieData.id) {
     console.error('[ERROR] mapPeliculaFromApi - Datos de API incompletos:', movieData);
     throw new Error('Los datos recibidos de la API están incompletos o en un formato inesperado');
@@ -115,7 +60,8 @@ export function mapPeliculaFromApi(movieData: MovieData): Pelicula {
   const fecha = movieData.fecha_estreno || movieData.fecha || movieData.release_date || '';
   const generos = movieData.generos 
     ? (Array.isArray(movieData.generos) 
-        ? movieData.generos.map((g: string | Genre) => typeof g === 'string' ? g : g.nombre || g.name || '')
+        ? movieData.generos.map((g: string | { nombre?: string; name?: string }) => 
+            typeof g === 'string' ? g : g.nombre || g.name || '')
         : [String(movieData.generos)])
     : [];
   const poster = formatImageUrl(movieData.poster_path || movieData.poster || '');

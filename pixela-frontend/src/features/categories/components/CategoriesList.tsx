@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { CategoriesProps } from '../type';
-import { useCategoriesStore } from '../store';
+import { useCategoriesStore } from '../store/categoriesStore';
 import { FiGrid, FiChevronDown } from 'react-icons/fi';
 import { CategoriesModal } from './CategoriesModal';
 import { Category } from '@/api/categories/categories';

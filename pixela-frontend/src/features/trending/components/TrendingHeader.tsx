@@ -1,7 +1,7 @@
 'use client';
 import './trending.css';
 import { useState, memo } from 'react';
-import { useTrendingStore } from '@/features/trending/store';
+import { useTrendingStore } from '@/features/trending/store/trendingStore';
 import { TrendingMediaCarousel } from '@/features/trending/components/TrendingMediaCarousel';
 import { TrendingButton } from './TrendingButton';
 import { TrendingSerie, TrendingMovie } from '@/features/trending/type';

@@ -4,55 +4,47 @@ import "./globals.css";
 import { Navbar } from "../shared/components/Navbar";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useEffect } from "react";
-import Footer from "../shared/components/Footer";
+import Footer from "../features/footer/Footer";
 import { outfit, roboto } from "./ui/fonts";
-import Script from 'next/script';
 
+const STYLES = {
+  html: `${roboto.variable} ${outfit.variable}`,
+  body: "antialiased bg-pixela-dark",
+  container: "min-h-screen",
+  main: "flex-grow"
+} as const;
+
+/**
+ * Layout principal de la aplicación
+ * @param {Object} props - Propiedades del layout
+ * @param {React.ReactNode} props.children - Contenido del layout
+ * @returns {React.ReactNode} - Layout principal
+ * @description Layout principal de la aplicación
+ * @author Pixela
+ * @version 1.0.0
+ * @since 2025-06-04
+ * @requires React
+ * @requires Next.js
+ * @requires Tailwind CSS
+ */
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Extraemos checkAuth del store
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
-  // Llamamos a checkAuth al montar
   useEffect(() => {
-    // Clear forceLogout before checking auth
     localStorage.removeItem('forceLogout');
     checkAuth();
   }, [checkAuth]);
 
   return (
-    <html lang="en" className={`${roboto.variable} ${outfit.variable}`}>
-      <head>
-        {/* Script para manejar atributos añadidos por extensiones del navegador */}
-        <Script id="handle-body-attributes" strategy="afterInteractive">
-          {`
-            (function() {
-              // Solución para manejar atributos como cz-shortcut-listen añadidos por extensiones
-              if (typeof window !== 'undefined') {
-                const observer = new MutationObserver((mutations) => {
-                  const bodyElement = document.querySelector('body');
-                  if (bodyElement && bodyElement.hasAttribute('cz-shortcut-listen')) {
-                    bodyElement.removeAttribute('cz-shortcut-listen');
-                  }
-                });
-                
-                observer.observe(document.body || document.documentElement, {
-                  attributes: true,
-                  childList: false,
-                  subtree: false
-                });
-              }
-            })();
-          `}
-        </Script>
-      </head>
-      <body className="bg-pixela-dark antialiased">
-        <div className="min-h-screen">
+    <html lang="es" className={STYLES.html}>
+      <body className={STYLES.body}>
+        <div className={STYLES.container}>
           <Navbar />
-          <main className="flex-grow">{children}</main>
+          <main className={STYLES.main}>{children}</main>
           <Footer />
         </div>
       </body>
