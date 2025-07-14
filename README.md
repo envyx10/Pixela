@@ -1,13 +1,20 @@
 # Pixela
 
-Repositorio para proyecto fin de grado. </br>
-
 **Autores:** Ruyi & Pablo | 2ºDAW
 
 Pixela es una plataforma interactiva diseñada para que los usuarios puedan descubrir y explorar sus series y películas favoritas. Permite agregar reseñas, calificar contenidos y gestionar una experiencia completamente personalizada.
 El proyecto será desarrollado utilizando NextJS y react por debajo para la interfaz de usuario (frontend) y Laravel para la lógica del servidor (backend), asegurando una experiencia moderna, dinámica y eficiente.
 
 Ante proyecto: [www.notion.es](https://sphenoid-stone-975.notion.site/ANTEPROYECTO-PIXELA-1c2bccfbf6a4800c8945f8c8dfb77095) <br/>
+
+Repositorio para proyecto fin de grado. </br>
+
+# LinkedIn </br>
+
+[Pablo](https://www.linkedin.com/in/envyx10/)  </br>
+[Ruyi](https://www.linkedin.com/in/ruyi-xia-ye-b19853189/)
+
+
 
 # Historial Pixela <br/>
 Historial del repositorio de commits: [Historial github](https://github.com/envyx10/Pixela/commits/main/) <br/>
