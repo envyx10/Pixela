@@ -1,6 +1,8 @@
 # Pixela
 
-**Autores:** Ruyi & Pablo | 2ºDAW | Copyright © 2025 Pablo Gil Díaz y Ruyi Xia Ye
+**Autores:** Ruyi & Pablo | 2ºDAW </br>
+
+**Copyright © 2025 Pablo Gil Díaz y Ruyi Xia Ye**
 
 Pixela es una plataforma interactiva diseñada para que los usuarios puedan descubrir y explorar sus series y películas favoritas. Permite agregar reseñas, calificar contenidos y gestionar una experiencia completamente personalizada.
 El proyecto será desarrollado utilizando NextJS y react por debajo para la interfaz de usuario (frontend) y Laravel para la lógica del servidor (backend), asegurando una experiencia moderna, dinámica y eficiente.
