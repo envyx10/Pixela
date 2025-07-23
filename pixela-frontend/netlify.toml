@@ -1,17 +1,15 @@
 [build]
   command = "npm run build"
-  publish = "out"
+  publish = ".next"
+
+# Plugin de Next.js para Netlify
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [build.environment]
   NODE_VERSION = "18"
   NEXT_PUBLIC_API_URL = "https://pixela.duckdns.org/api"
   NEXT_PUBLIC_BACKEND_URL = "https://pixela.duckdns.org"
-
-# Configuración para manejo de rutas del lado del cliente
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
 
 # Headers de seguridad
 [[headers]]
@@ -22,7 +20,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Headers para archivos estáticos
+# Headers para archivos estáticos de Next.js
 [[headers]]
   for = "/_next/static/*"
   [headers.values]
