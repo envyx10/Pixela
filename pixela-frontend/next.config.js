@@ -1,26 +1,10 @@
 /** @type {import('next').NextConfig} */
 
-// PRODUCTION: const backendApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
-
 const nextConfig = {
-
     output: 'export',
-    
-    async rewrites() {
-        return [
-            {
-                source: '/api/series/:path*',
-                destination: 'http://localhost/api/series/:path*',
-                // PRODUCTION: destination: `${backendApiUrl}/series/:path*`,
-            },
-            {
-                source: '/api/movies/:path*',
-                destination: 'http://localhost/api/movies/:path*',
-                // PRODUCTION: destination: `${backendApiUrl}/movies/:path*`,
-            },
-        ];
-    },
+    trailingSlash: true,
     images: {
+        unoptimized: true,
         domains: [
             'image.tmdb.org', 
             'via.placeholder.com', 
@@ -32,6 +16,9 @@ const nextConfig = {
             'pixela.duckdns.org'
         ],
     },
+    env: {
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://pixela.duckdns.org/api',
+    }
 };
 
-module.exports = nextConfig; 
+module.exports = nextConfig;

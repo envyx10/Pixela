@@ -4,6 +4,12 @@ import { getMovieData } from '@/features/media/services/movieService';
 
 export { generateMetadata } from '@/features/media/services/movieMetadata';
 
+// Función necesaria para pages dinámicas en Next.js
+export async function generateStaticParams() {
+  // Retorna un array vacío para permitir generación dinámica
+  return [];
+}
+
 const PAGE_STYLES = {
   section: "min-h-screen pb-12 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900"
 } as const;

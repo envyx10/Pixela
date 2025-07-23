@@ -3,9 +3,9 @@
  * @namespace API_BASE_URL
  * @description URL de la API
  */
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL || 'http://laravel.test/api'; // QUITAR EN PRODUCTION
-export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost'; //Se usa en apiHelpers.ts
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://pixela.duckdns.org/api'; 
+export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://pixela.duckdns.org';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://pixela.duckdns.org/api';
 
 /**
  * Endpoints de la API
