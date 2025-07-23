@@ -11,11 +11,13 @@ const nextConfig = {
             'localhost',
             'i.pravatar.cc',
             'picsum.photos',
-            'pixela.duckdns.org'
+            'pixela.duckdns.org',
+            'pixela.onrender.com'
         ],
     },
     env: {
-        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://pixela.duckdns.org/api',
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://pixela.onrender.com/api',
+        NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'https://pixela.onrender.com',
     },
     async rewrites() {
         // Solo usar rewrites en desarrollo

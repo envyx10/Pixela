@@ -3,8 +3,10 @@
  * @namespace API_URL
  * @description URL de la API
  */
-export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost'; //Se usa en apiHelpers.ts
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
+export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://pixela.onrender.com';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://pixela.onrender.com/api';
+// Para compatibilidad con endpoints existentes
+export const API_BASE_URL = API_URL;
 
 /**
  * Endpoints de la API

@@ -8,8 +8,8 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  NEXT_PUBLIC_API_URL = "https://pixela.duckdns.org/api"
-  NEXT_PUBLIC_BACKEND_URL = "https://pixela.duckdns.org"
+  NEXT_PUBLIC_API_URL = "https://pixela.onrender.com/api"
+  NEXT_PUBLIC_BACKEND_URL = "https://pixela.onrender.com"
 
 # Headers de seguridad
 [[headers]]
