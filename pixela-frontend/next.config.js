@@ -3,6 +3,9 @@
 // PRODUCTION: const backendApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
 
 const nextConfig = {
+
+    output: 'export',
+    
     async rewrites() {
         return [
             {
