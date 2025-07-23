@@ -132,14 +132,38 @@ export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): P
  */
 export async function fetchWithErrorHandling<T>(url: string): Promise<T | null> {
   try {
-    const response = await fetch(url, DEFAULT_FETCH_OPTIONS);
+    console.log('[API] Haciendo petición a:', url);
+    
+    const response = await fetch(url, {
+      ...DEFAULT_FETCH_OPTIONS,
+      headers: {
+        ...DEFAULT_FETCH_OPTIONS.headers,
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    });
+    
+    console.log('[API] Respuesta:', response.status, response.statusText);
+    
     if (!response.ok) {
-      if (response.status === 404) return null;
-      throw new Error(`HTTP ${response.status}`);
+      if (response.status === 404) {
+        console.warn('[API] Recurso no encontrado:', url);
+        return null;
+      }
+      const errorText = await response.text();
+      console.error('[API] Error:', {
+        status: response.status,
+        url,
+        error: errorText
+      });
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    return await response.json();
+    
+    const data = await response.json();
+    console.log('[API] Datos recibidos exitosamente');
+    return data;
+    
   } catch (error) {
-    console.warn(`[API] Error fetching ${url}:`, error);
+    console.error(`[API] Error fetching ${url}:`, error);
     return null;
   }
 }
