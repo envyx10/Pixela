@@ -45,22 +45,23 @@ Próximamente
 
 **Propósito**: `Pixela` es una aplicación web moderna diseñada para que los usuarios puedan descubrir, explorar, guardar como favoritos y escribir reseñas de películas y series. Actúa como una interfaz de usuario sofisticada que consume datos de una fuente externa (probablemente The Movie Database - TMDB) y gestiona los datos propios de los usuarios (perfiles, favoritos, etc.).
 
-**Arquitectura General**: El proyecto sigue una arquitectura de **API Headless + SPA (Single Page Application)** desacoplada.
+**Arquitectura General**: El proyecto utiliza una arquitectura **Full-Stack Next.js** con API Routes integradas.
 
-*   **Backend**: Una API RESTful robusta construida con **Laravel 12 (PHP)**. Es responsable de la lógica de negocio, la autenticación de usuarios y de actuar como un proxy seguro para la API externa de películas/series.
+> **Nota de Migración**: El backend ha sido migrado de Laravel/PHP a Next.js API Routes (TypeScript). Para más detalles, consulta [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md).
+
+*   **Backend**: API Routes integradas en Next.js escritas en **TypeScript**. Responsable de la lógica de negocio, autenticación (NextAuth.js) y proxy seguro a la API de TMDB.
 *   **Frontend**: Una SPA dinámica y reactiva construida con **Next.js 15 (React 19)** y escrita en **TypeScript**. Es responsable de toda la interfaz de usuario y la experiencia de navegación.
-*   **Base de Datos**: El backend utiliza un sistema de base de datos relacional gestionado a través del ORM de Laravel, **Eloquent**. Los modelos indican una base de datos con tablas para `users`, `favorites` y `reviews`.
+*   **Base de Datos**: PostgreSQL gestionada mediante **Prisma ORM**. Modelos para `users`, `favorites`, `reviews` y tablas de autenticación de NextAuth.js.
 *   **Contenerización**: Todo el entorno de desarrollo está completamente contenerizado con **Docker**, lo que facilita enormemente la configuración y la consistencia entre desarrolladores.
 
 **Tecnologías Principales**:
 
 | Área | Tecnología | Propósito |
 | :--- | :--- | :--- |
-| **Backend** | Laravel 12, PHP 8.2 | Framework principal de la API |
-| | Laravel Sanctum | Autenticación de API para la SPA |
-| | Eloquent ORM | Interacción con la base de datos |
-| | Guzzle | Peticiones HTTP |
-| | l5-swagger | Documentación de API (OpenAPI) |
+| **Backend** | Next.js API Routes | API integrada en el mismo proyecto |
+| | NextAuth.js (Auth.js) | Autenticación de API para la SPA |
+| | Prisma ORM | Interacción con la base de datos (PostgreSQL) |
+| | TypeScript | Tipado estático para robustez del código |
 | **Frontend**| Next.js 15, React 19 | Framework principal de la SPA |
 | | TypeScript | Tipado estático para robustez del código |
 | | Zustand | Gestión de estado global |
@@ -68,7 +69,6 @@ Próximamente
 | | React Hook Form | Gestión de formularios |
 | | GSAP | Animaciones |
 | **DevOps** | Docker, Docker Compose | Contenerización y orquestación del entorno |
-| | Laravel Sail | Abstracción sobre Docker para Laravel |
 | | GitHub | Control de versiones |
 | **Despliegue** | AWS | Amazon Web Services|
 | | EC2 | Servicio de AWS para alojar la aplicación y la base de datos |
@@ -79,49 +79,61 @@ Próximamente
 Para empezar a trabajar en el proyecto, un nuevo desarrollador debería seguir estos pasos:
 
 1.  Clonar el repositorio de GitHub.
-2.  Asegurarse de tener Docker y Docker Compose instalados.
-3.  Navegar a la carpeta `pixela-backend` y crear el archivo `.env` ejecutando `cp .env.example .env`.
-4.  Instalar las dependencias del backend: ejecutar `composer install` y `npm install`.
-5.  Ejecutar `docker-compose up -d` (o el script personalizado si existe, como `make up`, `sail up` o `./vendor/bin/sail up`). Esto levantará todos los servicios (PHP, Next.js, base de datos).
-6.  Una vez levantado, ejecutar las migraciones de la base de datos con `docker-compose exec app php artisan migrate` o si se usa Sail `sail artisan migrate` o `./vendor/bin/sail artisan migrate`.
-7.  Instalar las dependencias del frontend: navegar a `pixela-frontend` y ejecutar `npm install`.
-8.  Ejecutar el servidor de desarrollo en el backend con `npm run dev` y `sudo systemctl stop apache2`.
-9.  El servidor de desarrollo del front ya se ejecuta automáticamente al levantar los contenedores de Docker
+2.  Asegurarse de tener Node.js (v18+), Docker y Docker Compose instalados.
+3.  Navegar a la carpeta `pixela-frontend`.
+4.  Crear el archivo `.env.local` ejecutando `cp .env.local.example .env.local`.
+5.  Configurar las variables de entorno en `.env.local`:
+    - `DATABASE_URL`: URL de conexión a PostgreSQL
+    - `NEXTAUTH_SECRET`: Generar con `openssl rand -base64 32`
+    - `TMDB_API_KEY`: Tu clave de API de TMDB
+6.  Instalar las dependencias: ejecutar `npm install`.
+7.  Generar el cliente de Prisma: `npx prisma generate`.
+8.  Ejecutar las migraciones: `npx prisma migrate dev`.
+9.  Ejecutar el servidor de desarrollo: `npm run dev`.
 
 ## 3. Estructura del Proyecto
 
-El proyecto es un monorepo con una separación clara entre el cliente y el servidor:
+El proyecto utiliza una arquitectura Full-Stack Next.js:
 
 ```
 pixela/
-├── pixela-backend/      # Proyecto de la API en Laravel
-│   ├── app/             # Núcleo de la aplicación: Modelos, Controladores, etc.
-│   │   ├── Http/
-│   │   │   └── Controllers/ # Lógica para manejar las peticiones HTTP
-│   │   └── Models/        # Modelos de Eloquent (User, Favorite, Review)
-│   ├── config/          # Archivos de configuración de Laravel
-│   ├── database/        # Migraciones y seeders de la base de datos
-│   ├── routes/          # Definición de las rutas (api.php, auth.php)
-│   ├── composer.json    # Dependencias de PHP
-│   └── Dockerfile.dev   # Definición del contenedor de desarrollo
+├── pixela-backend/      # [LEGACY] Proyecto de la API en Laravel (se puede eliminar)
 │
-└── pixela-frontend/     # Proyecto de la SPA en Next.js
-    ├── src/             # Código fuente del frontend
-    │   ├── app/         # Enrutado basado en carpetas (App Router)
-    │   │   └── (rutas)/ # Grupo de rutas principal de la aplicación
-    │   ├── api/         # Lógica para comunicarse con el backend
-    │   ├── features/    # Componentes y lógica agrupados por funcionalidad
-    │   ├── stores/      # Stores de Zustand para el estado global
-    │   └── shared/      # Componentes y utilidades reutilizables
-    ├── package.json     # Dependencias de JavaScript
-    └── next.config.js   # Configuración de Next.js
+├── pixela-frontend/     # Proyecto Full-Stack en Next.js
+│   ├── prisma/          # Schema de Prisma y migraciones
+│   │   └── schema.prisma # Definición de modelos de la base de datos
+│   ├── src/             # Código fuente
+│   │   ├── app/         # Enrutado basado en carpetas (App Router)
+│   │   │   ├── api/     # API Routes (backend integrado)
+│   │   │   │   ├── auth/       # Autenticación (NextAuth.js)
+│   │   │   │   ├── movies/     # Endpoints de películas
+│   │   │   │   ├── series/     # Endpoints de series
+│   │   │   │   ├── favorites/  # Endpoints de favoritos
+│   │   │   │   ├── reviews/    # Endpoints de reseñas
+│   │   │   │   ├── users/      # Endpoints de usuarios
+│   │   │   │   └── tmdb/       # Endpoints de TMDB
+│   │   │   └── (rutas)/        # Grupo de rutas de la aplicación
+│   │   ├── lib/         # Utilidades y servicios
+│   │   │   ├── services/       # Servicios de TMDB (TypeScript)
+│   │   │   ├── db/             # Cliente de Prisma
+│   │   │   ├── auth.ts         # Configuración de NextAuth.js
+│   │   │   └── api-utils.ts    # Utilidades para API Routes
+│   │   ├── features/    # Componentes y lógica por funcionalidad
+│   │   ├── stores/      # Stores de Zustand para estado global
+│   │   ├── shared/      # Componentes y utilidades reutilizables
+│   │   └── types/       # Definiciones de tipos TypeScript
+│   ├── package.json     # Dependencias de JavaScript
+│   └── next.config.js   # Configuración de Next.js
+│
+├── MIGRATION_GUIDE.md   # Guía de migración de Laravel a Next.js
+└── README.md            # Este archivo
 ```
 
 ## 4. Endpoints de la API
 
 ### TMDB, Películas y Series (Público)
 
-Estas rutas actúan como un proxy a la API de TMDB. La caché interna del backend de Pixela se gestiona a través de estas rutas para no sobresaturar de peticiones a la API de TMDB.
+Estas rutas actúan como un proxy a la API de TMDB. El backend de Pixela gestiona la caché para optimizar las peticiones.
 
 *   `GET /api/tmdb/categories`: Obtiene todos los géneros.
 *   `GET /api/tmdb/trending`: Obtiene las tendencias generales.
@@ -160,14 +172,12 @@ Estas rutas actúan como un proxy a la API de TMDB. La caché interna del backen
 
 ## 6. Glosario de Términos
 
-*   **Eloquent**: El ORM (Object-Relational Mapper) de Laravel. Permite interactuar con la base de datos usando objetos y clases de PHP en lugar de SQL crudo.
+*   **Prisma**: ORM moderno para Node.js y TypeScript que facilita el acceso a bases de datos con tipado seguro.
+*   **NextAuth.js (Auth.js)**: Sistema de autenticación para Next.js que soporta múltiples proveedores y estrategias.
 *   **GSAP (GreenSock Animation Platform)**: Una potente librería de JavaScript para crear animaciones de alto rendimiento.
-*   **Guzzle**: Cliente PHP HTTP que facilita el envío de peticiones HTTP y hace trivial la integración con servicios web.
-*   **Headless API**: Una API que solo se encarga de los datos y la lógica, sin generar ninguna interfaz de usuario. El "head" (frontend) está desacoplado.
-*   **Laravel Sail**: Una interfaz de línea de comandos ligera para interactuar con el entorno de desarrollo Docker por defecto de Laravel.
 *   **Next.js App Router**: El nuevo sistema de enrutado de Next.js basado en la estructura de carpetas dentro de `/app`.
+*   **Next.js API Routes**: Endpoints de API integrados en Next.js que se crean en la carpeta `/app/api`.
 *   **React Hook Form**: Una librería para la gestión de formularios en React que optimiza el rendimiento y simplifica la validación.
-*   **Sanctum**: El sistema de autenticación de Laravel para SPAs y APIs.
 *   **Tailwind CSS**: Un framework de CSS "utility-first" que permite construir diseños directamente en el HTML escribiendo clases predefinidas.
 *   **TMDB**: The Movie Database, una popular API externa con información sobre películas y series.
 *   **Zustand**: Una librería de gestión de estado para React, conocida por su simplicidad y bajo peso.
