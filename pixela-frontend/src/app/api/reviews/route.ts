@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { ItemType, Prisma } from '@prisma/client';
+import { ItemType } from '@prisma/client';
 import { isValidItemType, errorResponse } from '@/lib/api-utils';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
@@ -47,7 +47,7 @@ export async function GET() {
       );
     }
     
-    const userId = parseInt(session.user.id, 10);
+    const userId = session.user.id;
     
     const reviews = await prisma.review.findMany({
       where: { userId },
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
       return errorResponse('review must be at most 600 characters', 400);
     }
     
-    const userId = parseInt(session.user.id, 10);
+    const userId = session.user.id;
     
     // Check if review already exists
     const existingReview = await prisma.review.findFirst({
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
         userId,
         tmdbId: tmdb_id,
         itemType: item_type as ItemType,
-        rating: new Prisma.Decimal(rating),
+        rating: rating,
         review: reviewText || null,
       },
     });

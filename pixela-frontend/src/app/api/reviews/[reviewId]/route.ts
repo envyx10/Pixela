@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { Prisma } from '@prisma/client';
 
 interface RouteParams {
   params: Promise<{ reviewId: string }>;
@@ -20,14 +19,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
     
     const { reviewId } = await params;
-    const reviewIdNum = parseInt(reviewId, 10);
-    
-    if (isNaN(reviewIdNum)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid review ID' },
-        { status: 400 }
-      );
-    }
     
     const body = await request.json();
     const { rating, review: reviewText } = body;
@@ -54,11 +45,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       );
     }
     
-    const userId = parseInt(session.user.id, 10);
+    const userId = session.user.id;
     const isAdmin = (session.user as { isAdmin?: boolean }).isAdmin ?? false;
     
     const existingReview = await prisma.review.findUnique({
-      where: { id: reviewIdNum },
+      where: { id: reviewId },
     });
     
     if (!existingReview) {
@@ -76,9 +67,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
     
     const updatedReview = await prisma.review.update({
-      where: { id: reviewIdNum },
+      where: { id: reviewId },
       data: {
-        rating: new Prisma.Decimal(rating),
+        rating: rating,
         review: reviewText || null,
       },
     });
@@ -112,20 +103,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
     
     const { reviewId } = await params;
-    const reviewIdNum = parseInt(reviewId, 10);
     
-    if (isNaN(reviewIdNum)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid review ID' },
-        { status: 400 }
-      );
-    }
-    
-    const userId = parseInt(session.user.id, 10);
+    const userId = session.user.id;
     const isAdmin = (session.user as { isAdmin?: boolean }).isAdmin ?? false;
     
     const existingReview = await prisma.review.findUnique({
-      where: { id: reviewIdNum },
+      where: { id: reviewId },
     });
     
     if (!existingReview) {
@@ -143,7 +126,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
     
     await prisma.review.delete({
-      where: { id: reviewIdNum },
+      where: { id: reviewId },
     });
     
     return NextResponse.json({

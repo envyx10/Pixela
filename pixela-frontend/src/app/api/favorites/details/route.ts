@@ -47,7 +47,7 @@ export async function GET() {
       );
     }
     
-    const userId = parseInt(session.user.id, 10);
+    const userId = session.user.id;
     
     const favorites = await prisma.favorite.findMany({
       where: { userId },

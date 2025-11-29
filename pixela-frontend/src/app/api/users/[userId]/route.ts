@@ -20,20 +20,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
     
     const { userId } = await params;
-    const userIdNum = parseInt(userId, 10);
     
-    if (isNaN(userIdNum)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid user ID' },
-        { status: 400 }
-      );
-    }
-    
-    const authUserId = parseInt(session.user.id, 10);
+    const authUserId = session.user.id;
     const isAdmin = (session.user as { isAdmin?: boolean }).isAdmin ?? false;
     
     // Only admin or the user themselves can update
-    if (!isAdmin && authUserId !== userIdNum) {
+    if (!isAdmin && authUserId !== userId) {
       return NextResponse.json(
         { success: false, message: 'You are not authorized to update this user' },
         { status: 403 }
@@ -41,7 +33,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
     
     const existingUser = await prisma.user.findUnique({
-      where: { id: userIdNum },
+      where: { id: userId },
     });
     
     if (!existingUser) {
@@ -69,7 +61,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       const emailUser = await prisma.user.findUnique({
         where: { email },
       });
-      if (emailUser && emailUser.id !== userIdNum) {
+      if (emailUser && emailUser.id !== userId) {
         return NextResponse.json(
           { success: false, message: 'Email is already taken' },
           { status: 400 }
@@ -94,7 +86,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
     
     const updatedUser = await prisma.user.update({
-      where: { id: userIdNum },
+      where: { id: userId },
       data: updateData,
     });
     
@@ -134,20 +126,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
     
     const { userId } = await params;
-    const userIdNum = parseInt(userId, 10);
     
-    if (isNaN(userIdNum)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid user ID' },
-        { status: 400 }
-      );
-    }
-    
-    const authUserId = parseInt(session.user.id, 10);
+    const authUserId = session.user.id;
     const isAdmin = (session.user as { isAdmin?: boolean }).isAdmin ?? false;
     
     // Only admin or the user themselves can delete
-    if (!isAdmin && authUserId !== userIdNum) {
+    if (!isAdmin && authUserId !== userId) {
       return NextResponse.json(
         { success: false, message: 'You are not authorized to delete this user' },
         { status: 403 }
@@ -155,7 +139,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
     
     const existingUser = await prisma.user.findUnique({
-      where: { id: userIdNum },
+      where: { id: userId },
     });
     
     if (!existingUser) {
@@ -166,7 +150,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
     
     await prisma.user.delete({
-      where: { id: userIdNum },
+      where: { id: userId },
     });
     
     return NextResponse.json({

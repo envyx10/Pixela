@@ -19,19 +19,11 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
     
     const { favoriteId } = await params;
-    const favoriteIdNum = parseInt(favoriteId, 10);
     
-    if (isNaN(favoriteIdNum)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid favorite ID' },
-        { status: 400 }
-      );
-    }
-    
-    const userId = parseInt(session.user.id, 10);
+    const userId = session.user.id;
     
     const favorite = await prisma.favorite.findUnique({
-      where: { id: favoriteIdNum },
+      where: { id: favoriteId },
     });
     
     if (!favorite) {
@@ -49,7 +41,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
     
     await prisma.favorite.delete({
-      where: { id: favoriteIdNum },
+      where: { id: favoriteId },
     });
     
     return NextResponse.json({

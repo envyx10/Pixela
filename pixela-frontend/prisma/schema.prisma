@@ -1,77 +1,72 @@
 // Prisma schema for Pixela application
-// Migrated from Laravel/MySQL to PostgreSQL
+// Using MongoDB for simplicity (no local database setup required with MongoDB Atlas)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-// User model - migrated from Laravel users table
+// User model
 model User {
-  id              Int       @id @default(autoincrement()) @map("user_id")
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
   name            String
-  photoUrl        String?   @map("photo_url") @db.Text
+  photoUrl        String?
   email           String    @unique
-  emailVerifiedAt DateTime? @map("email_verified_at")
+  emailVerifiedAt DateTime?
   password        String
-  isAdmin         Boolean   @default(false) @map("is_admin")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  isAdmin         Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   // Relations
   favorites Favorite[]
   reviews   Review[]
   sessions  Session[]
   accounts  Account[]
-
-  @@map("users")
 }
 
 // NextAuth Account model for OAuth providers
 model Account {
-  id                String  @id @default(cuid())
-  userId            Int     @map("user_id")
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
   type              String
   provider          String
-  providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@map("accounts")
 }
 
 // NextAuth Session model
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique @map("session_token")
-  userId       Int      @map("user_id")
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
   expires      DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
 }
 
 // NextAuth Verification Token model
 model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   identifier String
   token      String
   expires    DateTime
 
   @@unique([identifier, token])
-  @@map("verification_tokens")
 }
 
 // Item type enum for favorites and reviews
@@ -80,39 +75,37 @@ enum ItemType {
   series
 }
 
-// Favorite model - migrated from Laravel favorites table
+// Favorite model
 model Favorite {
-  id        Int      @id @default(autoincrement()) @map("favorite_id")
-  itemType  ItemType @map("item_type")
-  tmdbId    Int      @map("tmdb_id")
-  userId    Int      @map("user_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  itemType  ItemType
+  tmdbId    Int
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, itemType, tmdbId], name: "favorites_unique_item")
+  @@unique([userId, itemType, tmdbId])
   @@index([tmdbId])
   @@index([itemType])
-  @@map("favorites")
 }
 
-// Review model - migrated from Laravel reviews table
+// Review model
 model Review {
-  id        Int      @id @default(autoincrement()) @map("review_id")
-  itemType  ItemType @map("item_type")
-  tmdbId    Int      @map("tmdb_id")
-  rating    Decimal  @db.Decimal(3, 1)
-  review    String?  @db.Text
-  userId    Int      @map("user_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  itemType  ItemType
+  tmdbId    Int
+  rating    Float
+  review    String?
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, itemType, tmdbId], name: "reviews_unique_item")
+  @@unique([userId, itemType, tmdbId])
   @@index([tmdbId])
   @@index([itemType])
   @@index([rating])
-  @@map("reviews")
 }

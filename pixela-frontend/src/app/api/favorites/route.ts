@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       return errorResponse('item_type must be either "movie" or "series"', 400);
     }
     
-    const userId = parseInt(session.user.id, 10);
+    const userId = session.user.id;
     
     // Check if favorite already exists
     const existingFavorite = await prisma.favorite.findFirst({

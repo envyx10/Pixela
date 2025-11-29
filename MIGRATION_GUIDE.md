@@ -19,7 +19,7 @@ After analyzing the Laravel backend, we chose **Option B (Next.js API Routes)** 
 ### Database
 
 - **Before**: Laravel Migrations + MySQL
-- **After**: Prisma ORM + PostgreSQL
+- **After**: Prisma ORM + MongoDB (MongoDB Atlas - free tier available)
 
 ### Authentication
 
@@ -43,12 +43,12 @@ After analyzing the Laravel backend, we chose **Option B (Next.js API Routes)** 
 Copy `.env.local.example` to `.env.local` and configure:
 
 ```env
-# Database (PostgreSQL)
-DATABASE_URL="postgresql://user:password@localhost:5432/pixela?schema=public"
+# Database (MongoDB Atlas - get free cluster at mongodb.com/atlas)
+DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/pixela?retryWrites=true&w=majority"
 
 # NextAuth.js
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-key-here  # Generate with: openssl rand -base64 32
+NEXTAUTH_SECRET=cualquier-texto-largo-y-aleatorio-aqui
 
 # TMDB API
 TMDB_API_KEY=your-tmdb-api-key-here
@@ -60,8 +60,8 @@ TMDB_API_KEY=your-tmdb-api-key-here
 # Generate Prisma Client
 npx prisma generate
 
-# Run migrations
-npx prisma migrate dev
+# Push schema to MongoDB (no migrations needed)
+npx prisma db push
 ```
 
 ### 3. Run Development Server
@@ -183,6 +183,6 @@ rm -rf pixela-backend
 If you encounter any issues during migration, please check:
 
 1. Environment variables are correctly configured
-2. PostgreSQL database is running and accessible
+2. MongoDB Atlas cluster is accessible (check IP whitelist)
 3. Prisma Client has been generated (`npx prisma generate`)
-4. Database migrations have been applied (`npx prisma migrate dev`)
+4. Database schema has been pushed (`npx prisma db push`)

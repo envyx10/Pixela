@@ -14,7 +14,7 @@ export async function GET() {
     }
     
     return NextResponse.json({
-      user_id: parseInt(session.user.id, 10),
+      user_id: session.user.id,
       name: session.user.name,
       email: session.user.email,
       photo_url: session.user.image,
