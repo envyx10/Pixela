@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getTmdbMovieService } from '@/lib/services';
+import { paginatedResponse, errorResponse } from '@/lib/api-utils';
 
 // GET /api/movies/search?query=...&page=1
 export async function GET(request: NextRequest) {
@@ -9,32 +10,14 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1', 10);
     
     if (!query) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Search query is required',
-        },
-        { status: 400 }
-      );
+      return errorResponse('Search query is required', 400);
     }
     
     const movieService = getTmdbMovieService();
     const movies = await movieService.searchMovies(query, page);
     
-    return NextResponse.json({
-      success: true,
-      page,
-      total_pages: movies.total_pages ?? null,
-      total_results: movies.total_results ?? null,
-      data: movies.results,
-    });
+    return paginatedResponse(movies, page);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return errorResponse(error instanceof Error ? error.message : 'Unknown error', 500);
   }
 }

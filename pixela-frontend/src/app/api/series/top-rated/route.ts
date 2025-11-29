@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getTmdbSeriesService } from '@/lib/services';
+import { paginatedResponse, errorResponse } from '@/lib/api-utils';
 
 // GET /api/series/top-rated
 export async function GET(request: NextRequest) {
@@ -10,20 +11,8 @@ export async function GET(request: NextRequest) {
     const seriesService = getTmdbSeriesService();
     const series = await seriesService.getTopRatedSeries(page);
     
-    return NextResponse.json({
-      success: true,
-      page,
-      total_pages: series.total_pages ?? null,
-      total_results: series.total_results ?? null,
-      data: series.results,
-    });
+    return paginatedResponse(series, page);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return errorResponse(error instanceof Error ? error.message : 'Unknown error', 500);
   }
 }

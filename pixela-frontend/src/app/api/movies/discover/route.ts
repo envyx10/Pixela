@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getTmdbMovieService } from '@/lib/services';
+import { paginatedResponse, errorResponse } from '@/lib/api-utils';
 
 // GET /api/movies/discover
 export async function GET(request: NextRequest) {
@@ -10,20 +11,8 @@ export async function GET(request: NextRequest) {
     const movieService = getTmdbMovieService();
     const movies = await movieService.getAllDiscoveredMovies(page);
     
-    return NextResponse.json({
-      success: true,
-      page,
-      total_pages: movies.total_pages ?? null,
-      total_results: movies.total_results ?? null,
-      data: movies.results,
-    });
+    return paginatedResponse(movies, page);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return errorResponse(error instanceof Error ? error.message : 'Unknown error', 500);
   }
 }

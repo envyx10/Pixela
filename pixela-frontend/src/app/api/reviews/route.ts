@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { ItemType } from '@prisma/client';
-import { Prisma } from '@prisma/client';
+import { ItemType, Prisma } from '@prisma/client';
+import { isValidItemType, errorResponse } from '@/lib/api-utils';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -98,10 +98,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     
     if (!session?.user) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized', 401);
     }
     
     const body = await request.json();
@@ -109,31 +106,19 @@ export async function POST(request: NextRequest) {
     
     // Validation
     if (!item_type || !tmdb_id || rating === undefined) {
-      return NextResponse.json(
-        { success: false, message: 'item_type, tmdb_id, and rating are required' },
-        { status: 400 }
-      );
+      return errorResponse('item_type, tmdb_id, and rating are required', 400);
     }
     
-    if (!['movie', 'series'].includes(item_type)) {
-      return NextResponse.json(
-        { success: false, message: 'item_type must be either "movie" or "series"' },
-        { status: 400 }
-      );
+    if (!isValidItemType(item_type)) {
+      return errorResponse('item_type must be either "movie" or "series"', 400);
     }
     
     if (typeof rating !== 'number' || rating < 0 || rating > 10) {
-      return NextResponse.json(
-        { success: false, message: 'rating must be a number between 0 and 10' },
-        { status: 400 }
-      );
+      return errorResponse('rating must be a number between 0 and 10', 400);
     }
     
     if (reviewText && reviewText.length > 600) {
-      return NextResponse.json(
-        { success: false, message: 'review must be at most 600 characters' },
-        { status: 400 }
-      );
+      return errorResponse('review must be at most 600 characters', 400);
     }
     
     const userId = parseInt(session.user.id, 10);

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { ItemType } from '@prisma/client';
+import { ItemType, Review, User } from '@prisma/client';
+import { isValidItemType, errorResponse } from '@/lib/api-utils';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -44,27 +45,18 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     
     if (!session?.user) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized', 401);
     }
     
     const { tmdbId, itemType } = await params;
     const tmdbIdNum = parseInt(tmdbId, 10);
     
     if (isNaN(tmdbIdNum)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid TMDB ID' },
-        { status: 400 }
-      );
+      return errorResponse('Invalid TMDB ID', 400);
     }
     
-    if (!['movie', 'series'].includes(itemType)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid item type. Must be either "movie" or "series".' },
-        { status: 400 }
-      );
+    if (!isValidItemType(itemType)) {
+      return errorResponse('Invalid item type. Must be either "movie" or "series".', 400);
     }
     
     const reviews = await prisma.review.findMany({
@@ -79,7 +71,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     // Fetch TMDB details once
     const details = await fetchTmdbDetails(itemType, tmdbIdNum);
     
-    const detailedReviews = reviews.map((review) => ({
+    const detailedReviews = reviews.map((review: Review & { user: User | null }) => ({
       id: review.id,
       user_id: review.userId,
       user_name: review.user?.name ?? null,
@@ -100,12 +92,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       data: detailedReviews,
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return errorResponse(error instanceof Error ? error.message : 'Unknown error', 500);
   }
 }

@@ -1,16 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getTmdbMovieService } from '@/lib/services';
-
-// Helper for paginated responses
-function paginatedResponse(data: { results: unknown[]; total_pages?: number; total_results?: number }, page: number) {
-  return NextResponse.json({
-    success: true,
-    page,
-    total_pages: data.total_pages ?? null,
-    total_results: data.total_results ?? null,
-    data: data.results,
-  });
-}
+import { paginatedResponse, errorResponse } from '@/lib/api-utils';
 
 // GET /api/movies/trending
 export async function GET(request: NextRequest) {
@@ -23,12 +13,6 @@ export async function GET(request: NextRequest) {
     
     return paginatedResponse(movies, page);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return errorResponse(error instanceof Error ? error.message : 'Unknown error', 500);
   }
 }

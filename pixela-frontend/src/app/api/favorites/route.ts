@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { ItemType } from '@prisma/client';
+import { isValidItemType, errorResponse } from '@/lib/api-utils';
 
 // POST /api/favorites - Add a favorite
 export async function POST(request: NextRequest) {
@@ -9,27 +10,18 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     
     if (!session?.user) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized', 401);
     }
     
     const body = await request.json();
     const { tmdb_id, item_type } = body;
     
     if (!tmdb_id || !item_type) {
-      return NextResponse.json(
-        { success: false, message: 'tmdb_id and item_type are required' },
-        { status: 400 }
-      );
+      return errorResponse('tmdb_id and item_type are required', 400);
     }
     
-    if (!['movie', 'series'].includes(item_type)) {
-      return NextResponse.json(
-        { success: false, message: 'item_type must be either "movie" or "series"' },
-        { status: 400 }
-      );
+    if (!isValidItemType(item_type)) {
+      return errorResponse('item_type must be either "movie" or "series"', 400);
     }
     
     const userId = parseInt(session.user.id, 10);
@@ -44,10 +36,7 @@ export async function POST(request: NextRequest) {
     });
     
     if (existingFavorite) {
-      return NextResponse.json(
-        { success: false, message: 'Favorite item already exists' },
-        { status: 400 }
-      );
+      return errorResponse('Favorite item already exists', 400);
     }
     
     const favorite = await prisma.favorite.create({
@@ -67,12 +56,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return errorResponse(error instanceof Error ? error.message : 'Unknown error', 500);
   }
 }

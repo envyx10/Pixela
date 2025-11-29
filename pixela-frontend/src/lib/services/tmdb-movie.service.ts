@@ -14,7 +14,6 @@ import {
   TransformedCastMember,
   TransformedCreator,
   TransformedImage,
-  ContentType,
 } from './tmdb.types';
 
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
