@@ -124,7 +124,7 @@ export const Navbar = () => {
       router.push('/profile');
       setMobileMenuOpen(false);
     } else {
-      window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/login`;
+      router.push('/login');
     }
   };
 
