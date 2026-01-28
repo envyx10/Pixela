@@ -23,20 +23,29 @@ export async function getSerieById(id: string): Promise<Serie> {
     throw new Error('Serie no encontrada o datos inválidos');
   }
 
-  const rawSerie = data.data;
+  const rawSerie = data.data as any;
 
-  // Obtener datos adicionales en paralelo
-  const [actores, videos, proveedores] = await Promise.allSettled([
-    getSerieActores(id),
-    getSerieVideos(id),
-    getSerieProveedores(id)
-  ]);
+  // Extract embedded
+  const actores = rawSerie.credits?.cast || [];
+  const trailers = rawSerie.videos?.results || [];
+
+  const providersData = rawSerie['watch/providers']?.results?.ES;
+  const proveedores = providersData ? [
+      ...(providersData.flatrate || []),
+      ...(providersData.rent || []),
+      ...(providersData.buy || [])
+  ] : [];
+
+  const uniqueProveedores = proveedores.filter((provider: any, index: number, self: any[]) =>
+    index === self.findIndex((p: any) => p.provider_id === provider.provider_id)
+  );
 
   return mapSerieFromApi({
     ...rawSerie,
-    actores: actores.status === 'fulfilled' ? actores.value : [],
-    trailers: videos.status === 'fulfilled' ? videos.value : [],
-    proveedores: proveedores.status === 'fulfilled' ? proveedores.value : []
+    actores: actores,
+    trailers: trailers,
+    proveedores: uniqueProveedores,
+    imagenes: rawSerie.images || { backdrops: [], posters: [] }
   });
 }
 

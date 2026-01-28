@@ -43,42 +43,20 @@ export async function getMediaImages(
       return { backdrops: [], posters: [], logos: [] };
     }
 
-    const data = await response.json() as ApiResponse;
+    // Simplified response handling as we now return TMDB data directly
+    const data = await response.json();
     console.log('[DEBUG] getMediaImages - Response data:', data);
-    
-    if (!data.success) {
-      console.error('[ERROR] getMediaImages - API response indicates failure:', data);
-      return { backdrops: [], posters: [], logos: [] };
+
+    // If API returns an error or empty object handling
+    if (!data.id && !data.backdrops && !data.posters) {
+         console.warn('[WARN] getMediaImages - Empty or invalid data received');
+         return { backdrops: [], posters: [], logos: [] };
     }
 
-    if (!data.data || (!data.data.backdrops && !data.data.posters)) {
-      console.error('[ERROR] getMediaImages - Unexpected data structure:', data);
-      return { backdrops: [], posters: [], logos: [] };
-    }
-
-    /**
-     * Transforma la respuesta para que coincida con el formato esperado
-     * @param {ApiResponse} data - Respuesta de la API
-     * @returns {WallpapersResponse} Respuesta transformada
-     */
     const result: WallpapersResponse = {
-      backdrops: Array.isArray(data.data.backdrops) ? data.data.backdrops.map((backdrop: ApiImageResponse) => ({
-        file_path: backdrop.url,
-        width: backdrop.ancho || 0,
-        height: backdrop.alto || 0,
-        aspect_ratio: backdrop.ancho && backdrop.alto ? backdrop.ancho / backdrop.alto : 1.78,
-        vote_average: 0,
-        vote_count: 0
-      })) : [],
-      posters: Array.isArray(data.data.posters) ? data.data.posters.map((poster: ApiImageResponse) => ({
-        file_path: poster.url,
-        width: poster.ancho || 0,
-        height: poster.alto || 0,
-        aspect_ratio: poster.ancho && poster.alto ? poster.ancho / poster.alto : 0.667,
-        vote_average: 0,
-        vote_count: 0
-      })) : [],
-      logos: []
+      backdrops: Array.isArray(data.backdrops) ? data.backdrops : [],
+      posters: Array.isArray(data.posters) ? data.posters : [],
+      logos: Array.isArray(data.logos) ? data.logos : []
     };
 
     return result;

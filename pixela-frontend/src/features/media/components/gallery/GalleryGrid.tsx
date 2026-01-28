@@ -44,8 +44,10 @@ export const GalleryGrid = ({ images, type, onImageClick, showAll = false }: Gal
   // Estado para manejar errores de carga de imágenes
   const [imageErrors, setImageErrors] = useState<{[key: string]: boolean}>({});
 
-  // Determinar el número de imágenes a mostrar
-  const displayImages = showAll ? images : images.slice(0, type === 'backdrops' ? 6 : 12);
+  // Determinar el número de imágenes a mostrar - Aumentamos los límites iniciales
+  const displayLimit = type === 'backdrops' ? 9 : 18;
+  const displayImages = showAll ? images : images.slice(0, displayLimit);
+  const hasMore = images.length > displayLimit;
 
   // Manejar errores de carga de imágenes
   const handleImageError = (filePath: string) => {

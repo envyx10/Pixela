@@ -60,7 +60,7 @@ const OverlayContent = ({ media, type, onFollowClick }: {
       />
       <div className={STYLES.overlayContent}>
         <h3 className={STYLES.title}>
-          {media.title}
+          {(media as any).title || (media as any).name || 'Sin título'}
         </h3>
         
         <div className={STYLES.infoContainer}>
@@ -130,7 +130,7 @@ export const DiscoverCard = ({ media, type, index, isMobile }: DiscoverCardProps
     >
       <Image
         src={`https://image.tmdb.org/t/p/w500${imagePath}`}
-        alt={media.title}
+        alt={(media as any).title || (media as any).name || 'Póster de contenido'}
         fill
         className={STYLES.image}
         sizes={isMobile ? "(max-width: 768px) 50vw, 200px" : "200px"}

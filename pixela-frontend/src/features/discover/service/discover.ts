@@ -13,7 +13,9 @@ type MediaType = 'series' | 'movies';
  */
 async function fetchDiscoveredContent<T>(type: MediaType): Promise<T[]> {
     try {
-        const endpoint = `${API_BASE_URL}/${type}/discover?limit=${DISCOVER_LIMIT}`; // PRODUCTION: Cambiar {API_BASE_URL} por {API_URL}
+        const endpoint = `${API_BASE_URL}/${type}/discover?limit=${DISCOVER_LIMIT}`; 
+        console.log(`[Discover] Fetching from: ${endpoint}`); // LOGGING PARA DEBUGUR
+
         const response = await fetch(endpoint, {
             ...DEFAULT_FETCH_OPTIONS,
         });

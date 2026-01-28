@@ -235,35 +235,42 @@ export const ProfileReviews = () => {
       {reviews.map((review) => (
         <div key={review.id} className={STYLES.reviewItem}>
           <div className={STYLES.posterContainer}>
-            {review.poster_path ? (
-              <Link 
-                href={`/${review.item_type === 'movie' ? 'movies' : 'series'}/${review.tmdb_id}`}
-                className="block w-full h-full"
-              >
-                <Image
-                  src={`${TMDB_IMAGE_BASE_URL}${review.poster_path}`}
-                  alt={review.title || (review.item_type === 'movie' ? 'Película' : 'Serie')}
-                  fill
-                  className={STYLES.posterImage}
-                  sizes="100px"
-                />
-                <div className={STYLES.posterOverlay}>
-                  <span className={STYLES.overlayText}>Ver detalles</span>
+            <Link 
+              href={`/${review.item_type === 'movie' ? 'movies' : 'series'}/${review.tmdb_id}`}
+              className="block w-full h-full"
+            >
+              {review.poster_path ? (
+                <>
+                  <Image
+                    src={`${TMDB_IMAGE_BASE_URL}${review.poster_path}`}
+                    alt={review.title || (review.item_type === 'movie' ? 'Película' : 'Serie')}
+                    fill
+                    className={STYLES.posterImage}
+                    sizes="100px"
+                  />
+                  <div className={STYLES.posterOverlay}>
+                    <span className={STYLES.overlayText}>Ver detalles</span>
+                  </div>
+                </>
+              ) : (
+                <div className={STYLES.noImageContainer}>
+                  Sin imagen
                 </div>
-              </Link>
-            ) : (
-              <div className={STYLES.noImageContainer}>
-                Sin imagen
-              </div>
-            )}
+              )}
+            </Link>
           </div>
 
           <div className={STYLES.infoContainer}>
             <div className={STYLES.contentContainer}>
               <div className={STYLES.titleContainer}>
-                <span className={STYLES.title}>
-                  {review.title || `${review.item_type === 'movie' ? 'Película' : 'Serie'} #${review.tmdb_id}`}
-                </span>
+                <Link 
+                  href={`/${review.item_type === 'movie' ? 'movies' : 'series'}/${review.tmdb_id}`}
+                  className="hover:text-pixela-accent transition-colors"
+                >
+                  <span className={STYLES.title}>
+                    {review.title || `${review.item_type === 'movie' ? 'Película' : 'Serie'} #${review.tmdb_id}`}
+                  </span>
+                </Link>
                 <span className={STYLES.rating}>
                   {editingId !== review.id && (
                     <FiStar className={STYLES.ratingIcon} />

@@ -382,18 +382,21 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
  */
 async function getUserData(): Promise<UserResponse> {
   try {
-    const userData = await authAPI.getUser();
-    if (!userData) throw new Error('No se pudieron obtener los datos del usuario');
+    const response = await authAPI.getUser() as any;
+    if (!response) throw new Error('No se pudieron obtener los datos del usuario');
+
+    // Manejar respuesta si viene envuelta en un objeto 'user' (común en NextAuth API routes)
+    const userData = response.user || response;
 
     return {
-      user_id: userData.user_id,
-      name: userData.name,
-      email: userData.email,
-      photo_url: userData.photo_url,
-      is_admin: userData.is_admin,
-      password: userData.password,
-      created_at: userData.created_at,
-      updated_at: new Date().toISOString()
+      user_id: userData.user_id || userData.id || 0,
+      name: userData.name || 'Usuario',
+      email: userData.email || '',
+      photo_url: userData.photo_url || userData.image || '',
+      is_admin: userData.is_admin || false,
+      password: userData.password || '',
+      created_at: userData.created_at || new Date().toISOString(),
+      updated_at: userData.updated_at || new Date().toISOString()
     };
   } catch (error) {
     console.error('Error al obtener datos del usuario:', error);

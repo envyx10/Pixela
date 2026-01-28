@@ -57,9 +57,8 @@ export function GallerySection({ media }: GallerySectionProps) {
     posters: []
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
   const [showAll, setShowAll] = useState(false);
 
   const {
@@ -74,44 +73,18 @@ export function GallerySection({ media }: GallerySectionProps) {
     setIsMounted(true);
   }, []);
 
-  // Cargar imágenes al montar el componente
+  // No need for separate fetch, use data from props
   useEffect(() => {
     if (!isMounted) return;
-    
-    const fetchImages = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        
-        const mediaType = media.tipo === 'pelicula' ? 'movie' : 'series';
-        console.log(`[DEBUG] GallerySection - Fetching images for ${mediaType} with ID ${media.id}`);
-        
-        const imagesData = await getMediaImages(media.id, mediaType);
-        
-        // Si hay imágenes, establecerlas
-        if (imagesData.backdrops.length > 0 || imagesData.posters.length > 0) {
-          console.log(`[DEBUG] GallerySection - Received ${imagesData.backdrops.length} backdrops and ${imagesData.posters.length} posters`);
-          setImages({
-            backdrops: imagesData.backdrops || [],
-            posters: imagesData.posters || []
-          });
-        } else if (retryCount < 1) {
-          console.log('[DEBUG] GallerySection - No images found, will retry');
-          setRetryCount(prev => prev + 1);
-        
-        } else {
-          console.warn('[WARN] GallerySection - No images found after retry');
-        }
-      } catch (err) {
-        console.error('Error fetching images:', err);
-        setError('No se pudieron cargar las imágenes');
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
-    fetchImages();
-  }, [media.id, media.tipo, isMounted, retryCount]);
+    if (media.imagenes) {
+         setImages({
+             backdrops: media.imagenes.backdrops || [],
+             posters: media.imagenes.posters || []
+         });
+         setIsLoading(false);
+    }
+  }, [media, isMounted]);
 
   // No renderizar nada en el servidor o antes de montar
   if (!isMounted) {
@@ -156,13 +129,14 @@ export function GallerySection({ media }: GallerySectionProps) {
           onImageClick={(image) => setSelectedGalleryImage(image.file_path)}
           showAll={showAll}
         />
-        {(images[activeGalleryTab].length > 4) && (
+        {((activeGalleryTab === 'backdrops' && images.backdrops.length > 9) || 
+          (activeGalleryTab === 'posters' && images.posters.length > 18)) && (
           <div className={STYLES.buttonContainer}>
             <button
               className={STYLES.button}
               onClick={() => setShowAll(v => !v)}
             >
-              {showAll ? 'Mostrar menos' : `Mostrar todos los ${activeGalleryTab === 'backdrops' ? 'fondos' : 'pósters'}`}
+              {showAll ? 'Mostrar menos' : `Mostrar todos (${images[activeGalleryTab].length})`}
             </button>
           </div>
         )}

@@ -3,9 +3,12 @@
  * @namespace API_BASE_URL
  * @description URL de la API
  */
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_INTERNAL_URL || 'http://laravel.test/api'; // QUITAR EN PRODUCTION
-export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost'; //Se usa en apiHelpers.ts
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
+// Ajuste crítico: Apuntar siempre a la ruta relativa del proxy interno en cliente
+// y a la URL completa en servidor.
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+
+export const API_BASE_URL = BASE_URL; 
+export const API_URL = BASE_URL;
 
 /**
  * Endpoints de la API
@@ -21,7 +24,7 @@ export const API_ENDPOINTS = {
     SERIES: {
         GET_BY_ID: (id: string) => `${API_BASE_URL}/series/${id}`,
         LIST: `${API_BASE_URL}/series`,
-        GET_CAST: (id: string) => `${API_BASE_URL}/series/${id}/cast`,
+        GET_CAST: (id: string) => `${API_BASE_URL}/series/${id}/cast`, // Estos fallarán si no creamos rutas, pero el ID sí funcionará
         GET_VIDEOS: (id: string) => `${API_BASE_URL}/series/${id}/videos`,
         GET_IMAGES: (id: string) => `${API_URL}/series/${id}/images`,
         GET_WATCH_PROVIDERS: (id: string) => `${API_BASE_URL}/series/${id}/watch-providers`,

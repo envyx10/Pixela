@@ -60,6 +60,16 @@ const mapCreator = (creator: ApiCreator) => ({
 });
 
 /**
+ * Mapea una imagen
+ * @param image
+ * @returns 
+ */
+const mapImage = (image: any) => ({
+  ...image,
+  file_path: formatImageUrl(image.file_path || ''),
+});
+
+/**
  * Mapea los datos de la API a un objeto Serie
  * @param apiData 
  * @returns 
@@ -117,7 +127,11 @@ export function mapSerieFromApi(apiData: ApiSerie): Serie {
     episodios: apiData.episodios || apiData.number_of_episodes || 0,
     actores,
     trailers,
-    proveedores,
+    proveedores: apiData.proveedores?.map((p: any) => mapProvider(p)) || proveedores,
+    imagenes: {
+      backdrops: apiData.imagenes?.backdrops?.map(mapImage) || [],
+      posters: apiData.imagenes?.posters?.map(mapImage) || [],
+    },
     creadores,
   };
 }

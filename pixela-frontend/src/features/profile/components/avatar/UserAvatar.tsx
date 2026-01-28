@@ -49,7 +49,7 @@ export const UserAvatar = ({
           />
         ) : (
           <div className={STYLES.placeholder}>
-            {name.charAt(0).toUpperCase()}
+            {name ? name.charAt(0).toUpperCase() : '?'}
           </div>
         )}
       </div>

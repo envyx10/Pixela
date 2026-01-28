@@ -23,29 +23,48 @@ export async function getPeliculaById(id: string): Promise<Pelicula> {
     throw new Error('Película no encontrada o datos inválidos');
   }
 
-  const rawPelicula = data.data;
+  const rawPelicula = data.data as any;
 
-  // Obtener datos adicionales en paralelo
-  const [actores, videos, proveedores, imagenes, creatorData] = await Promise.allSettled([
-    getPeliculaActores(id),
-    getPeliculaVideos(id),
-    getPeliculaProveedores(id),
-    getPeliculaImagenes(id),
-    fetchWithErrorHandling<ApiCreatorResponse>(`${API_ENDPOINTS.PELICULAS.GET_BY_ID(id)}/creator`)
-  ]);
+  // Extract embedded data (appended in backend route)
+  const actores = rawPelicula.credits?.cast || [];
+  const trailers = rawPelicula.videos?.results || [];
+  
+  // Extract providers for ES region
+  const providersData = rawPelicula['watch/providers']?.results?.ES;
+  const proveedores = providersData ? [
+      ...(providersData.flatrate || []),
+      ...(providersData.rent || []),
+      ...(providersData.buy || [])
+  ] : [];
+
+  // Deduplicate providers
+  const uniqueProveedores = proveedores.filter((provider: any, index: number, self: any[]) =>
+    index === self.findIndex((p: any) => p.provider_id === provider.provider_id)
+  );
+
+  // Images
+  const imagenesData = rawPelicula.images || { backdrops: [], posters: [] };
+
+  // Creator (Find Director in Crew)
+  const crew = rawPelicula.credits?.crew || [];
+  const director = crew.find((p: any) => p.job === 'Director');
+  const creador = director ? {
+      id: director.id,
+      nombre: director.name,
+      foto: director.profile_path
+  } : undefined;
+
 
   return mapPeliculaFromApi({
     ...rawPelicula,
-    actores: actores.status === 'fulfilled' ? actores.value : [],
-    trailers: videos.status === 'fulfilled' ? videos.value : [],
-    proveedores: proveedores.status === 'fulfilled' ? proveedores.value : [],
-    imagenes: imagenes.status === 'fulfilled' ? {
-      backdrops: imagenes.value.filter(img => img.file_path && img.file_path.includes('backdrop')),
-      posters: imagenes.value.filter(img => img.file_path && !img.file_path.includes('backdrop'))
-    } : { backdrops: [], posters: [] },
-    creador: creatorData.status === 'fulfilled' && creatorData.value?.data?.creator 
-      ? creatorData.value.data.creator 
-      : undefined
+    actores: actores,
+    trailers: trailers,
+    proveedores: uniqueProveedores,
+    imagenes: {
+      backdrops: imagenesData.backdrops || [],
+      posters: imagenesData.posters || []
+    },
+    creador: creador
   });
 }
 

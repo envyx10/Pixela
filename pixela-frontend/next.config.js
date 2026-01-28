@@ -3,33 +3,40 @@
 // PRODUCTION: const backendApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
 
 const nextConfig = {
-
     // output: 'export',
+    // Rewrites removed as we now handle API internal routing within Next.js
     
-    async rewrites() {
-        return [
-            {
-                source: '/api/series/:path*',
-                destination: 'http://localhost/api/series/:path*',
-                // PRODUCTION: destination: `${backendApiUrl}/series/:path*`,
-            },
-            {
-                source: '/api/movies/:path*',
-                destination: 'http://localhost/api/movies/:path*',
-                // PRODUCTION: destination: `${backendApiUrl}/movies/:path*`,
-            },
-        ];
-    },
     images: {
-        domains: [
-            'image.tmdb.org', 
-            'via.placeholder.com', 
-            'img.youtube.com',
-            'laravel.test',
-            'localhost',
-            'i.pravatar.cc',
-            'picsum.photos',
-            'pixela.duckdns.org'
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'image.tmdb.org',
+            },
+            {
+                protocol: 'https',
+                hostname: 'via.placeholder.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'img.youtube.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.pravatar.cc',
+            },
+            {
+                protocol: 'https',
+                hostname: 'picsum.photos',
+            },
+            // Local dev domains
+            {
+                 protocol: 'http',
+                 hostname: 'localhost',
+            },
+            {
+                  protocol: 'http',
+                  hostname: 'laravel.test',
+            }
         ],
     },
 };

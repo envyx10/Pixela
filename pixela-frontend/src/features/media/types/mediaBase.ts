@@ -1,8 +1,9 @@
 export type MediaType = 'serie' | 'pelicula';
 
 import { Actor } from './people';
-import { WatchProvider, Image } from './supplements';
+import { WatchProvider } from './supplements';
 import { Trailer } from './trailer';
+import { Wallpaper } from './gallery';
 
 /**
  * Media
@@ -42,5 +43,8 @@ export interface Media {
     nombre: string;
     foto: string;
   };
-  imagenes?: Image[];
+  imagenes?: {
+    backdrops: Wallpaper[];
+    posters: Wallpaper[];
+  };
 } 

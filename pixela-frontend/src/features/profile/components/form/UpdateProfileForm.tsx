@@ -174,7 +174,7 @@ export const UpdateProfileForm = ({
                 />
               ) : (
                 <div className={STYLES.avatarPlaceholder}>
-                  <span>{initialData.name.charAt(0).toUpperCase()}</span>
+                  <span>{initialData.name ? initialData.name.charAt(0).toUpperCase() : '?'}</span>
                 </div>
               )}
             </div>

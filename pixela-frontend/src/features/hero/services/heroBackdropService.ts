@@ -51,7 +51,7 @@ async function getMediaWithCache(item: MediaItem): Promise<MediaResponse | null>
  */
 export async function getFeaturedBackdrops(): Promise<string[]> {
   try {
-    console.time('[HERO] Carga de imágenes backdrop');
+    // console.time('[HERO] Carga de imágenes backdrop');
     
     // ✅ Procesar todos en paralelo para máxima velocidad (primera impresión)
     // Aumentamos la concurrencia para que las imágenes se carguen inmediatamente
@@ -66,7 +66,7 @@ export async function getFeaturedBackdrops(): Promise<string[]> {
       .slice(0, 6); // Máximo 6 imágenes para el hero
 
     try {
-      console.timeEnd('[HERO] Carga de imágenes backdrop');
+      // console.timeEnd('[HERO] Carga de imágenes backdrop');
     } catch (error) {
       console.error('Error al finalizar el timer:', error);
     }

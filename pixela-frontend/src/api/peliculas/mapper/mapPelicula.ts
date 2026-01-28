@@ -41,6 +41,27 @@ const mapTrailer = (trailer: ApiTrailer): Trailer => ({
 });
 
 /**
+ * Mapea un proveedor de streaming
+ * @param provider
+ * @returns 
+ */
+const mapProvider = (provider: any) => ({
+  id: provider.provider_id?.toString() || '',
+  nombre: provider.provider_name || '',
+  logo: formatImageUrl(provider.logo_path || ''),
+});
+
+/**
+ * Mapea una imagen
+ * @param image
+ * @returns 
+ */
+const mapImage = (image: any) => ({
+  ...image,
+  file_path: formatImageUrl(image.file_path || ''),
+});
+
+/**
  * Mapea los datos de la API a un objeto Pelicula
  * @param movieData 
  * @returns 
@@ -82,6 +103,11 @@ export function mapPeliculaFromApi(movieData: ApiPelicula): Pelicula {
     duracion,
     actores: movieData.actores?.map(mapActor) || [],
     trailers: movieData.trailers?.map(mapTrailer) || [],
+    proveedores: movieData.proveedores?.map(mapProvider) || [],
+    imagenes: {
+      backdrops: movieData.imagenes?.backdrops?.map(mapImage) || [],
+      posters: movieData.imagenes?.posters?.map(mapImage) || [],
+    },
     creador: movieData.creador ? {
       id: Number(movieData.creador.id),
       nombre: movieData.creador.nombre || movieData.creador.name || '',

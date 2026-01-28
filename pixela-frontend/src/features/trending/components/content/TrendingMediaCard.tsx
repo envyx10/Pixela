@@ -27,8 +27,8 @@ const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
  */
 const PosterImage = memo(({ posterPath, title, isInitiallyVisible }: PosterImageProps) => (
   <Image
-    src={`${TMDB_IMAGE_BASE_URL}${posterPath}`}
-    alt={title}
+    src={`${TMDB_IMAGE_BASE_URL}${posterPath || ''}`}
+    alt={title || 'Media poster'}
     fill
     className="object-cover"
     priority={isInitiallyVisible}

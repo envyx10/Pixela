@@ -177,6 +177,10 @@ export interface ApiSerie {
     results?: ApiTrailer[];
   };
   results?: ApiTrailer[];
+  imagenes?: {
+    backdrops: any[];
+    posters: any[];
+  };
 } 
 
 /** 

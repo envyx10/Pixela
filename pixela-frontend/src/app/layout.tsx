@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from "next/navigation";
 import "./globals.css";
 import { Navbar } from "../shared/components/Navbar";
 import { useAuthStore } from "../stores/useAuthStore";
@@ -29,7 +30,7 @@ function AuthHandler() {
     startTransition(() => {
       // Pequeño delay para no bloquear el primer render
       setTimeout(() => {
-        checkAuth();
+//        checkAuth(); // Disabled during migration to avoid conflicts
       }, 50);
     });
   }, [checkAuth]);
@@ -37,33 +38,29 @@ function AuthHandler() {
   return null;
 }
 
-/**
- * Layout principal de la aplicación optimizado
- * @param {Object} props - Propiedades del layout
- * @param {React.ReactNode} props.children - Contenido del layout
- * @returns {React.ReactNode} - Layout principal
- * @description Layout principal optimizado para reducir bloqueos de rendering
- * @author Pixela
- * @version 1.0.1
- * @since 2025-06-04
- * @requires React
- * @requires Next.js
- * @requires Tailwind CSS
- */
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
+
   return (
     <html lang="es" className={STYLES.html}>
       <body className={STYLES.body}>
         <div className={STYLES.container}>
-          {/* ✅ Componente auth separado para no bloquear render */}
-          <AuthHandler />
-          <Navbar />
+          {/* Ocultar Navbar y legacy AuthHandler en páginas de auth nuevas */}
+          {!isAuthPage && (
+            <>
+                <AuthHandler />
+                <Navbar />
+            </>
+          )}
+          
           <main className={STYLES.main}>{children}</main>
-          <Footer />
+          
+          {!isAuthPage && <Footer />}
         </div>
       </body>
     </html>

@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pixela_postgres
+    environment:
+      POSTGRES_USER: pixela_user
+      POSTGRES_PASSWORD: pixela_password
+      POSTGRES_DB: pixela_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
