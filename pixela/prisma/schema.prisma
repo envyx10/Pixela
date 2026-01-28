@@ -1,0 +1,60 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            Int       @id @default(autoincrement()) @map("user_id")
+  name          String
+  email         String    @unique
+  password      String?   // Opcional para logins sociales o si migramos solo hash
+  photoUrl      String?   @map("photo_url")
+  emailVerified DateTime? @map("email_verified_at")
+  isAdmin       Boolean   @default(false) @map("is_admin")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  favorites     Favorite[]
+  reviews       Review[]
+
+  @@map("users")
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement()) @map("favorite_id")
+  userId    Int      @map("user_id")
+  itemType  ItemType @map("item_type") // Enum: MOVIE, SERIES
+  tmdbId    BigInt   @map("tmdb_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemType, tmdbId])
+  @@map("favorites")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement()) @map("review_id")
+  userId    Int      @map("user_id")
+  itemType  ItemType @map("item_type")
+  tmdbId    BigInt   @map("tmdb_id")
+  rating    Decimal  @db.Decimal(3, 1)
+  review    String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemType, tmdbId])
+  @@map("reviews")
+}
+
+enum ItemType {
+  movie
+  series
+}
