@@ -3,9 +3,20 @@
  * @namespace API_BASE_URL
  * @description URL de la API
  */
-// Ajuste crítico: Apuntar siempre a la ruta relativa del proxy interno en cliente
-// y a la URL completa en servidor.
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+// Ajuste crítico: Detectar entorno para evitar localhost en producción
+const getBaseUrl = () => {
+    // Si estamos en el navegador (Cliente)
+    if (typeof window !== 'undefined') {
+        // Si NO estamos en localhost (es decir, estamos en Vercel/Producción)
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+             return '/api'; // Forzar ruta relativa
+        }
+    }
+    // En el servidor (Build/SSR) o Localhost, usamos la variable o el default
+    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+};
+
+const BASE_URL = getBaseUrl();
 
 export const API_BASE_URL = BASE_URL; 
 export const API_URL = BASE_URL;
