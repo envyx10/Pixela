@@ -103,8 +103,11 @@ export const ImageCarousel = ({ images }: ImageCarouselProps) => {
     );
   }
 
-  // Obtener la imagen de mayor calidad
-  const optimizedSrc = images[currentImageIndex];
+  // Obtener la imagen de mayor calidad y asegurar URL completa
+  let optimizedSrc = images[currentImageIndex];
+  if (optimizedSrc && optimizedSrc.startsWith('/')) {
+      optimizedSrc = `https://image.tmdb.org/t/p/original${optimizedSrc}`;
+  }
 
   return (
     <div className={STYLES.carousel.base}>
