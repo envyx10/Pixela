@@ -2,6 +2,7 @@
 
 import { FaBookmark } from "react-icons/fa";
 import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { favoritesAPI } from '@/api/favorites/favorites';
@@ -59,6 +60,7 @@ export const ActionButtons = ({
   itemType
 }: ActionButtonsProps) => {
   const [isFavorited, setIsFavorited] = useState<boolean | null>(null);
+  const router = useRouter();
   const [favoriteId, setFavoriteId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { isAuthenticated, checkAuth } = useAuthStore();
@@ -92,7 +94,7 @@ export const ActionButtons = ({
     e.stopPropagation();
     
     if (!isAuthenticated) {
-      window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+      router.push('/login');
       return;
     }
 
@@ -123,7 +125,7 @@ export const ActionButtons = ({
       console.error('Error toggling favorite:', error);
       if (error instanceof Error && error.message.includes('401')) {
         await checkAuth();
-        window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+        router.push('/login');
       }
     } finally {
       setIsLoading(false);
@@ -140,7 +142,8 @@ export const ActionButtons = ({
   );
 
   // No renderizamos el botón hasta que sepamos el estado inicial
-  if (isFavorited === null) return null;
+  // Si no está autenticado, asumimos false para pintar el botón 'inactivo' pero funcional (que redirige a login)
+  if (isFavorited === null && isAuthenticated) return null; // Solo esperamos si está intentando cargar estado
 
   return (
     <div className={STYLES.container}>
