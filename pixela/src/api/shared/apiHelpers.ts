@@ -46,7 +46,9 @@ export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): P
        fullUrl = `${cleanBase}${cleanUrl}`;
     }
     
-    // console.log('Haciendo petición a:', fullUrl);
+    console.log('[DEBUG API] Input:', url);
+    console.log('[DEBUG API] Base:', API_URL);
+    console.log('[DEBUG API] Final:', fullUrl);
     
     const response = await fetch(fullUrl, {
       ...options,
