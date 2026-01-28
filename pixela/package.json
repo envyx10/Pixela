@@ -2,19 +2,19 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
- "scripts": {
-  "dev": "next dev",
-  "build": "prisma generate && next build",
-  "start": "next start",
-  "lint": "next lint"
-},
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
     "@prisma/client": "^5.10.2",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",
     "gsap": "^3.13.0",
-    "next": "15.3.0",
+    "next": "15.3.8",
     "next-auth": "^5.0.0-beta.30",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
