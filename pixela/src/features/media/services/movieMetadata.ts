@@ -24,7 +24,9 @@ export async function generateMetadata(
       },
     };
   } catch (error) {
-    console.error('Error al obtener los metadatos de la película:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error al obtener los metadatos de la película:', error);
+    }
     return {
       title: 'Película no encontrada | Pixela',
       description: 'La película que buscas no existe o no está disponible.',

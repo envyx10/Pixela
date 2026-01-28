@@ -68,9 +68,10 @@ export async function getFeaturedBackdrops(): Promise<string[]> {
     try {
       // console.timeEnd('[HERO] Carga de imágenes backdrop');
     } catch (error) {
-      console.error('Error al finalizar el timer:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error al finalizar el timer:', error);
+      }
     }
-    console.log(`[HERO] Se cargaron ${backdrops.length} imágenes backdrop`);
     
     return backdrops;
 

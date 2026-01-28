@@ -4,6 +4,24 @@ import { create } from 'zustand';
 import { authAPI } from '@/api/auth/auth';
 import { UserResponse } from '@/api/auth/types';
 
+const AUTH_TIMEOUT_MS = 2000;
+const LOGOUT_TIMEOUT_MS = 1500;
+const CLEANUP_DELAY_MS = 2000;
+const FORCE_LOGOUT_KEY = 'forceLogout';
+
+const createAuthTimeout = <T>(
+  promise: Promise<T>, 
+  timeoutMs: number, 
+  errorMessage: string
+): Promise<T> => {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => 
+      setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+    )
+  ]);
+};
+
 interface AuthState {
   user: UserResponse | null;
   isAuthenticated: boolean;
@@ -25,45 +43,50 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   checkAuth: async () => {
+    set({ isLoading: true, error: null });
+    
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(FORCE_LOGOUT_KEY);
+    }
+    
     try {
-      set({ isLoading: true, error: null });
-      
-      // Limpiar cualquier forceLogout residual
-      localStorage.removeItem('forceLogout');
-      
-      // Timeout de 500ms para verificación rápida
-      const authPromise = authAPI.getUser();
-      const timeoutPromise = new Promise<UserResponse>((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout de autenticación')), 2000)
+      const user = await createAuthTimeout(
+        authAPI.getUser(),
+        AUTH_TIMEOUT_MS,
+        'Authentication timeout'
       );
       
-      const user = await Promise.race([authPromise, timeoutPromise]);
-      set({ user, isAuthenticated: true, isLoading: false, error: null });
-
+      set({ 
+        user, 
+        isAuthenticated: true, 
+        isLoading: false, 
+        error: null 
+      });
     } catch (error) {
-      console.error('Error checking auth:', error);
       set({
         user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Error desconocido'
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   },
 
   logout: async () => {
+    set({ isLoading: true, error: null });
+    
     try {
-      set({ isLoading: true, error: null });
-      
-      // Timeout de 3 segundos para logout
-      const logoutPromise = authAPI.logout();
-      const timeoutPromise = new Promise<void>((resolve) => 
-        setTimeout(() => resolve(), 1500)
+      await createAuthTimeout(
+        authAPI.logout(),
+        LOGOUT_TIMEOUT_MS,
+        'Logout timeout'
       );
-      
-      await Promise.race([logoutPromise, timeoutPromise]);
-
-      // Actualizar el estado inmediatamente
+    } catch (error) {
+      // Log error solo en desarrollo
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Logout error:', error);
+      }
+    } finally {
       set({
         user: null,
         isAuthenticated: false,
@@ -71,21 +94,11 @@ export const useAuthStore = create<AuthState>((set) => ({
         error: null
       });
 
-      // Limpiar localStorage después de logout exitoso
-      setTimeout(() => {
-        localStorage.removeItem('forceLogout');
-      }, 2000);
-
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-      
-      // Incluso si hay error, limpiar el estado local
-      set({
-        user: null,
-        isAuthenticated: false,
-        isLoading: false,
-        error: null // No mostrar error en logout
-      });
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          localStorage.removeItem(FORCE_LOGOUT_KEY);
+        }, CLEANUP_DELAY_MS);
+      }
     }
   },
 }));

@@ -39,7 +39,9 @@ async function fetchTrendingMedia<T>(
         return data.data;
 
     } catch (error) {
-        console.error(`Error fetching trending ${mediaType}:`, error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error(`Error fetching trending ${mediaType}:`, error);
+        }
         return [];
     }
 }
