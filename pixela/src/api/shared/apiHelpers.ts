@@ -29,7 +29,7 @@ export const DEFAULT_FETCH_OPTIONS = {
  */
 export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): Promise<T> {
   try {
-    const fullUrl = url.startsWith('http') 
+    const fullUrl = (url.startsWith('http') || url.startsWith(API_URL))
       ? url 
       : `${API_URL}${url.startsWith('/') ? url : `/${url}`}`;
     
