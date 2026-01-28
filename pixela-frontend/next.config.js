@@ -4,7 +4,7 @@
 
 const nextConfig = {
 
-    output: 'export',
+    // output: 'export',
     
     async rewrites() {
         return [
