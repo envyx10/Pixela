@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import { fetchFromTmdb } from '@/lib/tmdb';
 import { logger } from '@/lib/logger';
 
+interface TmdbDiscoverResponse {
+  results: unknown[];
+  page: number;
+  total_pages: number;
+  total_results: number;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const page = searchParams.get('page') || '1';
@@ -16,7 +23,7 @@ export async function GET(request: Request) {
   });
 
   try {
-    const data = await fetchFromTmdb(`/discover/${tmdbType}`, tmdbParams);
+    const data = await fetchFromTmdb<TmdbDiscoverResponse>(`/discover/${tmdbType}`, tmdbParams);
     
     return NextResponse.json({
         success: true,

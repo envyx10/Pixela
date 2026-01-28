@@ -2,12 +2,19 @@ import { NextResponse } from 'next/server';
 import { fetchFromTmdb } from '@/lib/tmdb';
 import { logger } from '@/lib/logger';
 
+interface TmdbTrendingResponse {
+  results: unknown[];
+  page: number;
+  total_pages: number;
+  total_results: number;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const page = searchParams.get('page') || '1';
 
   try {
-    const tmdbData = await fetchFromTmdb('/trending/tv/week', { page });
+    const tmdbData = await fetchFromTmdb<TmdbTrendingResponse>('/trending/tv/week', { page });
     
     return NextResponse.json({
         success: true,

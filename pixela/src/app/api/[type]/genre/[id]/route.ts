@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import { fetchFromTmdb } from '@/lib/tmdb';
 import { logger } from '@/lib/logger';
 
+interface TmdbGenreResponse {
+  results: unknown[];
+  page: number;
+  total_pages: number;
+  total_results: number;
+}
+
 export async function GET(
   request: Request,
   props: { params: Promise<{ type: string; id: string }> }
@@ -15,7 +22,7 @@ export async function GET(
   const tmdbType = type === 'series' ? 'tv' : 'movie';
   
   try {
-    const data = await fetchFromTmdb(`/discover/${tmdbType}`, {
+    const data = await fetchFromTmdb<TmdbGenreResponse>(`/discover/${tmdbType}`, {
         page,
         with_genres: id,
         sort_by: 'popularity.desc'
