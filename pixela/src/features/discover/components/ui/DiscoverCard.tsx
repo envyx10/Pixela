@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import { MediaContent } from "@/features/discover/types/media";
-import { TrendingSerie } from "@/features/trending/types";
+import { TrendingSerie, TrendingMovie } from "@/features/trending/types";
 import clsx from "clsx";
 import { useState } from "react";
 import { Badge } from "@/shared/components/Badge";
@@ -39,6 +39,16 @@ const isTrendingSerie = (media: MediaContent): media is TrendingSerie => {
 };
 
 /**
+ * Helper para obtener el título del media
+ */
+const getMediaTitle = (media: MediaContent): string => {
+  if ('title' in media) {
+    return (media as TrendingMovie).title;
+  }
+  return (media as TrendingSerie).name;
+};
+
+/**
  * Componente que renderiza el contenido superpuesto al hacer hover
  */
 const OverlayContent = ({ media, type, onFollowClick }: {
@@ -60,7 +70,7 @@ const OverlayContent = ({ media, type, onFollowClick }: {
       />
       <div className={STYLES.overlayContent}>
         <h3 className={STYLES.title}>
-          {(media as any).title || (media as any).name || 'Sin título'}
+          {getMediaTitle(media)}
         </h3>
         
         <div className={STYLES.infoContainer}>
@@ -109,7 +119,9 @@ export const DiscoverCard = ({ media, type, index, isMobile }: DiscoverCardProps
    * @returns {void}
    */
   const handleFollowClick = () => {
-    console.log("Seguir", type === 'serie' ? 'serie' : 'película', media.title);
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Seguir", type === 'serie' ? 'serie' : 'película', getMediaTitle(media));
+    }
   };
 
   /**
@@ -130,7 +142,7 @@ export const DiscoverCard = ({ media, type, index, isMobile }: DiscoverCardProps
     >
       <Image
         src={`https://image.tmdb.org/t/p/w500${imagePath}`}
-        alt={(media as any).title || (media as any).name || 'Póster de contenido'}
+        alt={getMediaTitle(media)}
         fill
         className={STYLES.image}
         sizes={isMobile ? "(max-width: 768px) 50vw, 200px" : "200px"}

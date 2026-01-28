@@ -48,7 +48,9 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
         setIsFavorited(!!fav);
         setFavoriteId(fav ? fav.id : null);
       } catch (error) {
-        console.error('Error checking favorite status:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error checking favorite status:', error);
+        }
       }
     };
 
@@ -89,7 +91,9 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
       setFavoriteId(fav ? fav.id : null);
 
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error toggling favorite:', error);
+      }
       if (error instanceof Error && error.message.includes('401')) {
         await checkAuth();
         window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
@@ -118,6 +122,8 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
           onClick={handleFavorite}
           disabled={isLoading}
           className={STYLES.favoriteButton(isFavorited, isLoading)}
+          aria-label={isFavorited ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+          title={isFavorited ? 'Quitar de favoritos' : 'Agregar a favoritos'}
         >
           <FaBookmark className={STYLES.bookmarkIcon(isFavorited)} />
         </button>

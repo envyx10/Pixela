@@ -1,5 +1,13 @@
 import { NextResponse } from 'next/server';
 import { fetchFromTmdb } from '@/lib/tmdb';
+import { logger } from '@/lib/logger';
+
+interface TmdbSearchResponse {
+  results: unknown[];
+  page: number;
+  total_pages: number;
+  total_results: number;
+}
 
 export async function GET(
   request: Request,
@@ -19,7 +27,7 @@ export async function GET(
   const tmdbType = type === 'series' ? 'tv' : 'movie';
   
   try {
-    const data = await fetchFromTmdb(`/search/${tmdbType}`, {
+    const data = await fetchFromTmdb<TmdbSearchResponse>(`/search/${tmdbType}`, {
         query,
         page,
         include_adult: false
@@ -32,8 +40,11 @@ export async function GET(
         total_pages: data.total_pages,
         total_results: data.total_results
     });
-  } catch (error: any) {
-    console.error(`Error in search route for ${type}:`, error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (error) {
+    logger.error(`Failed to search ${type}`, error, { query, page });
+    return NextResponse.json(
+      { success: false, error: 'Failed to perform search' }, 
+      { status: 500 }
+    );
   }
 }

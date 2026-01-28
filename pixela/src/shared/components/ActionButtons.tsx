@@ -81,7 +81,9 @@ export const ActionButtons = ({
         setIsFavorited(!!fav);
         setFavoriteId(fav ? fav.id : null);
       } catch (error) {
-        console.error('Error checking favorite status:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error checking favorite status:', error);
+        }
         setIsFavorited(false);
       }
     };
@@ -122,7 +124,9 @@ export const ActionButtons = ({
       setFavoriteId(fav ? fav.id : null);
 
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error toggling favorite:', error);
+      }
       if (error instanceof Error && error.message.includes('401')) {
         await checkAuth();
         router.push('/login');

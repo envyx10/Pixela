@@ -38,7 +38,9 @@ async function getMediaWithCache(item: MediaItem): Promise<MediaResponse | null>
     mediaCache.set(cacheKey, result);
     return result;
   } catch (error) {
-    console.warn(`Error al obtener ${item.type} ${item.id}:`, error);
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Error al obtener ${item.type} ${item.id}:`, error);
+    }
     mediaCache.set(cacheKey, null);
     return null;
   }
@@ -76,7 +78,9 @@ export async function getFeaturedBackdrops(): Promise<string[]> {
     return backdrops;
 
   } catch (error) {
-    console.error("Error al obtener imágenes de fondo:", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Error al obtener imágenes de fondo:", error);
+    }
     // ✅ Fallback: devolver array vacío pero no fallar completamente
     return [];
   }

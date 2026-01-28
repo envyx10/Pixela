@@ -68,7 +68,9 @@ export function ReviewSection({ reviews, loading, error, refreshReviews }: Revie
       
       handleCancelEdit();
     } catch (error) {
-      console.error('Error al actualizar la reseña:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error al actualizar la reseña:', error);
+      }
     }
   };
 
@@ -86,7 +88,9 @@ export function ReviewSection({ reviews, loading, error, refreshReviews }: Revie
         refreshReviews();
       }
     } catch (error) {
-      console.error('Error al eliminar la reseña:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error al eliminar la reseña:', error);
+      }
     } finally {
       setDeletingReview(null);
     }

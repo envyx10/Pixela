@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchFromTmdb } from '@/lib/tmdb';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -13,8 +14,13 @@ export async function GET(request: Request) {
         success: true,
         data: tmdbData.results || []
     });
-  } catch (error: any) {
-    console.error("Error in movies trending route:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (error) {
+    logger.error('Failed to fetch trending movies', error);
+    
+    if (error instanceof Error) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+    
+    return NextResponse.json({ success: false, error: 'Error al obtener películas en tendencia' }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchFromTmdb } from '@/lib/tmdb';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   request: Request,
@@ -27,8 +28,13 @@ export async function GET(
         total_pages: data.total_pages,
         total_results: data.total_results
     });
-  } catch (error: any) {
-    console.error(`Error in genre route for ${type}/${id}:`, error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (error) {
+    logger.error(`Failed to fetch genre content`, error, { type, genreId: id });
+    
+    if (error instanceof Error) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+    
+    return NextResponse.json({ success: false, error: 'Error al obtener contenido por género' }, { status: 500 });
   }
 }

@@ -147,7 +147,9 @@ export const Navbar = () => {
     try {
       await logout();
     } catch (error) {
-      console.error('Error durante el logout:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error durante el logout:', error);
+      }
       // No importa si falla, ya redirigimos
     }
   };

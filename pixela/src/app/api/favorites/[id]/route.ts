@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from "@/auth";
+import { logger } from '@/lib/logger';
 
 export async function DELETE(
   request: Request,
@@ -19,7 +20,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const userId = parseInt((session.user as any).id);
+    const userId = parseInt(session.user.id);
 
     // Comprobar que el favorito pertenece al usuario
     const favorite = await prisma.favorite.findUnique({
@@ -35,8 +36,8 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error("Error deleting favorite:", error);
+  } catch (error) {
+    logger.error('Failed to delete favorite', error, { favoriteId: id });
     return NextResponse.json({ error: 'Error al eliminar favorito' }, { status: 500 });
   }
 }

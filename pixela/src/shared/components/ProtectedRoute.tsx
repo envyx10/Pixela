@@ -59,7 +59,9 @@ export function ProtectedRoute({
         await Promise.race([authPromise, timeoutPromise]);
         
       } catch (error) {
-        console.error('Error checking auth:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error checking auth:', error);
+        }
         
         // Solo marcar error si realmente requiere autenticación
         if (requireAuth) {

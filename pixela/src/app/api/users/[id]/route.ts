@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from "@/auth";
+import { logger } from '@/lib/logger';
+import bcrypt from 'bcryptjs';
+
+interface UpdateUserData {
+  name?: string;
+  email?: string;
+  photoUrl?: string;
+  isAdmin?: boolean;
+  password?: string;
+}
 
 export async function PUT(
   request: Request,
@@ -19,8 +29,8 @@ export async function PUT(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const currentUserId = parseInt((session.user as any).id);
-    const isAdmin = (session.user as any).isAdmin;
+    const currentUserId = parseInt(session.user.id);
+    const isAdmin = session.user.isAdmin;
 
     // Solo el propio usuario o un admin pueden editar
     if (currentUserId !== id && !isAdmin) {
@@ -29,7 +39,7 @@ export async function PUT(
 
     const body = await request.json();
     
-    const updateData: any = {
+    const updateData: UpdateUserData = {
       name: body.name,
       email: body.email,
       photoUrl: body.photo_url,
@@ -40,10 +50,8 @@ export async function PUT(
       updateData.isAdmin = body.is_admin === true || body.is_admin === 'true';
     }
 
-    // Gestionar cambio de contraseña si viene en el body
     if (body.password && body.password.trim().length >= 8) {
-        const bcrypt = require('bcryptjs');
-        updateData.password = await bcrypt.hash(body.password, 10);
+      updateData.password = await bcrypt.hash(body.password, 10);
     }
 
     const updatedUser = await prisma.user.update({
@@ -63,9 +71,14 @@ export async function PUT(
             updatedAt: updatedUser.updatedAt,
         }
     });
-  } catch (error: any) {
-    console.error("Error updating user:", error);
-    return NextResponse.json({ error: error.message || 'Error al actualizar usuario' }, { status: 500 });
+  } catch (error) {
+    logger.error('Failed to update user', error, { userId: id });
+    
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    
+    return NextResponse.json({ error: 'Error al actualizar usuario' }, { status: 500 });
   }
 }
 
@@ -86,8 +99,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const currentUserId = parseInt((session.user as any).id);
-    const isAdmin = (session.user as any).isAdmin;
+    const currentUserId = parseInt(session.user.id);
+    const isAdmin = session.user.isAdmin;
 
     // Solo el propio usuario o un admin pueden borrar
     if (currentUserId !== id && !isAdmin) {
@@ -99,8 +112,13 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error("Error deleting user:", error);
-    return NextResponse.json({ error: error.message || 'Error al eliminar usuario' }, { status: 500 });
+  } catch (error) {
+    logger.error('Failed to delete user', error, { userId: id });
+    
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    
+    return NextResponse.json({ error: 'Error al eliminar usuario' }, { status: 500 });
   }
 }

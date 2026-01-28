@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from "@/auth";
 import { fetchFromTmdb } from '@/lib/tmdb';
+import { logger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -10,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const userId = parseInt((session.user as any).id);
+    const userId = parseInt(session.user.id);
 
     const reviews = await prisma.review.findMany({
       where: { userId: userId },
@@ -48,7 +49,7 @@ export async function GET() {
                     poster_path: tmdbData.poster_path,
                 };
             } catch (error) {
-                console.error(`Error enrichment for review ${review.id}:`, error);
+                logger.error(`Error enrichment for review ${review.id}`, error);
                 return {
                     id: review.id,
                     user_id: review.userId,
@@ -72,7 +73,7 @@ export async function GET() {
         data: enrichedReviews
     });
   } catch (error) {
-    console.error("Error listing reviews:", error);
+    logger.error('Failed to list reviews', error);
     return NextResponse.json({ error: 'Error al listar reseñas' }, { status: 500 });
   }
 }
@@ -84,7 +85,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const userId = parseInt((session.user as any).id);
+    const userId = parseInt(session.user.id);
     const body = await req.json();
     
     // El frontend envía snake_case
@@ -140,7 +141,7 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
-    console.error("Review creation error:", error);
+    logger.error('Failed to create/update review', error);
     return NextResponse.json({ error: 'Error al procesar la reseña' }, { status: 500 });
   }
 }

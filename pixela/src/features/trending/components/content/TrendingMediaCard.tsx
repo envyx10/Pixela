@@ -71,7 +71,9 @@ export const TrendingMediaCard = memo(({ media, type, index = 0 }: TrendingMedia
   const isInitiallyVisible = index < INITIALLY_VISIBLE_ITEMS;
 
   const handleFollowClick = () => {
-    console.log("Seguir", type === 'series' ? 'serie' : 'película', media.title);
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Seguir", type === 'series' ? 'serie' : 'película', media.title);
+    }
   };
   
   /**

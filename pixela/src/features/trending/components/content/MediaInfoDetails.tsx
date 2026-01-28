@@ -64,7 +64,10 @@ export const MediaInfoDetails = memo(({ media, type }: MediaInfoDetailsProps) =>
   return (
     <div className={STYLES.container}>
       <h3 className={STYLES.title}>
-        {(media as any).title || (media as any).name || 'Sin título'}
+        {type === 'series' 
+          ? (media as TrendingSerie).name 
+          : (media as TrendingMovie).title
+        }
       </h3>
       
       <div className={STYLES.infoContainer}>

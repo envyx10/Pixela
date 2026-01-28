@@ -3,9 +3,11 @@ import type { BaseTrendingMedia } from './base';
 /**
  * Interfaz para series en tendencia
  * Extiende BaseTrendingMedia y añade propiedades específicas de series
+ * @property {string} name - Nombre de la serie (alternativa a title)
  * @property {string} first_air_date - Fecha de primera emisión
  */
 export interface TrendingSerie extends BaseTrendingMedia {
+    name: string;
     first_air_date: string;
 }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchFromTmdb } from '@/lib/tmdb';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -15,10 +16,17 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
         success: true,
         data: data
     });
-  } catch (error: any) {
-    if (error.message.includes('404')) {
-         return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('404')) {
+      return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    
+    logger.error('Failed to fetch series details', error, { seriesId: id });
+    
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    
+    return NextResponse.json({ error: 'Error al obtener detalles de la serie' }, { status: 500 });
   }
 }
