@@ -29,9 +29,22 @@ export const DEFAULT_FETCH_OPTIONS = {
  */
 export async function fetchFromAPI<T>(url: string, options: RequestInit = {}): Promise<T> {
   try {
-    const fullUrl = (url.startsWith('http') || url.startsWith(API_URL))
-      ? url 
-      : `${API_URL}${url.startsWith('/') ? url : `/${url}`}`;
+    let fullUrl: string;
+    
+    // Si la URL ya es absoluta (http...), la usamos tal cual
+    if (url.startsWith('http')) {
+      fullUrl = url;
+    } 
+    // Si la URL ya empieza con '/api', asumimos que es relativa a la raíz del dominio
+    else if (url.startsWith('/api')) {
+       fullUrl = url;
+    }
+    // Si no, le añadimos el prefijo configurado
+    else {
+       const cleanBase = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
+       const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+       fullUrl = `${cleanBase}${cleanUrl}`;
+    }
     
     // console.log('Haciendo petición a:', fullUrl);
     
