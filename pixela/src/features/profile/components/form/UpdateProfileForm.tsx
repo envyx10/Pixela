@@ -147,13 +147,11 @@ export const UpdateProfileForm = ({
    * @param {ProfileFormData} data - Datos del formulario
    */
   const onFormSubmit = (data: ProfileFormData) => {
-    // Construir el objeto solo con los campos necesarios
-    const formData: ProfileFormData = {
+    // Construir el objeto con los campos del formulario
+    const formData: Partial<ProfileFormData> = {
       name: data.name,
       email: data.email,
-      photo_url: profileImage !== initialData.photo_url ? profileImage : undefined,
-      created_at: data.created_at,
-      is_admin: data.is_admin,
+      photo_url: profileImage || initialData.photo_url,
     };
 
     // Solo añadir password si el usuario la ha escrito
@@ -161,7 +159,7 @@ export const UpdateProfileForm = ({
       formData.password = data.password;
     }
 
-    onSubmit(formData);
+    onSubmit(formData as ProfileFormData);
   };
 
   return (

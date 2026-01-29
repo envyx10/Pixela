@@ -142,11 +142,14 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
         user_id: user.user_id,
         name: data.name,
         email: data.email,
-        photo_url: data.photo_url || user.photo_url,
         is_admin: user.is_admin,
         created_at: user.created_at,
         updated_at: new Date().toISOString(),
       };
+      
+      // Manejar photo_url: enviar el nuevo valor o mantener el actual
+      userData.photo_url = data.photo_url !== undefined ? data.photo_url : user.photo_url;
+      
       // Solo añadir password si el usuario la ha escrito
       if (data.password && data.password.trim()) {
         userData.password = data.password;

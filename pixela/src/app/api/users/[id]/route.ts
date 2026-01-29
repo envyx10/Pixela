@@ -39,11 +39,20 @@ export async function PUT(
 
     const body = await request.json();
     
-    const updateData: UpdateUserData = {
-      name: body.name,
-      email: body.email,
-      photoUrl: body.photo_url,
-    };
+    const updateData: UpdateUserData = {};
+
+    // Solo actualizar campos que vienen en el body (no undefined)
+    if (body.name !== undefined) {
+      updateData.name = body.name;
+    }
+    
+    if (body.email !== undefined) {
+      updateData.email = body.email;
+    }
+    
+    if (body.photo_url !== undefined) {
+      updateData.photoUrl = body.photo_url;
+    }
 
     // Solo permitimos cambiar isAdmin si el que edita es admin
     if (isAdmin && body.is_admin !== undefined) {
