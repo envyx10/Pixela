@@ -68,7 +68,7 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
         title: 'Autenticación requerida',
         duration: 3000,
       });
-      window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+      router.push('/login');
       return;
     }
 
@@ -101,7 +101,7 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
       }
       if (error instanceof Error && error.message.includes('401')) {
         await checkAuth();
-        window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+        router.push('/login');
       }
     } finally {
       setIsLoading(false);
@@ -118,7 +118,7 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
         title: 'Autenticación requerida',
         duration: 3000,
       });
-      window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+      router.push('/login');
       return;
     }
     setShowReviewModal(true);

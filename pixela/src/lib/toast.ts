@@ -29,6 +29,8 @@ class ToastManager {
   private nextId = 0;
 
   private readonly DEFAULT_DURATION = 5000;
+  // AUTO_DISMISS_TYPES se usa solo para referencia
+  // El auto-dismiss real es manejado por ToastItem component
   private readonly AUTO_DISMISS_TYPES: ToastType[] = ['success', 'info'];
 
   /**
@@ -77,10 +79,8 @@ class ToastManager {
     this.toasts.push(toast);
     this.notify();
 
-    // Auto-dismiss si aplica
-    if (this.AUTO_DISMISS_TYPES.includes(type) && toast.duration > 0) {
-      setTimeout(() => this.dismiss(id), toast.duration);
-    }
+    // NOTA: Auto-dismiss es manejado por ToastItem para control de animación
+    // No se usa setTimeout aquí para evitar conflicto de timers
 
     return id;
   }
