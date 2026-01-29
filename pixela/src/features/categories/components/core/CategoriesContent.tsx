@@ -14,10 +14,10 @@ import { ContentSkeleton } from '@/app/components/skeletons';
 import { ItemCounter } from '@/features/categories/components/ui/ItemCounter';
 import { CategoriesContentProps } from '@/features/categories/types/content';
 import { useInteractiveBorder } from '@/hooks/useInteractiveBorder';
+import { tmdbImageHelpers } from '@/lib/constants/tmdb';
 
 const INITIAL_VISIBLE_ITEMS = 6;
 const HIGH_RATING_THRESHOLD = 8.0;
-const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 const BATCH_SIZE = 12;
 
 interface SearchFormData {
@@ -156,7 +156,7 @@ const PosterImage = memo(({ posterPath, title, isInitiallyVisible, type }: {
 
     return (
         <Image
-            src={`${TMDB_IMAGE_BASE_URL}${posterPath}`}
+            src={tmdbImageHelpers.poster(posterPath)}
             alt={title || 'Imagen no disponible'}
             fill
             className={STYLES.poster}

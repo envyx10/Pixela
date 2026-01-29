@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import "./globals.css";
 import { Navbar } from "../shared/components/Navbar";
+import { ToastContainer } from "../shared/components/ToastContainer";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useEffect, startTransition } from "react";
 import Footer from "../features/footer/Footer";
@@ -50,6 +51,9 @@ export default function RootLayout({
     <html lang="es" className={STYLES.html}>
       <body className={STYLES.body}>
         <div className={STYLES.container}>
+          {/* Toast notifications - Global */}
+          <ToastContainer />
+          
           {/* Ocultar Navbar y legacy AuthHandler en páginas de auth nuevas */}
           {!isAuthPage && (
             <>

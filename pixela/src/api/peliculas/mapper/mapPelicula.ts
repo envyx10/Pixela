@@ -2,10 +2,7 @@ import { Pelicula } from '@/features/media/types/content';
 import { Actor } from '@/features/media/types/people';
 import { Trailer } from '@/features/media/types/trailer';
 import { ApiActor, ApiPelicula, ApiTrailer } from '../types';
-
-
-// URL base para imágenes de TMDb
-const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
+import { buildTmdbImageUrl, DEFAULT_IMAGE_SIZES } from '@/lib/constants/tmdb';
 
 /**
  * Formatea la URL de la imagen
@@ -13,7 +10,7 @@ const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
  * @returns 
  */
 export const formatImageUrl = (path: string): string =>
-  path?.startsWith('/') ? `${TMDB_IMAGE_BASE_URL}${path}` : path || '';
+  path?.startsWith('/') ? buildTmdbImageUrl(path, DEFAULT_IMAGE_SIZES.BACKDROP) : path || '';
 
 /**
  * Mapea un actor

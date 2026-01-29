@@ -11,6 +11,7 @@ import { ActionButtons } from "@/shared/components/ActionButtons";
 import { useRouter } from 'next/navigation';
 import { DiscoverCardProps } from "@/features/discover/types/components";
 import { MediaType } from "@/features/media/types";
+import { tmdbImageHelpers, TMDB_PLACEHOLDER } from "@/lib/constants/tmdb";
 
 const STYLES = {
   containerBase: "relative aspect-[2/3] group rounded-2xl overflow-hidden cursor-pointer",
@@ -141,7 +142,7 @@ export const DiscoverCard = ({ media, type, index, isMobile }: DiscoverCardProps
       onClick={handleCardClick}
     >
       <Image
-        src={`https://image.tmdb.org/t/p/w500${imagePath}`}
+        src={tmdbImageHelpers.poster(imagePath) || TMDB_PLACEHOLDER.POSTER}
         alt={getMediaTitle(media)}
         fill
         className={STYLES.image}

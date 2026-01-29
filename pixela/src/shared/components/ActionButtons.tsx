@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { favoritesAPI } from '@/api/favorites/favorites';
+import { toast } from '@/lib/toast';
 
 const STYLES = {
   container: 'absolute top-3 right-3 z-50',
@@ -96,6 +97,10 @@ export const ActionButtons = ({
     e.stopPropagation();
     
     if (!isAuthenticated) {
+      toast.info('Inicia sesión para agregar a favoritos', {
+        title: 'Autenticación requerida',
+        duration: 3000,
+      });
       router.push('/login');
       return;
     }

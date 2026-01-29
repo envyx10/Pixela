@@ -63,11 +63,15 @@ export const useAuthStore = create<AuthState>((set) => ({
         error: null 
       });
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      // No mostrar toast aquí - solo actualizar estado
+      // Los toasts se mostrarán en acciones específicas (favoritos, reseñas)
       set({
         user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: errorMessage
       });
     }
   },

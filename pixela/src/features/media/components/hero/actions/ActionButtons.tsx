@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import { favoritesAPI } from '@/api/favorites/favorites';
 import { ReviewModal } from '@/features/media/components/review/ReviewModal';
 import { ActionButtonsProps } from '@/features/media/types/actions';
+import { toast } from '@/lib/toast';
 
 
 const STYLES = {
@@ -63,6 +64,10 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
    */
   const handleFavorite = async () => {
     if (!isAuthenticated) {
+      toast.info('Inicia sesión para agregar a favoritos', {
+        title: 'Autenticación requerida',
+        duration: 3000,
+      });
       window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
       return;
     }
@@ -109,6 +114,10 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
    */
   const handleReview = () => {
     if (!isAuthenticated) {
+      toast.info('Inicia sesión para escribir una reseña', {
+        title: 'Autenticación requerida',
+        duration: 3000,
+      });
       window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
       return;
     }
