@@ -25,8 +25,6 @@ import { clsx } from 'clsx';
 import { TabType } from '@/features/profile/types/tabs';
 import { ProfileClientProps } from '@/features/profile/types/profileTypes';
 
-import '@/shared/styles/profile/main.scss';
-
 const STYLES = {
   // Contenedores principales
   container: 'profile-page',
