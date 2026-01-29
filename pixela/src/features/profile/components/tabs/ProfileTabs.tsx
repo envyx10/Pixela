@@ -13,7 +13,7 @@ import { ProfileTabsProps } from '@/features/profile/types/tabs';
  */
 export const ProfileTabs = ({ activeTab, onTabChange, isAdmin }: ProfileTabsProps) => {
   return (
-    <div className="profile-tabs">
+    <div className="flex gap-3 sm:gap-4 mb-8 overflow-x-auto pb-1 scrollbar-none">
       <TabNavigationButton
         label="Perfil"
         icon={<FiSettings />}
