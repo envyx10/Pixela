@@ -4,6 +4,13 @@ import { auth } from "@/auth";
 import { fetchFromTmdb } from '@/lib/tmdb';
 import { logger } from '@/lib/logger';
 
+interface TmdbMediaDetails {
+  title?: string;
+  name?: string;
+  poster_path?: string;
+  [key: string]: unknown;
+}
+
 export async function PUT(
   request: Request,
   props: { params: Promise<{ id: string }> }
@@ -50,7 +57,7 @@ export async function PUT(
 
     // Enriquecer con datos de TMDB para mantener consistencia
     const tmdbType = updatedReview.itemType === 'movie' ? 'movie' : 'tv';
-    const tmdbData = await fetchFromTmdb(`${tmdbType}/${updatedReview.tmdbId}`);
+    const tmdbData = await fetchFromTmdb<TmdbMediaDetails>(`${tmdbType}/${updatedReview.tmdbId}`);
 
     return NextResponse.json({
         success: true,
