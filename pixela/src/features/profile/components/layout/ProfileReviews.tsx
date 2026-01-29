@@ -7,7 +7,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
 import { StarEditProps } from '@/features/profile/types/layout';
-import { tmdbImageHelpers, TMDB_PLACEHOLDER } from '@/lib/constants/tmdb';
+
+/**
+ * URL base para las imágenes de TMDB
+ */
+const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
 /**
  * Mensajes de error constantes
@@ -238,7 +242,7 @@ export const ProfileReviews = () => {
               {review.poster_path ? (
                 <>
                   <Image
-                    src={tmdbImageHelpers.poster(review.poster_path) || TMDB_PLACEHOLDER.POSTER}
+                    src={`${TMDB_IMAGE_BASE_URL}${review.poster_path}`}
                     alt={review.title || (review.item_type === 'movie' ? 'Película' : 'Serie')}
                     fill
                     className={STYLES.posterImage}

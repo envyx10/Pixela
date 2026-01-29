@@ -7,11 +7,11 @@ import { MediaItem, MediaResponse } from "@/features/hero/types/content";
  * Cada medio debe tener un ID válido y un tipo específico.
  */
 export const featuredMedia: MediaItem[] = [
-  { id: "986056",  type: "movie" },  // Thunderbolts
-  { id: "1084199", type: "movie" },  // La acompañante
-  { id: "124364",  type: "serie" },  // From
+  { id: "66732",  type: "serie" },  // From
+  { id: "1233413",  type: "movie" },  // Thunderbolts
+  { id: "79744",   type: "serie" },  // La acompañante
   { id: "680",     type: "movie" },  // Pulp Fiction
-  { id: "95396",   type: "serie" },  // Severance
+  { id: "1311031",   type: "movie" },  // Severance
   { id: "4607",    type: "serie" },  // Lost
 ];
 

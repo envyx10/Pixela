@@ -6,7 +6,11 @@ import { FaTrash } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { tmdbImageHelpers, TMDB_PLACEHOLDER } from '@/lib/constants/tmdb';
+
+/**
+ * URL base para las imágenes de TMDB
+ */
+const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
 /**
  * Mensajes de error constantes
@@ -126,7 +130,7 @@ export const ProfileFavorites = () => {
                 className={STYLES.link}
               >
                 <Image
-                  src={tmdbImageHelpers.poster(fav.poster_path) || TMDB_PLACEHOLDER.POSTER}
+                  src={`${TMDB_IMAGE_BASE_URL}${fav.poster_path}`}
                   alt={fav.title}
                   fill
                   className={STYLES.posterImage}

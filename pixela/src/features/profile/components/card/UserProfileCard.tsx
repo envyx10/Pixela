@@ -35,9 +35,7 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
   };
 
   const handleSubmitProfile = (data: UpdateProfileData) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Datos actualizados:', data);
-    }
+    console.log('Datos actualizados:', data);
     setIsEditing(false);
   };
 

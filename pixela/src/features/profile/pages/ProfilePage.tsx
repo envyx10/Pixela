@@ -25,6 +25,8 @@ import { clsx } from 'clsx';
 import { TabType } from '@/features/profile/types/tabs';
 import { ProfileClientProps } from '@/features/profile/types/profileTypes';
 
+import '@/shared/styles/profile/main.scss';
+
 const STYLES = {
   // Contenedores principales
   container: 'profile-page',
@@ -169,9 +171,7 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
       setSuccessMessage('¡Perfil actualizado correctamente!');
 
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error al actualizar el perfil:', error);
-      }
+      console.error('Error al actualizar el perfil:', error);
       
       // Solo mostrar notificaciones para errores del servidor, no de validación del formulario
       if (error instanceof Error) {
@@ -179,9 +179,7 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
           setSuccessMessage('Error: El email ya está en uso o es inválido.');
         } else if (error.message.includes('validation') || error.message.includes('password')) {
           // Los errores de validación se muestran directamente en los inputs del formulario
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Error de validación manejado por el formulario');
-          }
+          console.log('Error de validación manejado por el formulario');
         } else {
           setSuccessMessage(`Error: ${error.message}`);
         }
@@ -378,41 +376,14 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
   );
 };
 
-interface GetUserResponse {
-  user_id?: number;
-  id?: number;
-  name?: string;
-  email?: string;
-  photo_url?: string;
-  image?: string;
-  is_admin?: boolean;
-  password?: string;
-  created_at?: string;
-  updated_at?: string;
-  user?: {
-    user_id?: number;
-    id?: number;
-    name?: string;
-    email?: string;
-    photo_url?: string;
-    image?: string;
-    is_admin?: boolean;
-    password?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
-}
-
 /**
  * Función para obtener los datos del usuario
  * @returns {Promise<UserResponse>} Datos del usuario
  */
 async function getUserData(): Promise<UserResponse> {
   try {
-    const response = await authAPI.getUser() as GetUserResponse;
-    if (!response) {
-      throw new Error('No se pudieron obtener los datos del usuario');
-    }
+    const response = await authAPI.getUser() as any;
+    if (!response) throw new Error('No se pudieron obtener los datos del usuario');
 
     // Manejar respuesta si viene envuelta en un objeto 'user' (común en NextAuth API routes)
     const userData = response.user || response;
@@ -428,9 +399,7 @@ async function getUserData(): Promise<UserResponse> {
       updated_at: userData.updated_at || new Date().toISOString()
     };
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Error al obtener datos del usuario:', error);
-    }
+    console.error('Error al obtener datos del usuario:', error);
     throw error;
   }
 }
