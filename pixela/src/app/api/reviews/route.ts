@@ -4,6 +4,13 @@ import { auth } from "@/auth";
 import { fetchFromTmdb } from '@/lib/tmdb';
 import { logger } from '@/lib/logger';
 
+interface TmdbMediaDetails {
+  title?: string;
+  name?: string;
+  poster_path?: string;
+  [key: string]: unknown;
+}
+
 export async function GET() {
   try {
     const session = await auth();
@@ -31,7 +38,7 @@ export async function GET() {
         reviews.map(async (review) => {
             try {
                 const tmdbType = review.itemType === 'movie' ? 'movie' : 'tv';
-                const tmdbData = await fetchFromTmdb(`${tmdbType}/${review.tmdbId}`);
+                const tmdbData = await fetchFromTmdb<TmdbMediaDetails>(`${tmdbType}/${review.tmdbId}`);
 
                 return {
                     id: review.id,
