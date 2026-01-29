@@ -2,6 +2,7 @@
 
 import { FaBookmark, FaPen } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { favoritesAPI } from '@/api/favorites/favorites';
 import { ReviewModal } from '@/features/media/components/review/ReviewModal';
@@ -32,6 +33,7 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
   const [isLoading, setIsLoading] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const { isAuthenticated, checkAuth } = useAuthStore();
+  const router = useRouter();
 
   /**
    * Efecto para verificar el estado de favoritos
