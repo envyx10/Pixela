@@ -48,7 +48,7 @@ export const UserAvatar = ({
             loading="eager"
           />
         ) : (
-          <div className="user-avatar__placeholder">
+          <div className={STYLES.placeholder}>
             {name ? name.charAt(0).toUpperCase() : '?'}
           </div>
         )}

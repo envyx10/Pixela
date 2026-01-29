@@ -32,7 +32,7 @@ class Logger {
 
   error(message: string, error?: unknown, context?: LogContext): void {
     if (this.shouldLog('error')) {
-      console.error(`[ERROR] ${message}`, { error, ...context });
+      console.error(`[ERROR] ${message}`, { error, ...(context || {}) });
     }
   }
 }
