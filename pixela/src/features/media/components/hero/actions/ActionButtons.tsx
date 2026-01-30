@@ -2,10 +2,12 @@
 
 import { FaBookmark, FaPen } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { favoritesAPI } from '@/api/favorites/favorites';
 import { ReviewModal } from '@/features/media/components/review/ReviewModal';
 import { ActionButtonsProps } from '@/features/media/types/actions';
+import { toast } from '@/lib/toast';
 
 
 const STYLES = {
@@ -31,6 +33,7 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
   const [isLoading, setIsLoading] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const { isAuthenticated, checkAuth } = useAuthStore();
+  const router = useRouter();
 
   /**
    * Efecto para verificar el estado de favoritos
@@ -48,7 +51,9 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
         setIsFavorited(!!fav);
         setFavoriteId(fav ? fav.id : null);
       } catch (error) {
-        console.error('Error checking favorite status:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error checking favorite status:', error);
+        }
       }
     };
 
@@ -61,7 +66,11 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
    */
   const handleFavorite = async () => {
     if (!isAuthenticated) {
-      window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+      toast.info('Inicia sesión para agregar a favoritos', {
+        title: 'Autenticación requerida',
+        duration: 3000,
+      });
+      router.push('/login');
       return;
     }
 
@@ -89,10 +98,12 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
       setFavoriteId(fav ? fav.id : null);
 
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error toggling favorite:', error);
+      }
       if (error instanceof Error && error.message.includes('401')) {
         await checkAuth();
-        window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+        router.push('/login');
       }
     } finally {
       setIsLoading(false);
@@ -105,7 +116,11 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
    */
   const handleReview = () => {
     if (!isAuthenticated) {
-      window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+      toast.info('Inicia sesión para escribir una reseña', {
+        title: 'Autenticación requerida',
+        duration: 3000,
+      });
+      router.push('/login');
       return;
     }
     setShowReviewModal(true);
@@ -118,6 +133,8 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
           onClick={handleFavorite}
           disabled={isLoading}
           className={STYLES.favoriteButton(isFavorited, isLoading)}
+          aria-label={isFavorited ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+          title={isFavorited ? 'Quitar de favoritos' : 'Agregar a favoritos'}
         >
           <FaBookmark className={STYLES.bookmarkIcon(isFavorited)} />
         </button>

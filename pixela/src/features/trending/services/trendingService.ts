@@ -26,7 +26,9 @@ async function fetchTrendingMedia<T>(
     const endpoint = `${API_BASE_URL}/${mediaType}/trending?limit=${limit}&offset=${offset}`; // PRODUCTION: Cambiar {API_BASE_URL} por {API_URL}
 
     try {
-        console.log(`Fetching trending ${mediaType} from: ${endpoint}`);
+        if (process.env.NODE_ENV === 'development') {
+            console.log(`Fetching trending ${mediaType} from: ${endpoint}`);
+        }
         const response = await fetch(endpoint, {
             ...DEFAULT_FETCH_OPTIONS,
         });
@@ -39,7 +41,9 @@ async function fetchTrendingMedia<T>(
         return data.data;
 
     } catch (error) {
-        console.error(`Error fetching trending ${mediaType}:`, error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error(`Error fetching trending ${mediaType}:`, error);
+        }
         return [];
     }
 }

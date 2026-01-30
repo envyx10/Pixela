@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import { logger } from '@/lib/logger';
 
 const registerSchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true }, { status: 201 });
 
   } catch (error) {
-    console.error("Registration error:", error);
+    logger.error('Registration failed', error);
     return NextResponse.json({ error: 'Ocurrió un error en el servidor.' }, { status: 500 });
   }
 }

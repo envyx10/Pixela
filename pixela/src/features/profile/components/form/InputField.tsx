@@ -7,25 +7,25 @@ import { InputFieldProps } from '@/features/profile/types/form';
  * Estilos constantes para el componente InputField
  */
 const STYLES = {
-  container: 'input-field mb-2',
-  label: 'input-field__label mb-0.5',
-  iconContainer: 'input-field__icon-container',
+  container: 'relative w-full mb-1.5',
+  label: 'block text-sm text-gray-400 mb-0.5 font-outfit font-medium',
+  iconContainer: 'absolute left-4 top-1/2 -translate-y-1/2 text-white/50 text-base pointer-events-none',
   input: (hasError: boolean) => clsx(
-    'input-field__input',
-    hasError && 'input-field__input--error'
+    'w-full py-4 px-4 pl-12',
+    'bg-black/30 border rounded-xl',
+    'text-white text-base',
+    'placeholder:text-white/30',
+    'transition-all duration-200',
+    'focus:outline-none focus:shadow-none',
+    hasError 
+      ? 'border-pixela-accent/50 focus:border-pixela-accent/50'
+      : 'border-white/10 focus:border-pixela-accent/50'
   ),
-  errorMessage: 'input-field__error-message mt-0.5 text-xs',
-  helperText: clsx(
-    'input-field__helper-text',
-    'mt-1.5 mb-1 text-[0.75rem] italic font-light',
-    'text-gray-400/70 pl-0.5',
-    'bg-transparent border-none shadow-none',
-    'leading-relaxed'
-  ),
-  // Nuevos estilos para el botón del ojo
+  errorMessage: 'text-pixela-accent text-xs mt-0.5',
+  helperText: 'mt-1.5 mb-1 text-[0.75rem] italic font-light text-gray-400/70 pl-0.5 leading-relaxed',
   passwordContainer: 'relative',
   eyeButton: clsx(
-    'absolute right-3 top-1/2 transform -translate-y-1/2',
+    'absolute right-3 top-1/2 -translate-y-1/2',
     'text-gray-400 hover:text-pixela-accent transition-colors',
     'cursor-pointer z-10 p-1 rounded',
     'hover:bg-gray-700/20'
@@ -62,7 +62,7 @@ export const InputField = ({
       <label htmlFor={name} className={STYLES.label}>
         {labelText}
       </label>
-      <div className={isPasswordField ? STYLES.passwordContainer : undefined}>
+      <div className={isPasswordField ? STYLES.passwordContainer : 'relative'}>
         <div className={STYLES.iconContainer}>
           {icon}
         </div>
@@ -71,7 +71,6 @@ export const InputField = ({
           type={inputType}
           placeholder={placeholder}
           className={STYLES.input(!!error)}
-          style={{ boxShadow: 'none' }}
           {...register}
         />
         {isPasswordField && (
@@ -88,7 +87,6 @@ export const InputField = ({
             )}
           </button>
         )}
-        <div className="input-field__highlight" style={{ display: 'none' }} />
       </div>
       {error && (
         <p className={STYLES.errorMessage}>

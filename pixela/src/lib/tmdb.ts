@@ -7,7 +7,10 @@ if (!TMDB_API_KEY) {
 
 type TmdbParams = Record<string, string | number | boolean | undefined>;
 
-export const fetchFromTmdb = async (endpoint: string, params: TmdbParams = {}) => {
+export const fetchFromTmdb = async <T = unknown>(
+  endpoint: string, 
+  params: TmdbParams = {}
+): Promise<T> => {
   const baseUrl = TMDB_BASE_URL?.replace(/\/$/, '');
   const cleanEndpoint = endpoint.replace(/^\//, '');
   
@@ -35,5 +38,5 @@ export const fetchFromTmdb = async (endpoint: string, params: TmdbParams = {}) =
     throw new Error(`TMDB Error: ${res.status} - ${res.statusText}`);
   }
 
-  return res.json();
+  return res.json() as Promise<T>;
 };

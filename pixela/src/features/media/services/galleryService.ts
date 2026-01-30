@@ -18,8 +18,6 @@ export async function getMediaImages(
     ? `${API_ENDPOINTS.PELICULAS.GET_IMAGES(mediaId)}`
     : `${API_ENDPOINTS.SERIES.GET_IMAGES(mediaId)}`;
 
-  console.log(`[DEBUG] getMediaImages - Fetching from: ${apiUrl}`);
-
   try {
     
     const controller = new AbortController();
@@ -39,18 +37,20 @@ export async function getMediaImages(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[ERROR] getMediaImages - Status code ${response.status}, Response: ${errorText}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`[ERROR] getMediaImages - Status code ${response.status}, Response: ${errorText}`);
+      }
       return { backdrops: [], posters: [], logos: [] };
     }
 
-    // Simplified response handling as we now return TMDB data directly
     const data = await response.json();
-    console.log('[DEBUG] getMediaImages - Response data:', data);
 
     // If API returns an error or empty object handling
     if (!data.id && !data.backdrops && !data.posters) {
-         console.warn('[WARN] getMediaImages - Empty or invalid data received');
-         return { backdrops: [], posters: [], logos: [] };
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[WARN] getMediaImages - Empty or invalid data received');
+      }
+      return { backdrops: [], posters: [], logos: [] };
     }
 
     const result: WallpapersResponse = {
@@ -62,7 +62,9 @@ export async function getMediaImages(
     return result;
     
   } catch (error) {
-    console.error('[ERROR] getMediaImages:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[ERROR] getMediaImages:', error);
+    }
     return { backdrops: [], posters: [], logos: [] };
   }
 } 

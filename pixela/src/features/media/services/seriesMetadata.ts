@@ -24,7 +24,9 @@ export async function generateMetadata(
       },
     };
   } catch (error) {
-    console.error('Error al obtener los metadatos de la serie:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error al obtener los metadatos de la serie:', error);
+    }
     return {
       title: 'Serie no encontrada | Pixela',
       description: 'La serie que buscas no existe o no está disponible.',

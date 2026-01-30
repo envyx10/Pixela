@@ -1,5 +1,13 @@
 import { NextResponse } from 'next/server';
 import { fetchFromTmdb } from '@/lib/tmdb';
+import { logger } from '@/lib/logger';
+
+interface TmdbDiscoverResponse {
+  results: unknown[];
+  page: number;
+  total_pages: number;
+  total_results: number;
+}
 
 export async function GET(request: Request, props: { params: Promise<{ type: string }> }) {
   const params = await props.params;
@@ -21,7 +29,7 @@ export async function GET(request: Request, props: { params: Promise<{ type: str
   });
 
   try {
-    const data = await fetchFromTmdb(`/discover/${tmdbType}`, tmdbParams);
+    const data = await fetchFromTmdb<TmdbDiscoverResponse>(`/discover/${tmdbType}`, tmdbParams);
     
     return NextResponse.json({
         success: true,
@@ -30,8 +38,11 @@ export async function GET(request: Request, props: { params: Promise<{ type: str
         total_pages: data.total_pages,
         total_results: data.total_results
     });
-  } catch (error: any) {
-    console.error(`Error in discover route for ${type}:`, error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (error) {
+    logger.error(`Failed to discover ${type}`, error, { page });
+    return NextResponse.json(
+      { success: false, error: 'Failed to discover content' }, 
+      { status: 500 }
+    );
   }
 }

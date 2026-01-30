@@ -6,6 +6,7 @@ import { ActionButtons } from "@/shared/components/ActionButtons";
 import { MediaInfoDetails } from "./MediaInfoDetails";
 import { useRouter } from 'next/navigation';
 import type { TrendingMediaCardProps, PosterImageProps, OverlayContentProps } from '@/features/trending/types';
+import { tmdbImageHelpers, TMDB_PLACEHOLDER } from '@/lib/constants/tmdb';
 
 /**
  * Estilos constantes para el componente TrendingMediaCard
@@ -18,7 +19,6 @@ const STYLES = {
 
 const HIGH_RATING_THRESHOLD = 8.0;
 const INITIALLY_VISIBLE_ITEMS = 3;
-const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
 /**
  * Componente que renderiza la imagen del póster de un medio
@@ -27,7 +27,7 @@ const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
  */
 const PosterImage = memo(({ posterPath, title, isInitiallyVisible }: PosterImageProps) => (
   <Image
-    src={`${TMDB_IMAGE_BASE_URL}${posterPath || ''}`}
+    src={tmdbImageHelpers.poster(posterPath) || TMDB_PLACEHOLDER.POSTER}
     alt={title || 'Media poster'}
     fill
     className="object-cover"
@@ -71,7 +71,9 @@ export const TrendingMediaCard = memo(({ media, type, index = 0 }: TrendingMedia
   const isInitiallyVisible = index < INITIALLY_VISIBLE_ITEMS;
 
   const handleFollowClick = () => {
-    console.log("Seguir", type === 'series' ? 'serie' : 'película', media.title);
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Seguir", type === 'series' ? 'serie' : 'película', media.title);
+    }
   };
   
   /**

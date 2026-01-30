@@ -9,24 +9,25 @@ import { ProfileInfoProps } from '@/features/profile/types/layout';
  * Estilos constantes para el componente ProfileInfo
  */
 const STYLES = {
-  container: 'profile-info',
-  header: 'profile-info__header',
-  title: 'profile-info__title',
+  container: 'p-6 lg:p-8 bg-black/20 backdrop-blur-sm rounded-2xl',
+  header: 'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8',
+  title: 'text-2xl font-bold text-white font-outfit',
   editButton: clsx(
-    'profile-info__edit-button',
     'flex items-center gap-2',
-    'text-white hover:text-gray-200',
-    'transition-colors duration-200'
+    'bg-pixela-accent text-white',
+    'px-6 py-2 rounded-full',
+    'hover:bg-pixela-accent/80',
+    'transition-colors duration-300',
+    'font-outfit w-full sm:w-auto justify-center'
   ),
-  content: 'profile-info__content',
-  field: 'profile-info__field',
-  label: 'profile-info__label',
+  content: 'flex flex-col gap-6',
+  field: 'pb-4 border-b border-gray-700/70 last:border-b-0',
+  label: 'text-sm text-gray-400 mb-2 font-outfit',
   value: clsx(
-    'profile-info__value',
-    'flex items-center gap-3',
-    'text-gray-300'
+    'flex items-center gap-2',
+    'text-base text-white font-outfit'
   ),
-  icon: 'profile-info__icon text-gray-500'
+  icon: 'text-pixela-accent w-5 h-5 flex-shrink-0'
 } as const;
 
 

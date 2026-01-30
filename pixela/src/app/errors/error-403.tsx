@@ -43,7 +43,7 @@ export default function Error403() {
   };
 
   const handleLogin = () => {
-    window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/login';
+    router.push('/login');
   };
 
   return (

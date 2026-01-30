@@ -28,7 +28,9 @@ async function fetchDiscoveredContent<T>(type: MediaType): Promise<T[]> {
         return (data.data as T[]).slice(0, DISCOVER_LIMIT);
 
     } catch (error) {
-        console.error(`Error fetching discovered ${type}:`, error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error(`Error fetching discovered ${type}:`, error);
+        }
         return [];
     }
 }

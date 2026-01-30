@@ -1,8 +1,11 @@
 'use client';
 
 import { create } from 'zustand';
-import { authAPI } from '@/api/auth/auth';
+import { useSession, signOut } from 'next-auth/react';
 import { UserResponse } from '@/api/auth/types';
+
+const CLEANUP_DELAY_MS = 2000;
+const FORCE_LOGOUT_KEY = 'forceLogout';
 
 interface AuthState {
   user: UserResponse | null;
@@ -12,6 +15,7 @@ interface AuthState {
   checkAuth: () => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: UserResponse) => void;
+  syncWithSession: (session: any) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -24,46 +28,55 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user, isAuthenticated: true });
   },
 
-  checkAuth: async () => {
-    try {
-      set({ isLoading: true, error: null });
-      
-      // Limpiar cualquier forceLogout residual
-      localStorage.removeItem('forceLogout');
-      
-      // Timeout de 500ms para verificación rápida
-      const authPromise = authAPI.getUser();
-      const timeoutPromise = new Promise<UserResponse>((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout de autenticación')), 2000)
-      );
-      
-      const user = await Promise.race([authPromise, timeoutPromise]);
-      set({ user, isAuthenticated: true, isLoading: false, error: null });
+  syncWithSession: (session: any) => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(FORCE_LOGOUT_KEY);
+    }
 
-    } catch (error) {
-      console.error('Error checking auth:', error);
+    if (session?.user) {
+      const user: UserResponse = {
+        user_id: parseInt(session.user.id),
+        name: session.user.name || '',
+        email: session.user.email || '',
+        is_admin: session.user.isAdmin || false,
+        photo_url: session.user.image || undefined,
+        password: '', // Session doesn't have password
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
+      set({ 
+        user, 
+        isAuthenticated: true, 
+        isLoading: false, 
+        error: null 
+      });
+    } else {
       set({
         user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Error desconocido'
+        error: null
       });
     }
   },
 
-  logout: async () => {
-    try {
-      set({ isLoading: true, error: null });
-      
-      // Timeout de 3 segundos para logout
-      const logoutPromise = authAPI.logout();
-      const timeoutPromise = new Promise<void>((resolve) => 
-        setTimeout(() => resolve(), 1500)
-      );
-      
-      await Promise.race([logoutPromise, timeoutPromise]);
+  checkAuth: async () => {
+    // Ahora solo sincroniza con la sesión de NextAuth
+    // La llamada real se hace desde el componente con useSession
+    set({ isLoading: false, error: null });
+  },
 
-      // Actualizar el estado inmediatamente
+  logout: async () => {
+    set({ isLoading: true, error: null });
+    
+    try {
+      await signOut({ redirect: false });
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Logout error:', error);
+      }
+    } finally {
       set({
         user: null,
         isAuthenticated: false,
@@ -71,21 +84,11 @@ export const useAuthStore = create<AuthState>((set) => ({
         error: null
       });
 
-      // Limpiar localStorage después de logout exitoso
-      setTimeout(() => {
-        localStorage.removeItem('forceLogout');
-      }, 2000);
-
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-      
-      // Incluso si hay error, limpiar el estado local
-      set({
-        user: null,
-        isAuthenticated: false,
-        isLoading: false,
-        error: null // No mostrar error en logout
-      });
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          localStorage.removeItem(FORCE_LOGOUT_KEY);
+        }, CLEANUP_DELAY_MS);
+      }
     }
   },
 }));

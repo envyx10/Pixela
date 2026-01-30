@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from "@/auth";
 import { fetchFromTmdb } from '@/lib/tmdb';
+import { logger } from '@/lib/logger';
+
+interface TmdbMediaDetails {
+  title?: string;
+  name?: string;
+  poster_path?: string;
+  [key: string]: unknown;
+}
 
 export async function PUT(
   request: Request,
@@ -20,7 +28,7 @@ export async function PUT(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const userId = parseInt((session.user as any).id);
+    const userId = parseInt(session.user.id);
     const body = await request.json();
 
     const review = await prisma.review.findUnique({
@@ -49,7 +57,7 @@ export async function PUT(
 
     // Enriquecer con datos de TMDB para mantener consistencia
     const tmdbType = updatedReview.itemType === 'movie' ? 'movie' : 'tv';
-    const tmdbData = await fetchFromTmdb(`${tmdbType}/${updatedReview.tmdbId}`);
+    const tmdbData = await fetchFromTmdb<TmdbMediaDetails>(`${tmdbType}/${updatedReview.tmdbId}`);
 
     return NextResponse.json({
         success: true,
@@ -68,8 +76,8 @@ export async function PUT(
             poster_path: tmdbData.poster_path,
         }
     });
-  } catch (error: any) {
-    console.error("Error updating review:", error);
+  } catch (error) {
+    logger.error('Failed to update review', error, { reviewId: id });
     return NextResponse.json({ error: 'Error al actualizar reseña' }, { status: 500 });
   }
 }
@@ -91,13 +99,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const userId = parseInt((session.user as any).id);
+    const userId = parseInt(session.user.id);
 
     const review = await prisma.review.findUnique({
       where: { id }
     });
 
-    if (!review || (review.userId !== userId && !(session.user as any).isAdmin)) {
+    if (!review || (review.userId !== userId && !session.user.isAdmin)) {
       return NextResponse.json({ error: 'No tienes permiso para eliminar esta reseña' }, { status: 403 });
     }
 
@@ -106,8 +114,8 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error("Error deleting review:", error);
+  } catch (error) {
+    logger.error('Failed to delete review', error, { reviewId: id });
     return NextResponse.json({ error: 'Error al eliminar reseña' }, { status: 500 });
   }
 }

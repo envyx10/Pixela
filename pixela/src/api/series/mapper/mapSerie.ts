@@ -1,7 +1,6 @@
 import { Serie, WatchProvider } from '../../../features/media/types';
 import { ApiActor, ApiCreator, ApiProvider, ApiSerie, ApiTrailer } from '../types';
-
-const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
+import { buildTmdbImageUrl, DEFAULT_IMAGE_SIZES } from '@/lib/constants/tmdb';
 
 /**
  * Formatea la URL de la imagen
@@ -9,7 +8,7 @@ const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
  * @returns 
  */
 const formatImageUrl = (path: string): string =>
-  path?.startsWith('/') ? `${TMDB_IMAGE_BASE_URL}${path}` : path || '';
+  path?.startsWith('/') ? buildTmdbImageUrl(path, DEFAULT_IMAGE_SIZES.BACKDROP) : path || '';
 
 /**
  * Mapea un actor

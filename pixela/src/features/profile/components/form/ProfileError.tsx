@@ -1,15 +1,21 @@
 import { FiAlertTriangle } from 'react-icons/fi';
+import clsx from 'clsx';
 import { ProfileErrorProps } from "@/features/profile/types/profileTypes";
 
 /**
  * Estilos constantes para el componente ProfileError
  */
 const STYLES = {
-  container: 'profile-error',
-  icon: 'profile-error__icon',
-  title: 'profile-error__title',
-  message: 'profile-error__message',
-  button: 'profile-error__button'
+  container: 'flex flex-col items-center justify-center p-12 bg-black/20 backdrop-blur-sm rounded-2xl',
+  icon: 'w-16 h-16 text-red-500 mb-4',
+  title: 'text-2xl font-bold text-white mb-2',
+  message: 'text-gray-400 text-center mb-6 max-w-md',
+  button: clsx(
+    'px-6 py-3 bg-pixela-accent hover:bg-pixela-accent/90',
+    'text-white rounded-xl font-medium',
+    'transition-all duration-200',
+    'shadow-lg shadow-pixela-accent/20'
+  )
 } as const;
 
 /**

@@ -7,7 +7,38 @@ import type {
   ApiResponse, ApiCastResponse, ApiVideosResponse, ApiProvidersResponse 
 } from './types';
 
+interface ExtendedSerieResponse extends ApiSerie {
+  credits?: {
+    cast: ApiActor[];
+  };
+  videos?: {
+    results: Video[];
+  };
+  'watch/providers'?: {
+    results: {
+      ES?: {
+        flatrate?: Provider[];
+        rent?: Provider[];
+        buy?: Provider[];
+      };
+    };
+  };
+  images?: {
+    backdrops: any[];
+    posters: any[];
+  };
+}
 
+const deduplicateProviders = (providers: Provider[]): Provider[] => {
+  const seen = new Set<number>();
+  return providers.filter(provider => {
+    if (seen.has(provider.provider_id)) {
+      return false;
+    }
+    seen.add(provider.provider_id);
+    return true;
+  });
+};
 
 /**
  * Obtiene los datos de una serie
@@ -15,36 +46,32 @@ import type {
  * @returns - Serie
  */
 export async function getSerieById(id: string): Promise<Serie> {
-  const data = await fetchWithErrorHandling<ApiResponse<ApiSerie>>(
+  const response = await fetchWithErrorHandling<ApiResponse<ExtendedSerieResponse>>(
     API_ENDPOINTS.SERIES.GET_BY_ID(id)
   );
   
-  if (!data?.data?.id) {
-    throw new Error('Serie no encontrada o datos inválidos');
+  if (!response?.data?.id) {
+    throw new Error('Series not found or invalid data');
   }
 
-  const rawSerie = data.data as any;
-
-  // Extract embedded
+  const rawSerie = response.data;
   const actores = rawSerie.credits?.cast || [];
   const trailers = rawSerie.videos?.results || [];
 
   const providersData = rawSerie['watch/providers']?.results?.ES;
-  const proveedores = providersData ? [
-      ...(providersData.flatrate || []),
-      ...(providersData.rent || []),
-      ...(providersData.buy || [])
+  const allProviders: Provider[] = providersData ? [
+    ...(providersData.flatrate || []),
+    ...(providersData.rent || []),
+    ...(providersData.buy || [])
   ] : [];
 
-  const uniqueProveedores = proveedores.filter((provider: any, index: number, self: any[]) =>
-    index === self.findIndex((p: any) => p.provider_id === provider.provider_id)
-  );
+  const proveedores = deduplicateProviders(allProviders);
 
   return mapSerieFromApi({
     ...rawSerie,
-    actores: actores,
-    trailers: trailers,
-    proveedores: uniqueProveedores,
+    actores,
+    trailers,
+    proveedores,
     imagenes: rawSerie.images || { backdrops: [], posters: [] }
   });
 }

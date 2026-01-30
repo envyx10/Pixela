@@ -2,6 +2,28 @@ import { API_ENDPOINTS } from "../shared/apiEndpoints";
 import { fetchFromAPI } from "../shared/apiHelpers";
 import { AuthResponse, UserResponse } from "./types";
 
+const AUTH_STORAGE_KEYS = {
+  TOKEN: 'token',
+  FORCE_LOGOUT: 'forceLogout',
+} as const;
+
+const COOKIE_NAMES = {
+  XSRF_TOKEN: 'XSRF-TOKEN',
+  SESSION: 'pixela_session',
+} as const;
+
+const clearAuthCookies = (): void => {
+  if (typeof document === 'undefined') return;
+  
+  const expireDate = 'Thu, 01 Jan 1970 00:00:00 UTC';
+  const domain = typeof window !== 'undefined' ? window.location.hostname : '';
+  
+  Object.values(COOKIE_NAMES).forEach(cookieName => {
+    document.cookie = `${cookieName}=; expires=${expireDate}; path=/;`;
+    document.cookie = `${cookieName}=; expires=${expireDate}; path=/; domain=${domain}`;
+  });
+};
+
 /**
  * API para autenticación
  * @namespace authAPI
@@ -14,8 +36,8 @@ export const authAPI = {
             body: JSON.stringify({ email, password }),
         });
 
-        if (response.token) {
-            localStorage.removeItem('forceLogout');
+        if (response.token && typeof window !== 'undefined') {
+            localStorage.removeItem(AUTH_STORAGE_KEYS.FORCE_LOGOUT);
         }
 
         return response;
@@ -33,38 +55,27 @@ export const authAPI = {
             body: JSON.stringify(userData),
         });
 
-        if (response.token) {
-            localStorage.setItem('token', response.token);
+        if (response.token && typeof window !== 'undefined') {
+            localStorage.setItem(AUTH_STORAGE_KEYS.TOKEN, response.token);
         }
 
         return response;
     },
 
     async logout(): Promise<void> {
-        try {
-            // Primero hacer el logout en el backend
-            await fetchFromAPI(API_ENDPOINTS.AUTH.LOGOUT, {
-                method: 'POST',
-            });
+        await fetchFromAPI(API_ENDPOINTS.AUTH.LOGOUT, {
+            method: 'POST',
+        });
 
-            // Limpiar cookies con dominio correcto
-            document.cookie = 'XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            document.cookie = 'pixela_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            document.cookie = `XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname}`;
-            document.cookie = `pixela_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname}`;
-
-        } catch (error) {
-            console.error('[API] Error en logout:', error);
-            throw error;
-        }
+        clearAuthCookies();
     },
 
     async getUser(): Promise<UserResponse> {
-        // Si hay un logout forzado, no intentar obtener el usuario
-        if (localStorage.getItem('forceLogout')) {
-            localStorage.removeItem('forceLogout');
-            throw new Error('Sesión cerrada');
+        if (typeof window !== 'undefined' && localStorage.getItem(AUTH_STORAGE_KEYS.FORCE_LOGOUT)) {
+            localStorage.removeItem(AUTH_STORAGE_KEYS.FORCE_LOGOUT);
+            throw new Error('Session closed');
         }
+        
         return fetchFromAPI<UserResponse>(API_ENDPOINTS.AUTH.USER);
     }
 };

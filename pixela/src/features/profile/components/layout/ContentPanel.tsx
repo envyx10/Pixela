@@ -1,20 +1,15 @@
 import { FiInfo } from 'react-icons/fi';
-import clsx from 'clsx';
 import { ContentPanelProps } from '@/features/profile/types/layout';
 
 const STYLES = {
-  container: 'content-panel',
-  header: clsx(
-    'content-panel__header',
-    'flex items-center justify-between px-6 pb-4',
-    'border-b border-white/10'
-  ),
-  title: 'content-panel__title text-lg font-semibold text-white',
-  headerAction: 'text-pixela-primary',
-  empty: 'content-panel__empty',
-  emptyIcon: 'content-panel__empty-icon',
-  emptyMessage: 'content-panel__empty-message',
-  content: 'content-panel__content'
+  container: 'p-6 bg-pixela-dark/35 rounded-xl border border-white/10 backdrop-blur-[10px] transition-all duration-300 hover:bg-pixela-dark/40 hover:-translate-y-px hover:shadow-lg',
+  header: 'mb-6 pb-4 border-b border-white/10',
+  title: 'text-lg font-semibold text-white font-outfit tracking-tight',
+  headerAction: 'text-pixela-accent',
+  empty: 'flex flex-col items-center justify-center py-16 text-center',
+  emptyIcon: 'text-5xl text-gray-400 mb-4',
+  emptyMessage: 'text-gray-400 text-base font-outfit',
+  content: 'max-w-[60rem] mx-auto w-full grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4 p-2'
 } as const;
 
 

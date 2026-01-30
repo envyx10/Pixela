@@ -8,6 +8,67 @@ import type {
   ApiImagesResponse, ApiCreatorResponse
 } from './types';
 
+interface CrewMember {
+  id: number;
+  name: string;
+  profile_path: string | null;
+  job: string;
+}
+
+interface Creator {
+  id: number;
+  nombre: string;
+  foto?: string;
+}
+
+interface ExtendedPeliculaResponse extends ApiPelicula {
+  credits?: {
+    cast: ApiActor[];
+    crew: CrewMember[];
+  };
+  videos?: {
+    results: ApiTrailer[];
+  };
+  'watch/providers'?: {
+    results: {
+      ES?: {
+        flatrate?: ApiProvider[];
+        rent?: ApiProvider[];
+        buy?: ApiProvider[];
+      };
+    };
+  };
+  images?: {
+    backdrops: ApiImage[];
+    posters: ApiImage[];
+  };
+}
+
+const deduplicateProviders = (providers: ApiProvider[]): ApiProvider[] => {
+  const seen = new Set<number>();
+  return providers.filter(provider => {
+    if (!provider.provider_id) return false;
+    
+    if (seen.has(provider.provider_id)) {
+      return false;
+    }
+    seen.add(provider.provider_id);
+    return true;
+  });
+};
+
+const extractDirector = (crew: CrewMember[]): Creator | undefined => {
+  const director = crew.find(member => member.job === 'Director');
+  
+  if (!director) return undefined;
+  
+  return {
+    id: director.id,
+    nombre: director.name,
+    foto: director.profile_path || undefined
+  };
+};
+
 
 /**
  * Obtiene la película por ID junto con datos adicionales
@@ -15,56 +76,41 @@ import type {
  * @returns Objeto Pelicula completo
  */
 export async function getPeliculaById(id: string): Promise<Pelicula> {
-  const data = await fetchWithErrorHandling<ApiResponse<ApiPelicula>>(
+  const response = await fetchWithErrorHandling<ApiResponse<ExtendedPeliculaResponse>>(
     API_ENDPOINTS.PELICULAS.GET_BY_ID(id)
   );
   
-  if (!data?.data?.id) {
-    throw new Error('Película no encontrada o datos inválidos');
+  if (!response?.data?.id) {
+    throw new Error('Movie not found or invalid data');
   }
 
-  const rawPelicula = data.data as any;
-
-  // Extract embedded data (appended in backend route)
+  const rawPelicula = response.data;
   const actores = rawPelicula.credits?.cast || [];
   const trailers = rawPelicula.videos?.results || [];
   
-  // Extract providers for ES region
   const providersData = rawPelicula['watch/providers']?.results?.ES;
-  const proveedores = providersData ? [
-      ...(providersData.flatrate || []),
-      ...(providersData.rent || []),
-      ...(providersData.buy || [])
+  const allProviders: ApiProvider[] = providersData ? [
+    ...(providersData.flatrate || []),
+    ...(providersData.rent || []),
+    ...(providersData.buy || [])
   ] : [];
-
-  // Deduplicate providers
-  const uniqueProveedores = proveedores.filter((provider: any, index: number, self: any[]) =>
-    index === self.findIndex((p: any) => p.provider_id === provider.provider_id)
-  );
-
-  // Images
-  const imagenesData = rawPelicula.images || { backdrops: [], posters: [] };
-
-  // Creator (Find Director in Crew)
-  const crew = rawPelicula.credits?.crew || [];
-  const director = crew.find((p: any) => p.job === 'Director');
-  const creador = director ? {
-      id: director.id,
-      nombre: director.name,
-      foto: director.profile_path
-  } : undefined;
-
+  
+  const proveedores = deduplicateProviders(allProviders);
+  
+  const imagenes = {
+    backdrops: rawPelicula.images?.backdrops || [],
+    posters: rawPelicula.images?.posters || []
+  };
+  
+  const creador = extractDirector(rawPelicula.credits?.crew || []);
 
   return mapPeliculaFromApi({
     ...rawPelicula,
-    actores: actores,
-    trailers: trailers,
-    proveedores: uniqueProveedores,
-    imagenes: {
-      backdrops: imagenesData.backdrops || [],
-      posters: imagenesData.posters || []
-    },
-    creador: creador
+    actores,
+    trailers,
+    proveedores,
+    imagenes,
+    creador
   });
 }
 
@@ -98,23 +144,26 @@ export async function getPeliculaVideos(id: string): Promise<ApiTrailer[]> {
  * @param region Región para los proveedores (por defecto ES para España)
  * @returns Array de proveedores de streaming
  */
-export async function getPeliculaProveedores(id: string, region = 'ES'): Promise<ApiProvider[]> {
+export async function getPeliculaProveedores(
+  id: string, 
+  region = 'ES'
+): Promise<ApiProvider[]> {
   const data = await fetchWithErrorHandling<ApiProvidersResponse>(
     `${API_ENDPOINTS.PELICULAS.GET_WATCH_PROVIDERS(id)}?region=${region}`
   );
   
-  if (!data?.success || !data.data?.results?.[region]) return [];
+  if (!data?.success || !data.data?.results?.[region]) {
+    return [];
+  }
   
   const providers = data.data.results[region];
-  const allProviders = [
+  const allProviders: ApiProvider[] = [
     ...(providers.flatrate || []),
     ...(providers.rent || []),
     ...(providers.buy || [])
   ];
   
-  return allProviders.filter((provider, index, self) =>
-    index === self.findIndex(p => p.provider_id === provider.provider_id)
-  );
+  return deduplicateProviders(allProviders);
 }
 
 /**
@@ -126,5 +175,11 @@ export async function getPeliculaImagenes(id: string): Promise<ApiImage[]> {
   const data = await fetchWithErrorHandling<ApiImagesResponse>(
     API_ENDPOINTS.PELICULAS.GET_IMAGES(id)
   );
-  return data?.success ? [...(data.data?.backdrops || []), ...(data.data?.posters || [])] : [];
+  
+  if (!data?.success) return [];
+  
+  return [
+    ...(data.data?.backdrops || []), 
+    ...(data.data?.posters || [])
+  ];
 }

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from "@/auth";
+import { logger } from '@/lib/logger';
+import bcrypt from 'bcryptjs';
 
 export async function GET() {
   try {
@@ -37,7 +39,7 @@ export async function GET() {
         users: mappedUsers
     });
   } catch (error) {
-    console.error("Error listing users:", error);
+    logger.error('Failed to list users', error);
     return NextResponse.json({ error: 'Error al listar usuarios' }, { status: 500 });
   }
 }
@@ -60,7 +62,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Este email ya está registrado.' }, { status: 400 });
     }
 
-    const bcrypt = require('bcryptjs');
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
@@ -82,7 +83,7 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
-    console.error("User creation error:", error);
+    logger.error('Failed to create user', error);
     return NextResponse.json({ error: 'Ocurrió un error en el servidor.' }, { status: 500 });
   }
 }

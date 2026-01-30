@@ -39,6 +39,15 @@ const nextConfig = {
             }
         ],
     },
+    
+    /**
+     * Optimizaciones de performance para reducir warnings de preload
+     * Nota: optimizeCss requiere módulo 'critters' - desactivado temporalmente
+     */
+    experimental: {
+        // Reducir preloading agresivo
+        optimisticClientCache: false,
+    },
 };
 
 module.exports = nextConfig; 

@@ -238,7 +238,7 @@ export const ProfileUsers = ({ refresh, onUserUpdated }: ProfileUsersProps) => {
                     value={editingUser?.is_admin ? 'true' : 'false'}
                     onChange={(e) => handleEditChange('is_admin', e.target.value === 'true')}
                     className={STYLES.select}
-                    style={STYLES.selectIcon}
+                    aria-label="Seleccionar rol de usuario"
                   >
                     <option value="true">Administrador</option>
                     <option value="false">Usuario</option>

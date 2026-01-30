@@ -11,10 +11,14 @@ import { StreamingProvidersProps } from '@/features/media/types/platforms';
  */
 export function StreamingProviders({ providers }: StreamingProvidersProps) {
   // Verificación y registro para depuración
-  console.log('[DEBUG] StreamingProviders - Proveedores recibidos:', providers);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[DEBUG] StreamingProviders - Proveedores recibidos:', providers);
+  }
   
   if (!providers || providers.length === 0) {
-    console.log('[DEBUG] StreamingProviders - No hay proveedores disponibles');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[DEBUG] StreamingProviders - No hay proveedores disponibles');
+    }
     return null;
   }
   

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from "@/auth";
+import { logger } from '@/lib/logger';
 
 export async function POST(req: Request) {
   try {
@@ -9,7 +10,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const userId = parseInt((session.user as any).id);
+    const userId = parseInt(session.user.id);
     const body = await req.json();
     const { tmdb_id, item_type } = body;
 
@@ -31,11 +32,11 @@ export async function POST(req: Request) {
       }
     });
 
-  } catch (error: any) {
-    if (error.code === 'P2002') {
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'P2002') {
         return NextResponse.json({ error: 'Ya está en favoritos' }, { status: 400 });
     }
-    console.error("Favorite creation error:", error);
+    logger.error('Failed to create favorite', error);
     return NextResponse.json({ error: 'Error al añadir a favoritos' }, { status: 500 });
   }
 }

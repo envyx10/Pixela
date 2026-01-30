@@ -93,16 +93,20 @@ const StarEdit = ({ value, onChange, disabled }: StarEditProps) => (
           <button
             type="button"
             aria-label={`Puntuar con ${star - 0.5} estrellas`}
-            className="absolute top-0 left-0 z-10 w-1/2 h-full"
-            style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
+            className={clsx(
+              "absolute top-0 left-0 z-10 w-1/2 h-full",
+              disabled ? "cursor-not-allowed" : "cursor-pointer"
+            )}
             onClick={() => !disabled && onChange(star * 2 - 1)}
             disabled={disabled}
           />
           <button
             type="button"
             aria-label={`Puntuar con ${star} estrellas`}
-            className="absolute top-0 right-0 z-10 w-1/2 h-full"
-            style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
+            className={clsx(
+              "absolute top-0 right-0 z-10 w-1/2 h-full",
+              disabled ? "cursor-not-allowed" : "cursor-pointer"
+            )}
             onClick={() => !disabled && onChange(star * 2)}
             disabled={disabled}
           />
@@ -297,6 +301,8 @@ export const ProfileReviews = () => {
                     value={editText}
                     onChange={e => setEditText(e.target.value)}
                     disabled={savingId === review.id}
+                    placeholder="Escribe tu reseña aquí..."
+                    aria-label="Editar reseña"
                   />
                   <div className={STYLES.editActions}>
                     <button

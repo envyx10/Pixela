@@ -12,30 +12,38 @@ import { InputField } from '@/features/profile/components/form/InputField';
  * Estilos constantes para el componente UpdateProfileForm
  */
 const STYLES = {
-  container: 'profile-edit',
-  avatarColumn: 'profile-edit__avatar-column',
-  avatarSection: 'profile-edit__avatar-section',
-  avatarContainer: 'profile-edit__avatar-container',
-  avatarPreview: 'profile-edit__avatar-preview',
-  avatarImage: 'profile-edit__avatar-image',
-  avatarPlaceholder: 'profile-edit__avatar-placeholder',
-  avatarOverlay: 'profile-edit__avatar-overlay',
-  cameraIcon: 'profile-edit__camera-icon',
-  fileInput: 'profile-edit__file-input',
-  uploadButton: 'profile-edit__upload-button',
-  error: 'profile-edit__error',
-  formColumn: 'profile-edit__form-column',
-  header: 'profile-edit__header',
-  title: 'profile-edit__title',
-  closeButton: 'profile-edit__close-button',
-  fields: 'profile-edit__fields',
-  fieldGroup: 'profile-edit__field-group',
-  inputLabel: 'profile-input__label',
-  inputIcon: 'profile-input__icon',
-  actions: 'profile-edit__actions',
+  container: 'flex flex-col lg:flex-row gap-8 lg:gap-12 w-full',
+  
+  // Columna de avatar
+  avatarColumn: 'flex flex-col items-center bg-black/20 rounded-2xl p-6 shadow-md w-full lg:w-[300px] lg:flex-shrink-0 lg:sticky lg:top-8 lg:h-fit',
+  avatarSection: 'flex flex-col items-center mb-6',
+  avatarContainer: 'relative cursor-pointer mb-4 transition-transform duration-200 hover:scale-[1.02] group',
+  avatarPreview: 'w-[120px] h-[120px] rounded-full overflow-hidden border-2 border-pixela-accent/40',
+  avatarImage: 'w-full h-full object-cover',
+  avatarPlaceholder: 'w-full h-full flex items-center justify-center bg-gradient-to-br from-pixela-accent/20 to-pixela-accent/10 text-white text-5xl font-bold',
+  avatarOverlay: 'absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200',
+  cameraIcon: 'text-white text-2xl',
+  fileInput: 'hidden',
+  uploadButton: 'px-6 py-2 bg-pixela-accent/10 text-pixela-accent border border-pixela-accent/30 rounded-full hover:bg-pixela-accent/20 transition-all duration-200 text-sm font-medium',
+  error: 'text-pixela-accent text-xs mt-2 text-center',
+  
+  // Columna del formulario
+  formColumn: 'flex-1 min-w-0 bg-black/20 rounded-2xl p-6 shadow-md',
+  header: 'flex justify-between items-center mb-6 pb-3 border-b border-pixela-accent/50',
+  title: 'text-lg font-bold text-white m-0',
+  closeButton: 'bg-transparent border-none text-gray-400 text-lg cursor-pointer transition-colors duration-200 hover:text-pixela-accent',
+  fields: 'flex flex-col gap-5',
+  fieldGroup: 'flex flex-col gap-1',
+  inputLabel: 'block text-sm text-gray-400 mb-0.5',
+  inputIcon: 'text-base',
+  
+  // Acciones
+  actions: 'flex gap-3 mt-6 pt-6 border-t border-white/10',
   button: (variant: 'submit' | 'cancel') => clsx(
-    'profile-edit__button',
-    `profile-edit__button--${variant}`
+    'flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-200',
+    variant === 'submit'
+      ? 'bg-gradient-to-r from-pixela-accent to-pixela-accent/80 text-white hover:shadow-lg hover:shadow-pixela-accent/20'
+      : 'bg-white/5 text-gray-300 hover:bg-white/10'
   )
 } as const;
 
@@ -139,13 +147,11 @@ export const UpdateProfileForm = ({
    * @param {ProfileFormData} data - Datos del formulario
    */
   const onFormSubmit = (data: ProfileFormData) => {
-    // Construir el objeto solo con los campos necesarios
-    const formData: ProfileFormData = {
+    // Construir el objeto con los campos del formulario
+    const formData: Partial<ProfileFormData> = {
       name: data.name,
       email: data.email,
-      photo_url: profileImage !== initialData.photo_url ? profileImage : undefined,
-      created_at: data.created_at,
-      is_admin: data.is_admin,
+      photo_url: profileImage || initialData.photo_url,
     };
 
     // Solo añadir password si el usuario la ha escrito
@@ -153,7 +159,7 @@ export const UpdateProfileForm = ({
       formData.password = data.password;
     }
 
-    onSubmit(formData);
+    onSubmit(formData as ProfileFormData);
   };
 
   return (

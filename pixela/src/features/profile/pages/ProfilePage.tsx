@@ -25,32 +25,32 @@ import { clsx } from 'clsx';
 import { TabType } from '@/features/profile/types/tabs';
 import { ProfileClientProps } from '@/features/profile/types/profileTypes';
 
-import '@/shared/styles/profile/main.scss';
-
 const STYLES = {
   // Contenedores principales
-  container: 'profile-page',
-  content: 'profile-page__content',
-  profileContainer: 'profile-page__container',
-  headerContainer: 'relative',
+  container: 'min-h-screen bg-gradient-to-b from-[#0F0F0F] via-[#1A1A1A] to-[#0F0F0F] pt-32 pb-8 px-4',
+  content: 'mt-6',
+  profileContainer: 'max-w-7xl mx-auto',
+  headerContainer: 'relative mb-6',
   
   // Títulos y texto
-  title: 'profile-page__title',
-  welcome: 'profile-page__welcome text-gray-400 mb-6',
+  title: 'text-3xl md:text-4xl font-bold text-white mb-2 font-outfit',
+  welcome: 'text-gray-400 mb-6 text-base',
   welcomeAccent: 'font-medium text-pixela-accent',
   
   // Secciones de perfil
-  profileSection: 'profile-page__profile-section',
-  profileGrid: 'profile-page__profile-grid',
+  profileSection: 'w-full',
+  profileGrid: 'grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start',
   avatarColumn: (scrolled: boolean) => clsx(
-    'profile-page__avatar-column avatar-scroll-effect',
-    { scrolled }
+    'flex flex-col items-center text-center',
+    'lg:sticky lg:top-8',
+    'transition-all duration-300',
+    scrolled && 'lg:scale-95'
   ),
-  infoColumn: 'profile-page__info-column',
+  infoColumn: 'lg:col-span-2',
   
   // Avatar
-  avatarName: 'user-avatar__name',
-  avatarRole: 'user-avatar__role',
+  avatarName: 'text-2xl font-bold text-white mt-4 font-outfit',
+  avatarRole: 'text-gray-400 mt-1 font-outfit',
   
   // Botones
   addUserButton: 'px-4 py-1.5 flex items-center justify-center rounded-md bg-pixela-accent text-white text-sm font-medium hover:bg-pixela-accent/90 transition-colors',
@@ -142,11 +142,14 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
         user_id: user.user_id,
         name: data.name,
         email: data.email,
-        photo_url: data.photo_url || user.photo_url,
         is_admin: user.is_admin,
         created_at: user.created_at,
         updated_at: new Date().toISOString(),
       };
+      
+      // Manejar photo_url: enviar el nuevo valor o mantener el actual
+      userData.photo_url = data.photo_url !== undefined ? data.photo_url : user.photo_url;
+      
       // Solo añadir password si el usuario la ha escrito
       if (data.password && data.password.trim()) {
         userData.password = data.password;
