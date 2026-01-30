@@ -6,6 +6,7 @@ import { MdLogout } from 'react-icons/md';
 import { FiUser, FiX } from 'react-icons/fi';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { useState, useEffect, useMemo } from 'react';
+import { useSession } from 'next-auth/react';
 import { mainNavLinks } from '@/links/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSectionNavigation } from '@/hooks/useSectionNavigation';
@@ -82,16 +83,18 @@ const MobileActionButton = ({
  */
 export const Navbar = () => {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const { user, isAuthenticated, isLoading } = useAuthStore();
-  const logout = useAuthStore((s) => s.logout);
-  const checkAuth = useAuthStore((s) => s.checkAuth);
+  const { logout, syncWithSession } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { navigateToSection, navigateToTop } = useSectionNavigation();
 
-  // Verificar estado de autenticación al cargar
+  // Sincronizar sesión de NextAuth con el store
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    if (status !== 'loading') {
+      syncWithSession(session);
+    }
+  }, [session, status, syncWithSession]);
   
   // Prefetch de rutas críticas al montar el componente
   useEffect(() => {
@@ -114,8 +117,8 @@ export const Navbar = () => {
 
   // Memoizar el nombre del usuario para evitar re-renders innecesarios
   const userDisplayName = useMemo(() => {
-    if (!user) return '';
-    return user.name || user.email?.split('@')[0] || '';
+    if (!user?.user) return '';
+    return user.user.name || user.user.email?.split('@')[0] || '';
   }, [user]);
 
   const handleProfile = (e: React.MouseEvent<HTMLButtonElement>) => {

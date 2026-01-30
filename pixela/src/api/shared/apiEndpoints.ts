@@ -61,10 +61,10 @@ export const API_ENDPOINTS = {
      * @description Auth
      */
     AUTH: {
-        LOGIN: `${API_URL}/login`,
-        LOGOUT: `${API_URL}/logout`,
-        REGISTER: `${API_URL}/register`,
-        USER: `${API_URL}/user`,
+        LOGIN: `${API_URL}/auth/login`,
+        LOGOUT: `${API_URL}/auth/logout`,
+        REGISTER: `${API_URL}/auth/register`,
+        USER: `${API_URL}/auth/user`,
     },
 
     /**

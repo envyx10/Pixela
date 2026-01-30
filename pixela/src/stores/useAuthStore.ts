@@ -1,26 +1,11 @@
 'use client';
 
 import { create } from 'zustand';
-import { authAPI } from '@/api/auth/auth';
+import { useSession, signOut } from 'next-auth/react';
 import { UserResponse } from '@/api/auth/types';
 
-const AUTH_TIMEOUT_MS = 2000;
-const LOGOUT_TIMEOUT_MS = 1500;
 const CLEANUP_DELAY_MS = 2000;
 const FORCE_LOGOUT_KEY = 'forceLogout';
-
-const createAuthTimeout = <T>(
-  promise: Promise<T>, 
-  timeoutMs: number, 
-  errorMessage: string
-): Promise<T> => {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) => 
-      setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
-    )
-  ]);
-};
 
 interface AuthState {
   user: UserResponse | null;
@@ -30,6 +15,7 @@ interface AuthState {
   checkAuth: () => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: UserResponse) => void;
+  syncWithSession: (session: any) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -42,19 +28,24 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user, isAuthenticated: true });
   },
 
-  checkAuth: async () => {
-    set({ isLoading: true, error: null });
-    
+  syncWithSession: (session: any) => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(FORCE_LOGOUT_KEY);
     }
-    
-    try {
-      const user = await createAuthTimeout(
-        authAPI.getUser(),
-        AUTH_TIMEOUT_MS,
-        'Authentication timeout'
-      );
+
+    if (session?.user) {
+      const user: UserResponse = {
+        user: {
+          id: parseInt(session.user.id),
+          name: session.user.name || '',
+          surname: '',
+          email: session.user.email || '',
+          isAdmin: session.user.isAdmin || false,
+          photoUrl: session.user.image || null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+      };
       
       set({ 
         user, 
@@ -62,31 +53,28 @@ export const useAuthStore = create<AuthState>((set) => ({
         isLoading: false, 
         error: null 
       });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      
-      // No mostrar toast aquí - solo actualizar estado
-      // Los toasts se mostrarán en acciones específicas (favoritos, reseñas)
+    } else {
       set({
         user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: errorMessage
+        error: null
       });
     }
+  },
+
+  checkAuth: async () => {
+    // Ahora solo sincroniza con la sesión de NextAuth
+    // La llamada real se hace desde el componente con useSession
+    set({ isLoading: false, error: null });
   },
 
   logout: async () => {
     set({ isLoading: true, error: null });
     
     try {
-      await createAuthTimeout(
-        authAPI.logout(),
-        LOGOUT_TIMEOUT_MS,
-        'Logout timeout'
-      );
+      await signOut({ redirect: false });
     } catch (error) {
-      // Log error solo en desarrollo
       if (process.env.NODE_ENV === 'development') {
         console.error('Logout error:', error);
       }
