@@ -117,8 +117,8 @@ export const Navbar = () => {
 
   // Memoizar el nombre del usuario para evitar re-renders innecesarios
   const userDisplayName = useMemo(() => {
-    if (!user?.user) return '';
-    return user.user.name || user.user.email?.split('@')[0] || '';
+    if (!user) return '';
+    return user.name || user.email?.split('@')[0] || '';
   }, [user]);
 
   const handleProfile = (e: React.MouseEvent<HTMLButtonElement>) => {

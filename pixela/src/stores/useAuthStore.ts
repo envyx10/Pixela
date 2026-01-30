@@ -35,16 +35,14 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     if (session?.user) {
       const user: UserResponse = {
-        user: {
-          id: parseInt(session.user.id),
-          name: session.user.name || '',
-          surname: '',
-          email: session.user.email || '',
-          isAdmin: session.user.isAdmin || false,
-          photoUrl: session.user.image || null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
+        user_id: parseInt(session.user.id),
+        name: session.user.name || '',
+        email: session.user.email || '',
+        is_admin: session.user.isAdmin || false,
+        photo_url: session.user.image || undefined,
+        password: '', // Session doesn't have password
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       };
       
       set({ 
