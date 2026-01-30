@@ -5,7 +5,11 @@ import bcrypt from 'bcryptjs';
 import { logger } from '@/lib/logger';
 
 const registerSchema = z.object({
-  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+  name: z
+    .string()
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .max(50, "El nombre no puede exceder los 50 caracteres")
+    .regex(/^[a-zA-Z0-9]+([._-][a-zA-Z0-9]+)*$/, "El nombre solo puede contener letras, números y los caracteres . _ - (sin espacios ni caracteres especiales)"),
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
 });

@@ -3,6 +3,22 @@ import prisma from '@/lib/prisma';
 import { auth } from "@/auth";
 import { logger } from '@/lib/logger';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+
+const userUpdateSchema = z.object({
+  name: z.string()
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .max(50, "El nombre no puede exceder los 50 caracteres")
+    .regex(/^[a-zA-Z0-9]+([._-][a-zA-Z0-9]+)*$/, "El nombre solo puede contener letras, números y los caracteres . _ - (sin espacios ni caracteres especiales)")
+    .optional(),
+  email: z.string().email("Email inválido").optional(),
+  photo_url: z.string().url("URL de foto inválida").optional().or(z.literal("")),
+  is_admin: z.preprocess((val) => {
+    if (typeof val === 'string') return val === 'true';
+    return val;
+  }, z.boolean()).optional(),
+  password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres").optional(),
+});
 
 interface UpdateUserData {
   name?: string;
@@ -39,28 +55,26 @@ export async function PUT(
 
     const body = await request.json();
     
+    // Validar datos con Zod
+    const parseResult = userUpdateSchema.safeParse(body);
+    if (!parseResult.success) {
+      return NextResponse.json({ error: parseResult.error.issues[0].message }, { status: 400 });
+    }
+
+    const { name, email, photo_url, is_admin, password } = parseResult.data;
     const updateData: UpdateUserData = {};
 
-    // Solo actualizar campos que vienen en el body (no undefined)
-    if (body.name !== undefined) {
-      updateData.name = body.name;
-    }
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (photo_url !== undefined) updateData.photoUrl = photo_url;
     
-    if (body.email !== undefined) {
-      updateData.email = body.email;
-    }
-    
-    if (body.photo_url !== undefined) {
-      updateData.photoUrl = body.photo_url;
-    }
-
     // Solo permitimos cambiar isAdmin si el que edita es admin
-    if (isAdmin && body.is_admin !== undefined) {
-      updateData.isAdmin = body.is_admin === true || body.is_admin === 'true';
+    if (isAdmin && is_admin !== undefined) {
+      updateData.isAdmin = is_admin;
     }
 
-    if (body.password && body.password.trim().length >= 8) {
-      updateData.password = await bcrypt.hash(body.password, 10);
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
     }
 
     const updatedUser = await prisma.user.update({

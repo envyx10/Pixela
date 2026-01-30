@@ -44,3 +44,5 @@ next-env.d.ts
 # Internal docs
 DEVELOPER_GUIDE.md
 DEPLOYMENT_GUIDE.md
+SECURITY_FIX_SQLI.md
+
