@@ -63,11 +63,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const passwordsMatch = await bcrypt.compare(password, user.password);
         if (!passwordsMatch) return null;
 
+        // Evitar que imágenes en Base64 revienten el tamaño de la cookie (HTTP 431)
+        const isBase64Image = user.photoUrl?.startsWith('data:');
+        const isTooLong = user.photoUrl && user.photoUrl.length > 1000;
+        
         return {
           id: user.id.toString(),
           name: user.name,
           email: user.email,
-          image: user.photoUrl,
+          image: (isBase64Image || isTooLong) ? null : user.photoUrl,
           isAdmin: user.isAdmin
         };
       },

@@ -11,7 +11,7 @@ import { Providers } from "./providers";
 const STYLES = {
   html: `${roboto.variable} ${outfit.variable}`,
   body: "antialiased bg-pixela-dark",
-  container: "min-h-screen",
+  container: "min-h-screen flex flex-col",
   main: "flex-grow"
 } as const;
 

@@ -1,8 +1,7 @@
 'use client';
-
 import { useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { useSession } from 'next-auth/react';
 import Error403 from '@/app/error-403';
 
 interface ProtectedRouteProps {
@@ -12,7 +11,7 @@ interface ProtectedRouteProps {
 }
 
 const STYLES = {
-  loadingContainer: "min-h-screen bg-gradient-to-br from-[#0F0F0F] via-[#1A1A1A] to-[#0F0F0F] flex items-center justify-center pt-20",
+  loadingContainer: "min-h-screen bg-gradient-to-br from-[#0F0F0F] via-[#1A1A1A] to-[#0F0F0F] flex flex-col items-center justify-center pt-20",
   loadingContent: "text-center",
   loadingSpinner: "animate-spin rounded-full h-12 w-12 border-b-2 border-pixela-accent mx-auto mb-4",
   loadingText: "text-gray-300"
@@ -23,106 +22,47 @@ export function ProtectedRoute({
   requireAuth = true, 
   requireAdmin = false 
 }: ProtectedRouteProps) {
-  const { isAuthenticated, user, checkAuth } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isChecked, setIsChecked] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [authError, setAuthError] = useState(false);
+  const { data: session, status } = useSession();
   const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        // Verificar si hay un logout forzado
-        if (localStorage.getItem('forceLogout')) {
-          setIsLoggingOut(true);
-          localStorage.removeItem('forceLogout');
-          
-          // Timeout más corto para logout (500ms)
-          setTimeout(() => {
-            router.push('/');
-            
-            // Asegurar limpieza después de redirección
-            setTimeout(() => {
-              localStorage.removeItem('forceLogout');
-            }, 100);
-          }, 500);
-          return;
-        }
-        
-        // Dar tiempo suficiente para verificación de auth en producción (2.5 segundos)
-        const authPromise = checkAuth();
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout de verificación')), 2500)
-        );
-        
-        await Promise.race([authPromise, timeoutPromise]);
-        
-      } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Error checking auth:', error);
-        }
-        
-        // Solo marcar error si realmente requiere autenticación
-        if (requireAuth) {
-          setAuthError(true);
-        }
-      } finally {
-        // Asegurar que el estado se actualice
-        setIsLoading(false);
-        setIsChecked(true);
-      }
-    };
+    // Verificar si hay un logout forzado pendiente
+    if (typeof window !== 'undefined' && localStorage.getItem('forceLogout')) {
+      setIsLoggingOut(true);
+      localStorage.removeItem('forceLogout');
+      setTimeout(() => router.push('/'), 500);
+    }
+  }, [router]);
 
-    initAuth();
-  }, [checkAuth, requireAuth, router]);
-
-  // Verificar si hay un logout en progreso
-  if (typeof window !== 'undefined' && localStorage.getItem('forceLogout')) {
+  // 1. Estado de carga inicial (Session aun verificando o Logout en progreso)
+  if (status === 'loading' || isLoggingOut) {
     return (
       <div className={STYLES.loadingContainer}>
         <div className={STYLES.loadingContent}>
           <div className={STYLES.loadingSpinner}></div>
-          <p className={STYLES.loadingText}>Cerrando sesión...</p>
+          <p className={STYLES.loadingText}>
+            {isLoggingOut ? 'Cerrando sesión...' : 'Verificando autenticación...'}
+          </p>
         </div>
       </div>
     );
   }
 
-  // Mostrar mensaje de logout
-  if (isLoggingOut) {
-    return (
-      <div className={STYLES.loadingContainer}>
-        <div className={STYLES.loadingContent}>
-          <div className={STYLES.loadingSpinner}></div>
-          <p className={STYLES.loadingText}>Cerrando sesión...</p>
-        </div>
-      </div>
-    );
-  }
+  // 2. Verificaciones de seguridad UNA VEZ que tenemos session definitiva
+  const isAuthenticated = status === 'authenticated';
+  const isAdmin = session?.user?.isAdmin; // Asegúrate que isAdmin viene en tu sesión
 
-  // Mostrar loading mientras verificamos autenticación
-  if (isLoading || !isChecked) {
-    return (
-      <div className={STYLES.loadingContainer}>
-        <div className={STYLES.loadingContent}>
-          <div className={STYLES.loadingSpinner}></div>
-          <p className={STYLES.loadingText}>Verificando autenticación...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Verificar si requiere autenticación SOLO después de timeout o error real
-  if (requireAuth && (!isAuthenticated || authError)) {
+  // Validar Autenticación
+  if (requireAuth && !isAuthenticated) {
     return <Error403 />;
   }
 
-  // Verificar si requiere privilegios de administrador
-  if (requireAdmin && (!isAuthenticated || !user?.is_admin)) {
+  // Validar Rol Admin
+  if (requireAdmin && !isAdmin) {
     return <Error403 />;
   }
 
-  // Si pasa todas las verificaciones, renderizar children
+  // 3. Todo OK
   return <>{children}</>;
 } 
