@@ -7,12 +7,12 @@ import { MediaItem, MediaResponse } from "@/features/hero/types/content";
  * Cada medio debe tener un ID válido y un tipo específico.
  */
 export const featuredMedia: MediaItem[] = [
-  { id: "66732",  type: "serie" },  // From
-  { id: "1233413",  type: "movie" },  // Thunderbolts
-  { id: "79744",   type: "serie" },  // La acompañante
-  { id: "680",     type: "movie" },  // Pulp Fiction
-  { id: "1311031",   type: "movie" },  // Severance
-  { id: "4607",    type: "serie" },  // Lost
+  { id: "1317288", type: "movie" },
+  { id: "66732", type: "serie" },
+  { id: "1233413", type: "movie" },
+  { id: "680", type: "movie" },
+  { id: "1311031", type: "movie" },
+  { id: "4607", type: "serie" },
 ];
 
 // ✅ Cache simple en memoria para evitar llamadas duplicadas
@@ -21,24 +21,27 @@ const mediaCache = new Map<string, MediaResponse | null>();
 /**
  * ✅ Función helper para obtener media con cache
  */
-async function getMediaWithCache(item: MediaItem): Promise<MediaResponse | null> {
+async function getMediaWithCache(
+  item: MediaItem,
+): Promise<MediaResponse | null> {
   const cacheKey = `${item.type}-${item.id}`;
-  
+
   // Verificar cache
   if (mediaCache.has(cacheKey)) {
     return mediaCache.get(cacheKey) || null;
   }
 
   try {
-    const media = item.type === 'movie' 
-      ? await getPeliculaById(item.id)
-      : await getSerieById(item.id);
-    
+    const media =
+      item.type === "movie"
+        ? await getPeliculaById(item.id)
+        : await getSerieById(item.id);
+
     const result = media as MediaResponse;
     mediaCache.set(cacheKey, result);
     return result;
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.warn(`Error al obtener ${item.type} ${item.id}:`, error);
     }
     mediaCache.set(cacheKey, null);
@@ -54,7 +57,7 @@ async function getMediaWithCache(item: MediaItem): Promise<MediaResponse | null>
 export async function getFeaturedBackdrops(): Promise<string[]> {
   try {
     // console.time('[HERO] Carga de imágenes backdrop');
-    
+
     // ✅ Procesar todos en paralelo para máxima velocidad (primera impresión)
     // Aumentamos la concurrencia para que las imágenes se carguen inmediatamente
     const allPromises = featuredMedia.map(getMediaWithCache);
@@ -62,26 +65,27 @@ export async function getFeaturedBackdrops(): Promise<string[]> {
 
     // ✅ Filtrar y procesar resultados
     const backdrops = allResults
-      .filter((media): media is MediaResponse => media !== null && !!media.backdrop)
-      .map(media => media.backdrop!)
+      .filter(
+        (media): media is MediaResponse => media !== null && !!media.backdrop,
+      )
+      .map((media) => media.backdrop!)
       .filter(Boolean)
       .slice(0, 6); // Máximo 6 imágenes para el hero
 
     try {
       // console.timeEnd('[HERO] Carga de imágenes backdrop');
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error al finalizar el timer:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Error al finalizar el timer:", error);
       }
     }
-    
-    return backdrops;
 
+    return backdrops;
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.error("Error al obtener imágenes de fondo:", error);
     }
     // ✅ Fallback: devolver array vacío pero no fallar completamente
     return [];
   }
-} 
+}
