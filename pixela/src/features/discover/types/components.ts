@@ -1,4 +1,4 @@
-import { TrendingSerie, TrendingMovie } from '@/features/trending/types';
+import { TrendingSerie, TrendingMovie } from "@/features/trending/types";
 import { MediaContent, DiscoverMediaType as MediaType } from "./media";
 
 /**
@@ -8,8 +8,8 @@ import { MediaContent, DiscoverMediaType as MediaType } from "./media";
  * @property {TrendingMovie[]} movies - Lista de películas en tendencia
  */
 export interface DiscoverSectionProps {
-    series: TrendingSerie[];
-    movies: TrendingMovie[];
+  series: TrendingSerie[];
+  movies: TrendingMovie[];
 }
 
 /**
@@ -19,8 +19,8 @@ export interface DiscoverSectionProps {
  * @property {(type: MediaType) => void} onTypeChange - Función para cambiar el tipo de medio activo
  */
 export interface DiscoverSelectorProps {
-    activeType: MediaType;
-    onTypeChange: (type: MediaType) => void;
+  activeType: MediaType;
+  onTypeChange: (type: MediaType) => void;
 }
 
 /**
@@ -32,10 +32,10 @@ export interface DiscoverSelectorProps {
  * @property {boolean} [isMobile] - Indica si la tarjeta se muestra en una vista móvil
  */
 export interface DiscoverCardProps {
-    media: MediaContent;
-    type: MediaType;
-    index: number;
-    isMobile?: boolean;
+  media: MediaContent;
+  type: MediaType;
+  index: number;
+  isMobile?: boolean;
 }
 
 /**
@@ -44,5 +44,5 @@ export interface DiscoverCardProps {
  * @property {MediaType} type - El tipo de medio a mostrar ('serie' o 'pelicula')
  */
 export interface DiscoverGridProps {
-    type: MediaType;
-} 
+  type: MediaType;
+}
