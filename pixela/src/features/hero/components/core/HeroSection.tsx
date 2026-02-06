@@ -1,6 +1,11 @@
 "use client";
 import { useMemo, useEffect } from "react";
-import { ImageCarousel, NavigationControls, ProgressIndicator, ContentSection } from "@/features/hero/components";
+import {
+  ImageCarousel,
+  NavigationControls,
+  ProgressIndicator,
+  ContentSection,
+} from "@/features/hero/components";
 import { useHeroStore } from "@/features/hero/store/heroStore";
 import { HeroSectionProps } from "@/features/hero/types/content";
 import { useCarouselAutoPlay } from "@/features/hero/hooks/useCarouselAutoPlay";
@@ -10,8 +15,9 @@ import { preload } from "react-dom";
 const STYLES = {
   hero: {
     base: "relative w-full min-h-[80vh] sm:min-h-[85vh] md:min-h-screen lg:h-screen 2k:h-[70vh] overflow-hidden px-4 sm:px-6 md:px-8 lg:px-0 2k:px-0",
-    ipadFix: "sm:[min-height:1180px]:min-h-screen sm:[min-width:820px]:min-h-screen"
-  }
+    ipadFix:
+      "sm:[min-height:1180px]:min-h-screen sm:[min-width:820px]:min-h-screen",
+  },
 } as const;
 
 /**
@@ -24,31 +30,33 @@ export const HeroSection = ({
   accentTitle,
   description,
   secondaryButtonText,
-  images = []
+  images = [],
 }: HeroSectionProps) => {
   const imagesLength = useMemo(() => images.length, [images]);
   const { currentImageIndex } = useHeroStore();
-  
+
   useCarouselAutoPlay(imagesLength);
   useProgressBar();
-  
+
   /**
    * Preload de la primera imagen para garantizar carga inmediata
    */
   useEffect(() => {
     if (!images.length || !images[0]) return;
 
-    preload(images[0], { as: "image" });
+    // Preload both variants for optimal performance
+    preload(images[0].backdrop, { as: "image" });
+    preload(images[0].poster, { as: "image" });
   }, [images]);
-  
+
   return (
     <div className={`${STYLES.hero.base} ${STYLES.hero.ipadFix}`}>
       <ImageCarousel images={images} />
-      <NavigationControls imagesLength={imagesLength}/>
-      <ProgressIndicator images={images}/>
-  
-      <ContentSection 
-        title={title} 
+      <NavigationControls imagesLength={imagesLength} />
+      <ProgressIndicator images={images} />
+
+      <ContentSection
+        title={title}
         accentTitle={accentTitle}
         description={description}
         secondaryButtonText={secondaryButtonText}
@@ -57,4 +65,4 @@ export const HeroSection = ({
       />
     </div>
   );
-}; 
+};
