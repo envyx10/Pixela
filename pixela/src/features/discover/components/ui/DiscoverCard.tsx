@@ -5,7 +5,6 @@ import { FaStar } from "react-icons/fa";
 import { MediaContent } from "@/features/discover/types/media";
 import { TrendingSerie, TrendingMovie } from "@/features/trending/types";
 import clsx from "clsx";
-import { useState } from "react";
 import { Badge } from "@/shared/components/Badge";
 import { ActionButtons } from "@/shared/components/ActionButtons";
 import { useRouter } from "next/navigation";
@@ -18,7 +17,7 @@ const STYLES = {
     "relative aspect-[2/3] group rounded-2xl overflow-hidden cursor-pointer",
   image: "object-cover",
   overlay:
-    "absolute inset-0 bg-gradient-to-t from-pixela-dark via-pixela-dark/70 to-transparent flex flex-col justify-end p-3 sm:p-4 transition-all duration-500 ease-in-out opacity-0 group-hover:opacity-100",
+    "absolute inset-0 bg-gradient-to-t from-pixela-dark via-pixela-dark/70 to-transparent flex flex-col justify-end p-3 sm:p-4 transition-all duration-700 ease-in-out opacity-0 group-hover:opacity-100 group-hover:delay-100",
   overlayContent: "mb-3 sm:mb-4",
   title: "text-pixela-light font-bold text-lg sm:text-xl mb-2 font-outfit",
   infoContainer: "flex items-center gap-2 sm:gap-3 mb-3",
@@ -107,11 +106,9 @@ export const DiscoverCard = ({
   index,
   isMobile,
 }: DiscoverCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
 
   const imagePath = media.poster_path || media.backdrop_path;
-
   const isHighRated = (media.vote_average ?? 0) >= HIGH_RATING_THRESHOLD;
 
   const containerClasses = clsx(
@@ -144,12 +141,7 @@ export const DiscoverCard = ({
   };
 
   return (
-    <div
-      className={containerClasses}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={handleCardClick}
-    >
+    <div className={containerClasses} onClick={handleCardClick}>
       <Image
         src={tmdbImageHelpers.poster(imagePath) || TMDB_PLACEHOLDER.POSTER}
         alt={getMediaTitle(media)}
@@ -163,13 +155,11 @@ export const DiscoverCard = ({
 
       <div className={STYLES.noiseEffect} />
 
-      {isHovered && (
-        <OverlayContent
-          media={media}
-          type={type}
-          onFollowClick={handleFollowClick}
-        />
-      )}
+      <OverlayContent
+        media={media}
+        type={type}
+        onFollowClick={handleFollowClick}
+      />
 
       {isHighRated && (
         <Badge label="TOP PIXELA" position="top-left" variant="primary" />
