@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { memo } from "react";
+import { useState, memo } from "react";
 import { Badge } from "@/shared/components/Badge";
 import { ActionButtons } from "@/shared/components/ActionButtons";
 import { MediaInfoDetails } from "./MediaInfoDetails";
@@ -52,7 +52,7 @@ PosterImage.displayName = "PosterImage";
  */
 const OverlayContent = memo(
   ({ media, type, onFollowClick }: OverlayContentProps) => (
-    <div className="absolute inset-0 flex flex-col justify-end p-5 transition-all duration-500 ease-in-out bg-gradient-to-t from-pixela-dark via-pixela-dark/70 to-transparent opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto">
+    <div className="absolute inset-0 flex flex-col justify-end p-5 transition-all duration-500 ease-in-out bg-gradient-to-t from-pixela-dark via-pixela-dark/70 to-transparent">
       <ActionButtons
         tmdbId={Number(media.id)}
         itemType={type === "series" ? "series" : "movie"}
@@ -72,6 +72,7 @@ OverlayContent.displayName = "OverlayContent";
  */
 export const TrendingMediaCard = memo(
   ({ media, type, index = 0 }: TrendingMediaCardProps) => {
+    const [isHovered, setIsHovered] = useState(false);
     const router = useRouter();
 
     const isHighRated = media.vote_average >= HIGH_RATING_THRESHOLD;
@@ -96,7 +97,12 @@ export const TrendingMediaCard = memo(
     };
 
     return (
-      <div className={STYLES.card} onClick={handleCardClick}>
+      <div
+        className={STYLES.card}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={handleCardClick}
+      >
         <div className={STYLES.posterContainer}>
           <PosterImage
             posterPath={media.poster_path}
@@ -106,11 +112,13 @@ export const TrendingMediaCard = memo(
 
           <div className={STYLES.noiseEffect} />
 
-          <OverlayContent
-            media={media}
-            type={type}
-            onFollowClick={handleFollowClick}
-          />
+          {isHovered && (
+            <OverlayContent
+              media={media}
+              type={type}
+              onFollowClick={handleFollowClick}
+            />
+          )}
 
           {isHighRated && (
             <Badge label="TOP PIXELA" position="top-left" variant="primary" />

@@ -6,8 +6,8 @@ import { TrendingSerie, TrendingMovie } from "@/features/trending/types";
  * @property {string} MOVIES - Películas
  */
 export const MEDIA_TYPES = {
-    SERIES: 'series',
-    MOVIES: 'movies',
+  SERIES: "series",
+  MOVIES: "movies",
 };
 
 /**
@@ -17,7 +17,7 @@ export const MEDIA_TYPES = {
  * @property {string} serie - Serie
  * @property {string} pelicula - Película
  */
-export type DiscoverMediaType = 'serie' | 'pelicula';
+export type DiscoverMediaType = "serie" | "pelicula";
 
 /**
  * Tipo para el contenido multimedia (serie o película)
@@ -35,8 +35,8 @@ export type MediaContent = TrendingSerie | TrendingMovie;
  * @property {Array<TrendingSerie | TrendingMovie>} data - Datos de la respuesta
  */
 export interface DiscoverResponse {
-    success: boolean;
-    data: (TrendingSerie | TrendingMovie)[];
+  success: boolean;
+  data: (TrendingSerie | TrendingMovie)[];
 }
 
-export type { TrendingSerie, TrendingMovie }; 
+export type { TrendingSerie, TrendingMovie };

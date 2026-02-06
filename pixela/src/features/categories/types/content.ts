@@ -1,5 +1,5 @@
-import { Category } from '@/api/categories/categories';
-import { Pelicula, Serie } from '@/features/media/types/content';
+import { Category } from "@/api/categories/categories";
+import { Pelicula, Serie } from "@/features/media/types/content";
 
 /**
  * Props del componente CategoriesContent
@@ -16,16 +16,16 @@ import { Pelicula, Serie } from '@/features/media/types/content';
  * @param {number} totalPages - Total de páginas disponibles
  */
 export interface CategoriesContentProps {
-    selectedCategory: Category | null;
-    movies: Pelicula[];
-    series: Serie[];
-    loading: boolean;
-    error: string | null;
-    searchQuery: string;
-    onSearch: (query: string) => void;
-    mediaType: 'all' | 'movies' | 'series' | 'random';
-    currentPage: number;
-    totalPages: number;
+  selectedCategory: Category | null;
+  movies: Pelicula[];
+  series: Serie[];
+  loading: boolean;
+  error: string | null;
+  searchQuery: string;
+  onSearch: (query: string) => void;
+  mediaType: "all" | "movies" | "series" | "random";
+  currentPage: number;
+  totalPages: number;
 }
 
 /**
@@ -34,11 +34,11 @@ export interface CategoriesContentProps {
  * @param {number} [count=12] - Número de elementos esqueleto a mostrar
  */
 export interface ContentSkeletonProps {
-    count?: number;
+  count?: number;
 }
 
 export interface OverlayContentProps {
   media: Pelicula | Serie;
-  type: 'movies' | 'series';
+  type: "movies" | "series";
   onFollowClick: () => void;
-} 
+}
