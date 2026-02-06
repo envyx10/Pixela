@@ -8,12 +8,32 @@
  * @property {string[]} images - Imágenes del hero
  * @property {number} currentImageIndex - Índice de la imagen actual
  */
+/**
+ * Estructura de imagen responsiva para el Hero
+ * @property {string} backdrop - URL de imagen para escritorio (horizontal)
+ * @property {string} poster - URL de imagen para móvil (vertical)
+ */
+export interface HeroImage {
+  backdrop: string;
+  poster: string;
+}
+
+/**
+ * Interfaz que define la estructura del contenido del hero
+ * @interface HeroContent
+ * @property {string} title - Título del hero
+ * @property {string} accentTitle - Título del hero
+ * @property {string} description - Descripción del hero
+ * @property {string} secondaryButtonText - Texto del botón secundario
+ * @property {HeroImage[]} images - Imágenes del hero
+ * @property {number} currentImageIndex - Índice de la imagen actual
+ */
 export interface HeroContent {
   title: string;
   accentTitle: string;
   description: string;
   secondaryButtonText: string;
-  images: string[];
+  images: HeroImage[];
   currentImageIndex?: number;
 }
 
@@ -35,14 +55,14 @@ export interface HeroTitleProps {
  * @property {string} accentTitle - Título con acento
  * @property {string} description - Descripción del hero
  * @property {string} secondaryButtonText - Texto del botón secundario
- * @property {string[]} images - Array de URLs de imágenes
+ * @property {HeroImage[]} images - Array de objetos de imágenes (backdrop + poster)
  */
 export interface HeroData {
   title: string;
   accentTitle: string;
   description: string;
   secondaryButtonText: string;
-  images: string[];
+  images: HeroImage[];
 }
 
 /**
@@ -67,10 +87,10 @@ export interface SecondaryButtonProps {
 
 /**
  * Props para el componente ImageCarousel
- * @property {string[]} images - Array de URLs de imágenes para el carrusel
+ * @property {HeroImage[]} images - Array de objetos de imágenes para el carrusel
  */
 export interface ImageCarouselProps {
-  images: string[];
+  images: HeroImage[];
 }
 
 /**
@@ -79,14 +99,14 @@ export interface ImageCarouselProps {
  * @property {string} accentTitle - Título acentuado que complementa al título principal
  * @property {string} description - Descripción detallada de la sección
  * @property {string} secondaryButtonText - Texto del botón secundario
- * @property {string[]} [images] - Array opcional de URLs de imágenes para el carrusel
+ * @property {HeroImage[]} [images] - Array opcional de objetos de imágenes para el carrusel
  */
 export interface HeroSectionProps {
   title: string;
   accentTitle: string;
   description: string;
   secondaryButtonText: string;
-  images?: string[];
+  images?: HeroImage[];
 }
 
 /**
@@ -103,7 +123,7 @@ export interface NavigationControlsProps {
  * @property {() => void} onClick - Función que se ejecuta al hacer clic en el botón
  */
 export interface NavigationButtonProps {
-  direction: 'prev' | 'next';
+  direction: "prev" | "next";
   onClick: () => void;
 }
 
@@ -114,21 +134,23 @@ export interface NavigationButtonProps {
  */
 export type MediaItem = {
   id: string;
-  type: 'movie' | 'serie';
+  type: "movie" | "serie";
 };
 
 /**
  * Props para el componente ProgressIndicator
- * @property {string[]} images - Array de URLs de imágenes para el carrusel
+ * @property {HeroImage[]} images - Array de objetos de imágenes para el carrusel
  */
 export interface ProgressIndicatorProps {
-  images: string[];
+  images: HeroImage[];
 }
 
 /**
  * Tipo que representa la respuesta de la API para un medio
  * @property {string} [backdrop] - URL opcional del fondo del medio
+ * @property {string} [poster] - URL opcional del poster del medio
  */
 export type MediaResponse = {
   backdrop?: string;
-}; 
+  poster?: string;
+};

@@ -1,6 +1,10 @@
 import { getPeliculaById } from "@/api/peliculas/peliculas";
 import { getSerieById } from "@/api/series/series";
-import { MediaItem, MediaResponse } from "@/features/hero/types/content";
+import {
+  MediaItem,
+  MediaResponse,
+  HeroImage,
+} from "@/features/hero/types/content";
 
 /**
  * Lista de medios destacados cuyas imágenes se mostrarán en el Hero.
@@ -50,42 +54,36 @@ async function getMediaWithCache(
 }
 
 /**
- * ✅ Obtiene los fondos destacados para el hero con optimizaciones de rendimiento
+ * ✅ Obtiene las imágenes destacadas (backdrop + poster) para el hero con optimizaciones
  * Prioriza velocidad de carga para mostrar las imágenes backdrop como primera impresión
- * @returns {Promise<string[]>} Array de URLs de imágenes
+ * @returns {Promise<HeroImage[]>} Array de objetos de imágenes
  */
-export async function getFeaturedBackdrops(): Promise<string[]> {
+export async function getFeaturedImages(): Promise<HeroImage[]> {
   try {
-    // console.time('[HERO] Carga de imágenes backdrop');
+    // console.time('[HERO] Carga de imágenes hero');
 
-    // ✅ Procesar todos en paralelo para máxima velocidad (primera impresión)
-    // Aumentamos la concurrencia para que las imágenes se carguen inmediatamente
+    // ✅ Procesar todos en paralelo para máxima velocidad
     const allPromises = featuredMedia.map(getMediaWithCache);
     const allResults = await Promise.all(allPromises);
 
     // ✅ Filtrar y procesar resultados
-    const backdrops = allResults
+    const images: HeroImage[] = allResults
       .filter(
-        (media): media is MediaResponse => media !== null && !!media.backdrop,
+        (media): media is MediaResponse =>
+          media !== null && !!media.backdrop && !!media.poster,
       )
-      .map((media) => media.backdrop!)
-      .filter(Boolean)
-      .slice(0, 6); // Máximo 6 imágenes para el hero
+      .map((media) => ({
+        backdrop: media.backdrop!,
+        poster: media.poster!,
+      }))
+      .slice(0, 6); // Máximo 6 imágenes
 
-    try {
-      // console.timeEnd('[HERO] Carga de imágenes backdrop');
-    } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.error("Error al finalizar el timer:", error);
-      }
-    }
-
-    return backdrops;
+    return images;
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
-      console.error("Error al obtener imágenes de fondo:", error);
+      console.error("Error al obtener imágenes del hero:", error);
     }
-    // ✅ Fallback: devolver array vacío pero no fallar completamente
+    // ✅ Fallback: devolver array vacío
     return [];
   }
 }

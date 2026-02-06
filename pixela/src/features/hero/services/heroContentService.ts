@@ -1,4 +1,4 @@
-import { getFeaturedBackdrops } from '@/features/hero/services/heroBackdropService';
+import { getFeaturedImages } from "@/features/hero/services/heroBackdropService";
 import { HeroData } from "../types/content";
 
 /**
@@ -7,13 +7,14 @@ import { HeroData } from "../types/content";
  * para crear el contenido final del hero.
  */
 export async function getHeroData(): Promise<HeroData> {
-  const images = await getFeaturedBackdrops();
-  
+  const images = await getFeaturedImages();
+
   return {
     title: "Explora el universo",
     accentTitle: "cinematográfico",
-    description: "Descubre, colecciona y comparte experiencias audiovisuales en una comunidad de apasionados del cine y las series.",
+    description:
+      "Descubre, colecciona y comparte experiencias audiovisuales en una comunidad de apasionados del cine y las series.",
     secondaryButtonText: "Descubrir más",
     images,
   };
-} 
+}
