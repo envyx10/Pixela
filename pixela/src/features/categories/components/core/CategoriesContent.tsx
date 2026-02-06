@@ -59,7 +59,7 @@ const STYLES = {
   poster: "object-cover",
   noiseEffect: "noise-effect opacity-5",
   overlay:
-    "absolute inset-0 bg-gradient-to-t from-pixela-dark/95 via-pixela-dark/80 to-transparent flex flex-col justify-end p-3 md:p-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100 rounded-lg",
+    "absolute inset-0 bg-gradient-to-t from-pixela-dark/95 via-pixela-dark/80 to-transparent flex flex-col justify-end p-3 md:p-4 transition-all duration-700 ease-in-out opacity-0 group-hover:opacity-100 group-hover:delay-100 rounded-lg",
   overlayContent: "mb-2 md:mb-3",
   title:
     "text-pixela-light font-bold text-sm md:text-base lg:text-lg mb-1 md:mb-2 font-outfit overflow-hidden text-ellipsis whitespace-nowrap",
@@ -122,7 +122,7 @@ const STYLES = {
   recommendationCardContent:
     "relative z-10 w-full h-full overflow-hidden rounded-[15px] bg-gradient-to-br from-[#181818]/95 to-[#1a1a1a]/95 shadow-2xl shadow-pixela-accent/5 transition-all duration-300",
   recommendationOverlay:
-    "absolute inset-0 flex flex-col justify-end p-4 transition-opacity duration-300 opacity-0 bg-gradient-to-t from-pixela-dark via-pixela-dark/70 to-transparent group-hover:opacity-100",
+    "absolute inset-0 flex flex-col justify-end p-4 transition-all duration-700 ease-in-out opacity-0 bg-gradient-to-t from-pixela-dark via-pixela-dark/70 to-transparent group-hover:opacity-100 group-hover:delay-100",
   recommendationTitle:
     "mb-2 text-base font-bold leading-tight text-pixela-light md:text-lg font-outfit line-clamp-2 text-left",
   recommendationInfo: "flex flex-wrap items-center gap-2 mb-2",
