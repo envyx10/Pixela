@@ -870,12 +870,32 @@ const CategoriesContent = memo(
     });
     const currentSearchValue = watch("searchTerm");
 
+    // Sincronizar el formulario con la prop searchQuery externa solo si cambia externamente
     useEffect(() => {
-      reset({ searchTerm: searchQuery || "" });
-    }, [searchQuery, reset]);
+      if (searchQuery && searchQuery !== currentSearchValue) {
+        reset({ searchTerm: searchQuery });
+      }
+    }, [searchQuery, reset]); // Removed currentSearchValue from dependency to avoid loop
+
+    // Búsqueda en tiempo real con debounce
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        if (
+          currentSearchValue !== undefined &&
+          currentSearchValue !== searchQuery
+        ) {
+          onSearch(currentSearchValue);
+        }
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }, [currentSearchValue, onSearch, searchQuery]);
 
     const onFormSubmit = (data: SearchFormData) => {
-      onSearch(data.searchTerm);
+      // Evitar doble búsqueda si ya se disparó por debounce
+      if (data.searchTerm !== searchQuery) {
+        onSearch(data.searchTerm);
+      }
     };
 
     const handleClearSearch = () => {
@@ -894,29 +914,10 @@ const CategoriesContent = memo(
       }
     };
 
-    if (error) {
-      return <div className={STYLES.errorState}>{error}</div>;
-    }
-
-    if (mediaType !== "random" && loading) {
-      return (
-        <div className="relative">
-          <ContentSkeleton />
-        </div>
-      );
-    }
-
     const hasContent = movies.length > 0 || series.length > 0;
 
-    // Solo mostrar estado vacío si no está cargando Y no hay contenido
-    if (!hasContent && !loading && mediaType !== "random") {
-      return (
-        <div className={STYLES.emptyState}>
-          {selectedCategory
-            ? `No se encontró contenido en la categoría ${selectedCategory.name}`
-            : "No se encontró contenido"}
-        </div>
-      );
+    if (error) {
+      return <div className={STYLES.errorState}>{error}</div>;
     }
 
     return (
@@ -958,29 +959,42 @@ const CategoriesContent = memo(
           </form>
         )}
 
-        {mediaType !== "random" && hasContent && (
-          <ItemCounter
-            moviesCount={movies.length}
-            seriesCount={series.length}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            isSearching={!!searchQuery.trim()}
-            searchQuery={searchQuery}
-            mediaType={mediaType}
-          />
+        {mediaType !== "random" && loading ? (
+          <div className="relative">
+            <ContentSkeleton />
+          </div>
+        ) : !hasContent && mediaType !== "random" ? (
+          <div className={STYLES.emptyState}>
+            {selectedCategory
+              ? `No se encontró contenido en la categoría ${selectedCategory.name}`
+              : "No se encontró contenido"}
+          </div>
+        ) : (
+          <>
+            {mediaType !== "random" && hasContent && (
+              <ItemCounter
+                moviesCount={movies.length}
+                seriesCount={series.length}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                isSearching={!!searchQuery.trim()}
+                searchQuery={searchQuery}
+                mediaType={mediaType}
+              />
+            )}
+            <div className={STYLES.contentWrapper}>
+              {mediaType === "random" ? (
+                <RandomRecommendations
+                  movies={movies}
+                  series={series}
+                  mediaType={mediaType}
+                />
+              ) : (
+                <ContentGrid movies={movies} series={series} searchTerm={""} />
+              )}
+            </div>
+          </>
         )}
-
-        <div className={STYLES.contentWrapper}>
-          {mediaType === "random" ? (
-            <RandomRecommendations
-              movies={movies}
-              series={series}
-              mediaType={mediaType}
-            />
-          ) : (
-            <ContentGrid movies={movies} series={series} searchTerm={""} />
-          )}
-        </div>
       </div>
     );
   },
