@@ -15,6 +15,7 @@ export interface ProfileFormData {
   email: string;
   password?: string;
   password_confirmation?: string;
+  cover_url?: string;
   created_at: string;
   is_admin: boolean;
   photo_url?: string;
@@ -26,7 +27,7 @@ export interface ProfileFormData {
  * @property {Object} initialData - Datos iniciales del formulario
  * @property {string} initialData.name - Nombre del usuario
  * @property {string} initialData.email - Email del usuario
- * @property {string} initialData.password - Contraseña del usuario 
+ * @property {string} initialData.password - Contraseña del usuario
  * @property {string} initialData.photo_url - URL de la imagen del usuario
  * @property {function} onCancel - Función para cancelar el formulario
  * @property {function} onSubmit - Función para enviar el formulario
@@ -37,6 +38,7 @@ export interface UpdateProfileFormProps {
     email: string;
     password?: string;
     photo_url?: string;
+    cover_url?: string;
   };
   onCancel: () => void;
   onSubmit: (data: ProfileFormData) => void;
@@ -49,7 +51,7 @@ export interface UpdateProfileFormProps {
  */
 export interface ProfileErrorProps {
   message?: string;
-} 
+}
 
 /**
  * Props para el componente ProfileClient

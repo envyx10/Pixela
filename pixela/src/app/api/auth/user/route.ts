@@ -1,27 +1,31 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import prisma from '@/lib/prisma';
+import { NextResponse } from "next/server";
+import { auth } from "@/auth";
+import prisma from "@/lib/prisma";
 
 export async function GET() {
   try {
     const session = await auth();
 
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        photoUrl: true,
+        coverImage: true,
+        isAdmin: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     if (!user) {
-      return NextResponse.json(
-        { message: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     // Transform Prisma model to UserResponse interface format (snake_case)
@@ -31,20 +35,20 @@ export async function GET() {
       name: user.name,
       email: user.email,
       photo_url: user.photoUrl,
+      cover_url: user.coverImage,
       is_admin: user.isAdmin,
       // Security: Never send the password hash to the client
-      password: '', 
+      password: "",
       created_at: user.createdAt.toISOString(),
       updated_at: user.updatedAt.toISOString(),
     };
 
     return NextResponse.json(responseData);
-
   } catch (error) {
-    console.error('[API_AUTH_USER]', error);
+    console.error("[API_AUTH_USER]", error);
     return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 }
+      { message: "Internal Server Error" },
+      { status: 500 },
     );
   }
 }

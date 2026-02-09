@@ -13,6 +13,7 @@ model User {
   email         String    @unique
   password      String?   // Opcional para logins sociales o si migramos solo hash
   photoUrl      String?   @map("photo_url") @db.Text
+  coverImage    String?   @map("cover_image") @db.Text
   emailVerified DateTime? @map("email_verified_at")
   isAdmin       Boolean   @default(false) @map("is_admin")
   createdAt     DateTime  @default(now()) @map("created_at")
@@ -20,6 +21,7 @@ model User {
 
   favorites     Favorite[]
   reviews       Review[]
+  libraryItems  LibraryItem[]
 
   @@map("users")
 }
@@ -56,4 +58,26 @@ model Review {
 enum ItemType {
   movie
   series
+}
+
+enum WatchStatus {
+  PLAN_TO_WATCH
+  WATCHING
+  COMPLETED
+  DROPPED
+}
+
+model LibraryItem {
+  id        Int         @id @default(autoincrement()) @map("library_item_id")
+  userId    Int         @map("user_id")
+  itemType  ItemType    @map("item_type")
+  tmdbId    BigInt      @map("tmdb_id")
+  status    WatchStatus @default(PLAN_TO_WATCH)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemType, tmdbId])
+  @@map("library_items")
 }
