@@ -9,12 +9,13 @@
  * @property {string} password - Contraseña del usuario
  */
 export interface User {
-    user_id: number;
-    name: string;
-    email: string;
-    photo_url?: string;
-    is_admin: boolean;
-    password?: string;
-    created_at: string;
-    updated_at: string;
+  user_id: number;
+  name: string;
+  email: string;
+  photo_url?: string;
+  cover_url?: string;
+  is_admin: boolean;
+  password?: string;
+  created_at: string;
+  updated_at: string;
 }

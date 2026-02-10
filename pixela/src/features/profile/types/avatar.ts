@@ -2,7 +2,7 @@
  * Tamaños disponibles para el avatar
  * @type {AvatarSize}
  */
-export type AvatarSize = 'sm' | 'md' | 'lg';
+export type AvatarSize = 'sm' | 'md' | 'lg' | 'full';
 
 /**
  * Props del componente UserAvatar

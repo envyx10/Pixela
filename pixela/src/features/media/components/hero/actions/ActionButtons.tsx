@@ -1,24 +1,27 @@
 "use client";
 
-import { FaBookmark, FaPen } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/stores/useAuthStore';
-import { favoritesAPI } from '@/api/favorites/favorites';
-import { ReviewModal } from '@/features/media/components/review/ReviewModal';
-import { ActionButtonsProps } from '@/features/media/types/actions';
-import { toast } from '@/lib/toast';
-
+import { FaBookmark, FaPen } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { favoritesAPI } from "@/api/favorites/favorites";
+import { ReviewModal } from "@/features/media/components/review/ReviewModal";
+import { ActionButtonsProps } from "@/features/media/types/actions";
+import { toast } from "@/lib/toast";
+import { LibraryButton } from "@/features/media/components/actions/LibraryButton";
 
 const STYLES = {
-  container: 'flex gap-4',
-  favoriteButton: (isFavorited: boolean, isLoading: boolean) => `p-3 rounded-lg font-medium transition duration-300 flex items-center gap-2 shadow-lg ${isFavorited ? 'bg-[#FF2D55] text-white border border-white/20 hover:bg-[#FF4A6B]' : 'bg-[#FF2D55]/10 text-[#FF2D55] border border-[#FF2D55]/40 hover:bg-[#FF2D55]/20'} ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`,
-  bookmarkIcon: (isFavorited: boolean) => `w-5 h-5 transition-all duration-300 ${isFavorited ? '' : 'drop-shadow-[0_0_8px_rgba(255,45,85,0.5)] scale-110'}`,
-  reviewButton: 'bg-[#1A1A1A] hover:bg-[#252525] text-white px-8 py-3 rounded-lg font-medium transition duration-300 flex items-center gap-2 border border-white/10 relative z-50',
-  penIcon: 'w-5 h-5',
+  container: "flex gap-4",
+  favoriteButton: (isFavorited: boolean, isLoading: boolean) =>
+    `p-3 rounded-lg font-medium transition duration-300 flex items-center gap-2 shadow-lg ${isFavorited ? "bg-[#FF2D55] text-white border border-white/20 hover:bg-[#FF4A6B]" : "bg-[#FF2D55]/10 text-[#FF2D55] border border-[#FF2D55]/40 hover:bg-[#FF2D55]/20"} ${isLoading ? "opacity-60 cursor-not-allowed" : ""}`,
+  bookmarkIcon: (isFavorited: boolean) =>
+    `w-5 h-5 transition-all duration-300 ${isFavorited ? "" : "drop-shadow-[0_0_8px_rgba(255,45,85,0.5)] scale-110"}`,
+  reviewButton:
+    "bg-[#1A1A1A] hover:bg-[#252525] text-white px-8 py-3 rounded-lg font-medium transition duration-300 flex items-center gap-2 border border-white/10 relative z-50",
+  penIcon: "w-5 h-5",
 };
 
-/** 
+/**
  * Componente que muestra los botones de acción para una película o serie
  * @param {ActionButtonsProps} props - Propiedades del componente
  * @param {number} props.tmdbId - ID de la película o serie
@@ -27,7 +30,12 @@ const STYLES = {
  * @param {() => void} [props.refreshReviews] - Función para refrescar las reseñas
  * @returns {JSX.Element} Componente de botones de acción
  */
-export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: ActionButtonsProps) => {
+export const ActionButtons = ({
+  tmdbId,
+  itemType,
+  title,
+  refreshReviews,
+}: ActionButtonsProps) => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [favoriteId, setFavoriteId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,14 +53,14 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
 
       try {
         const favorites = await favoritesAPI.listWithDetails();
-        const fav = favorites.find(fav =>
-          fav.tmdb_id === tmdbId && fav.item_type === itemType
+        const fav = favorites.find(
+          (fav) => fav.tmdb_id === tmdbId && fav.item_type === itemType,
         );
         setIsFavorited(!!fav);
         setFavoriteId(fav ? fav.id : null);
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Error checking favorite status:', error);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Error checking favorite status:", error);
         }
       }
     };
@@ -66,11 +74,11 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
    */
   const handleFavorite = async () => {
     if (!isAuthenticated) {
-      toast.info('Inicia sesión para agregar a favoritos', {
-        title: 'Autenticación requerida',
+      toast.info("Inicia sesión para agregar a favoritos", {
+        title: "Autenticación requerida",
         duration: 3000,
       });
-      router.push('/login');
+      router.push("/login");
       return;
     }
 
@@ -91,19 +99,18 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
 
       // Refresca el estado real desde la API
       const favorites = await favoritesAPI.listWithDetails();
-      const fav = favorites.find(fav =>
-        fav.tmdb_id === tmdbId && fav.item_type === itemType
+      const fav = favorites.find(
+        (fav) => fav.tmdb_id === tmdbId && fav.item_type === itemType,
       );
       setIsFavorited(!!fav);
       setFavoriteId(fav ? fav.id : null);
-
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error toggling favorite:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Error toggling favorite:", error);
       }
-      if (error instanceof Error && error.message.includes('401')) {
+      if (error instanceof Error && error.message.includes("401")) {
         await checkAuth();
-        router.push('/login');
+        router.push("/login");
       }
     } finally {
       setIsLoading(false);
@@ -116,11 +123,11 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
    */
   const handleReview = () => {
     if (!isAuthenticated) {
-      toast.info('Inicia sesión para escribir una reseña', {
-        title: 'Autenticación requerida',
+      toast.info("Inicia sesión para escribir una reseña", {
+        title: "Autenticación requerida",
         duration: 3000,
       });
-      router.push('/login');
+      router.push("/login");
       return;
     }
     setShowReviewModal(true);
@@ -129,16 +136,18 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
   return (
     <>
       <div className={STYLES.container}>
-        <button 
+        <button
           onClick={handleFavorite}
           disabled={isLoading}
           className={STYLES.favoriteButton(isFavorited, isLoading)}
-          aria-label={isFavorited ? 'Quitar de favoritos' : 'Agregar a favoritos'}
-          title={isFavorited ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+          aria-label={
+            isFavorited ? "Quitar de favoritos" : "Agregar a favoritos"
+          }
+          title={isFavorited ? "Quitar de favoritos" : "Agregar a favoritos"}
         >
           <FaBookmark className={STYLES.bookmarkIcon(isFavorited)} />
         </button>
-        <button 
+        <button
           onClick={handleReview}
           className={STYLES.reviewButton}
           type="button"
@@ -146,6 +155,7 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
           <FaPen className={STYLES.penIcon} />
           Hacer Reseña
         </button>
+        <LibraryButton tmdbId={tmdbId} itemType={itemType} title={title} />
       </div>
 
       <ReviewModal
@@ -158,4 +168,4 @@ export const ActionButtons = ({ tmdbId, itemType, title, refreshReviews }: Actio
       />
     </>
   );
-}; 
+};

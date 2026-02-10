@@ -4,7 +4,7 @@ import { ReactNode } from "react";
  * Tipos de pestañas
  * @type {TabType}
  */
-export type TabType = 'profile' | 'reviews' | 'favorites' | 'users';
+export type TabType = "profile" | "reviews" | "favorites" | "users" | "library";
 
 /**
  * Props para el componente ProfileTabs
@@ -14,13 +14,12 @@ export type TabType = 'profile' | 'reviews' | 'favorites' | 'users';
  * @property {boolean} isAdmin - Indica si el usuario es administrador
  */
 export interface ProfileTabsProps {
-    activeTab: TabType;
-    onTabChange: (tab: TabType) => void;
-    isAdmin: boolean;
+  activeTab: TabType;
+  onTabChange: (tab: TabType) => void;
+  isAdmin: boolean;
 }
 
-
-/** 
+/**
  * Props para el componente TabNavigationButton
  * @interface TabNavigationButtonProps
  * @property {string} label - Etiqueta de la pestaña
@@ -29,8 +28,8 @@ export interface ProfileTabsProps {
  * @property {function} onClick - Función para cambiar la pestaña
  */
 export interface TabNavigationButtonProps {
-    label: string;
-    icon: ReactNode;
-    isActive: boolean;
-    onClick: () => void;
-  }
+  label: string;
+  icon: ReactNode;
+  isActive: boolean;
+  onClick: () => void;
+}

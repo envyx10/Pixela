@@ -1,81 +1,35 @@
-import { useEffect, useState } from 'react';
-import { reviewsAPI } from '@/api/reviews/reviews';
-import type { Review } from '@/api/reviews/types';
-import { FiLoader, FiAlertCircle, FiStar, FiEdit, FiCheck, FiX } from 'react-icons/fi';
-import { FaTrash } from 'react-icons/fa';
-import Image from 'next/image';
-import Link from 'next/link';
-import clsx from 'clsx';
-import { StarEditProps } from '@/features/profile/types/layout';
+import { useEffect, useState } from "react";
+import { reviewsAPI } from "@/api/reviews/reviews";
+import type { Review } from "@/api/reviews/types";
+import {
+  FiLoader,
+  FiAlertCircle,
+  FiStar,
+  FiEdit,
+  FiCheck,
+  FiX,
+} from "react-icons/fi";
+import { FaTrash } from "react-icons/fa";
+import Image from "next/image";
+import Link from "next/link";
+import clsx from "clsx";
+import { StarEditProps } from "@/features/profile/types/layout";
 
 /**
  * URL base para las imágenes de TMDB
  */
-const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 /**
  * Mensajes de error constantes
  */
 const ERROR_MESSAGES = {
-  LOAD: 'No se pudieron cargar las reseñas.',
-  DELETE: 'No se pudo eliminar la reseña',
-  UPDATE: 'No se pudo actualizar la reseña'
+  LOAD: "No se pudieron cargar las reseñas.",
+  DELETE: "No se pudo eliminar la reseña",
+  UPDATE: "No se pudo actualizar la reseña",
 } as const;
 
-/**
- * Estilos constantes para el componente ProfileReviews
- */
-const STYLES = {
-  container: '[&_.content-panel__content]:!block space-y-2',
-  loadingContainer: 'flex items-center justify-center p-8',
-  loadingIcon: 'w-8 h-8 text-pixela-primary animate-spin',
-  errorContainer: 'flex items-center justify-center p-8 text-red-500',
-  errorIcon: 'w-6 h-6 mr-2',
-  emptyContainer: 'flex flex-col items-center justify-center p-8 text-gray-400',
-  emptyIcon: 'w-12 h-12 mb-4',
-  emptyText: 'text-lg font-outfit',
-  reviewItem: clsx(
-    'flex items-center bg-pixela-dark-opacity/50',
-    'hover:bg-pixela-dark-opacity/70 transition-all duration-300 -mr-6'
-  ),
-  posterContainer: 'relative w-[100px] h-[150px] flex-shrink-0 group',
-  posterImage: 'object-cover cursor-pointer transition-all duration-300 group-hover:scale-105',
-  posterOverlay: clsx(
-    'absolute inset-0 bg-black/60 opacity-0',
-    'group-hover:opacity-100 transition-opacity duration-300',
-    'flex items-center justify-center'
-  ),
-  overlayText: 'text-white text-sm font-medium',
-  noImageContainer: 'w-full h-full flex items-center justify-center bg-pixela-dark text-gray-500 text-sm text-center px-2',
-  infoContainer: 'flex flex-grow items-center justify-between pl-6 pr-8 py-4',
-  contentContainer: 'flex flex-col gap-1 w-full',
-  titleContainer: 'flex items-center gap-2',
-  title: 'text-lg font-semibold text-white font-outfit',
-  rating: 'flex items-center text-yellow-400 ml-2',
-  ratingIcon: 'w-4 h-4 mr-1',
-  reviewText: 'text-gray-300 text-sm mt-1',
-  date: 'text-xs text-gray-400 mt-1',
-  actionsContainer: 'flex items-center -ml-2',
-  actionButton: clsx(
-    'p-3 text-gray-400 hover:text-[#ec1b69]',
-    'transition-colors duration-200'
-  ),
-  actionIcon: 'w-5 h-5',
-  editContainer: 'flex flex-col gap-2 mt-1',
-  textarea: clsx(
-    'w-full rounded bg-[#181818]',
-    'border border-gray-600 text-white p-2',
-    'resize-none'
-  ),
-  editActions: 'flex gap-2 mt-1',
-  editButton: clsx(
-    'p-2 text-gray-400 hover:text-[#ec1b69]',
-    'transition-colors duration-200'
-  ),
-  saveIcon: 'w-5 h-5 text-green-500 hover:text-green-400 transition-colors duration-200'
-} as const;
-
-
+// ... imports remain the same
 
 /**
  * Componente para mostrar y editar medias estrellas
@@ -95,7 +49,7 @@ const StarEdit = ({ value, onChange, disabled }: StarEditProps) => (
             aria-label={`Puntuar con ${star - 0.5} estrellas`}
             className={clsx(
               "absolute top-0 left-0 z-10 w-1/2 h-full",
-              disabled ? "cursor-not-allowed" : "cursor-pointer"
+              disabled ? "cursor-not-allowed" : "cursor-pointer",
             )}
             onClick={() => !disabled && onChange(star * 2 - 1)}
             disabled={disabled}
@@ -105,37 +59,41 @@ const StarEdit = ({ value, onChange, disabled }: StarEditProps) => (
             aria-label={`Puntuar con ${star} estrellas`}
             className={clsx(
               "absolute top-0 right-0 z-10 w-1/2 h-full",
-              disabled ? "cursor-not-allowed" : "cursor-pointer"
+              disabled ? "cursor-not-allowed" : "cursor-pointer",
             )}
             onClick={() => !disabled && onChange(star * 2)}
             disabled={disabled}
           />
           <span className="relative inline-block w-6 h-6">
-            <FiStar className={`w-6 h-6 absolute top-0 left-0 ${isFull ? 'text-yellow-400' : 'text-gray-400'}`} />
+            <FiStar
+              className={`w-6 h-6 absolute top-0 left-0 ${isFull ? "text-yellow-400" : "text-gray-400"}`}
+            />
             {isHalf && (
               <FiStar
                 className="absolute top-0 left-0 w-6 h-6 text-yellow-400"
-                style={{ clipPath: 'inset(0 50% 0 0)' }}
+                style={{ clipPath: "inset(0 50% 0 0)" }}
               />
             )}
           </span>
         </span>
       );
     })}
-    <span className="ml-2 text-xs text-yellow-400">{(value / 2) % 1 === 0 ? (value / 2) : (value / 2).toFixed(1)}/5</span>
+    <span className="ml-2 text-xs text-yellow-400">
+      {(value / 2) % 1 === 0 ? value / 2 : (value / 2).toFixed(1)}/5
+    </span>
   </div>
 );
 
-/**
- * Componente que muestra la lista de reseñas del usuario
- * @returns {JSX.Element} Componente ProfileReviews
- */
-export const ProfileReviews = () => {
+interface ProfileReviewsProps {
+  onStatsUpdate?: () => void;
+}
+
+export const ProfileReviews = ({ onStatsUpdate }: ProfileReviewsProps) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editText, setEditText] = useState<string>('');
+  const [editText, setEditText] = useState<string>("");
   const [editRating, setEditRating] = useState<number>(5);
   const [savingId, setSavingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -143,21 +101,19 @@ export const ProfileReviews = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    reviewsAPI.list()
+    reviewsAPI
+      .list()
       .then(setReviews)
       .catch(() => setError(ERROR_MESSAGES.LOAD))
       .finally(() => setLoading(false));
   }, []);
 
-  /**
-   * Maneja la eliminación de una reseña
-   * @param {number} reviewId - ID de la reseña a eliminar
-   */
   const handleDelete = async (reviewId: number) => {
     setDeletingId(reviewId);
     try {
       await reviewsAPI.delete(reviewId);
-      setReviews(prev => prev.filter(r => r.id !== reviewId));
+      setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+      onStatsUpdate?.();
     } catch {
       setError(ERROR_MESSAGES.DELETE);
     } finally {
@@ -165,41 +121,31 @@ export const ProfileReviews = () => {
     }
   };
 
-  /**
-   * Inicia la edición de una reseña
-   * @param {Review} review - Reseña a editar
-   */
   const handleEdit = (review: Review) => {
     setEditingId(review.id);
     setEditText(review.review);
     setEditRating(Number(review.rating));
   };
 
-  /**
-   * Cancela la edición de una reseña
-   */
   const handleCancelEdit = () => {
     setEditingId(null);
-    setEditText('');
+    setEditText("");
     setEditRating(5);
   };
 
-  /**
-   * Guarda los cambios de una reseña
-   * @param {Review} review - Reseña a actualizar
-   */
   const handleSaveEdit = async (review: Review) => {
     setSavingId(review.id);
     try {
       await reviewsAPI.update({
         ...review,
         review: editText,
-        rating: editRating
+        rating: editRating,
       });
       const updatedReviews = await reviewsAPI.list();
       setReviews(updatedReviews);
+      onStatsUpdate?.();
       setEditingId(null);
-      setEditText('');
+      setEditText("");
       setEditRating(5);
     } catch {
       setError(ERROR_MESSAGES.UPDATE);
@@ -210,16 +156,16 @@ export const ProfileReviews = () => {
 
   if (loading) {
     return (
-      <div className={STYLES.loadingContainer}>
-        <FiLoader className={STYLES.loadingIcon} />
+      <div className="flex items-center justify-center p-8">
+        <FiLoader className="w-8 h-8 text-pixela-primary animate-spin" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={STYLES.errorContainer}>
-        <FiAlertCircle className={STYLES.errorIcon} />
+      <div className="flex items-center justify-center p-8 text-red-500">
+        <FiAlertCircle className="w-6 h-6 mr-2" />
         <span>{error}</span>
       </div>
     );
@@ -227,135 +173,148 @@ export const ProfileReviews = () => {
 
   if (reviews.length === 0) {
     return (
-      <div className={STYLES.emptyContainer}>
-        <FiAlertCircle className={STYLES.emptyIcon} />
-        <p className={STYLES.emptyText}>No hay reseñas.</p>
+      <div className="flex flex-col items-center justify-center p-8 text-gray-400">
+        <FiAlertCircle className="w-12 h-12 mb-4" />
+        <p className="text-lg font-outfit">No hay reseñas.</p>
       </div>
     );
   }
 
   return (
-    <div className={STYLES.container}>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {reviews.map((review) => (
-        <div key={review.id} className={STYLES.reviewItem}>
-          <div className={STYLES.posterContainer}>
-            <Link 
-              href={`/${review.item_type === 'movie' ? 'movies' : 'series'}/${review.tmdb_id}`}
-              className="block w-full h-full"
-            >
-              {review.poster_path ? (
-                <>
-                  <Image
-                    src={`${TMDB_IMAGE_BASE_URL}${review.poster_path}`}
-                    alt={review.title || (review.item_type === 'movie' ? 'Película' : 'Serie')}
-                    fill
-                    className={STYLES.posterImage}
-                    sizes="100px"
-                  />
-                  <div className={STYLES.posterOverlay}>
-                    <span className={STYLES.overlayText}>Ver detalles</span>
-                  </div>
-                </>
-              ) : (
-                <div className={STYLES.noImageContainer}>
-                  Sin imagen
+        <div
+          key={review.id}
+          className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/5 flex gap-4 transition-all hover:bg-white/10 hover:border-white/10 group"
+        >
+          {/* Poster Image */}
+          <Link
+            href={`/${review.item_type === "movie" ? "movies" : "series"}/${review.tmdb_id}`}
+            className="flex-shrink-0 w-24 h-36 relative rounded-lg overflow-hidden shadow-lg transition-transform group-hover:scale-105"
+          >
+            {review.poster_path ? (
+              <Image
+                src={`${TMDB_IMAGE_BASE_URL}${review.poster_path}`}
+                alt={
+                  review.title ||
+                  (review.item_type === "movie" ? "Película" : "Serie")
+                }
+                fill
+                className="object-cover"
+                sizes="100px"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-800 text-gray-500 text-xs text-center p-2">
+                Sin imagen
+              </div>
+            )}
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+          </Link>
+
+          {/* Content */}
+          <div className="flex flex-col flex-grow min-w-0">
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <Link
+                  href={`/${review.item_type === "movie" ? "movies" : "series"}/${review.tmdb_id}`}
+                  className="text-white font-bold text-lg hover:text-pixela-accent transition-colors line-clamp-1"
+                >
+                  {review.title ||
+                    `${review.item_type === "movie" ? "Película" : "Serie"} #${review.tmdb_id}`}
+                </Link>
+                <p className="text-xs text-gray-400">
+                  {review.created_at
+                    ? new Date(review.created_at).toLocaleDateString()
+                    : ""}
+                </p>
+              </div>
+
+              {/* Actions */}
+              {editingId !== review.id && (
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+                    title="Editar reseña"
+                    onClick={() => handleEdit(review)}
+                  >
+                    <FiEdit className="w-4 h-4" />
+                  </button>
+                  <button
+                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
+                    title="Eliminar reseña"
+                    onClick={() => handleDelete(review.id)}
+                    disabled={deletingId === review.id}
+                  >
+                    {deletingId === review.id ? (
+                      <FiLoader className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <FaTrash className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
               )}
-            </Link>
-          </div>
+            </div>
 
-          <div className={STYLES.infoContainer}>
-            <div className={STYLES.contentContainer}>
-              <div className={STYLES.titleContainer}>
-                <Link 
-                  href={`/${review.item_type === 'movie' ? 'movies' : 'series'}/${review.tmdb_id}`}
-                  className="hover:text-pixela-accent transition-colors"
-                >
-                  <span className={STYLES.title}>
-                    {review.title || `${review.item_type === 'movie' ? 'Película' : 'Serie'} #${review.tmdb_id}`}
-                  </span>
-                </Link>
-                <span className={STYLES.rating}>
-                  {editingId !== review.id && (
-                    <FiStar className={STYLES.ratingIcon} />
-                  )}
-                  {editingId === review.id
-                    ? (
-                      <StarEdit
-                        value={editRating}
-                        onChange={setEditRating}
-                        disabled={savingId === review.id}
-                      />
-                    )
-                    : Number(review.rating) % 1 === 0
-                      ? (Number(review.rating) / 2)
-                      : (Number(review.rating) / 2).toFixed(1)
-                  }
-                </span>
-              </div>
+            {/* Rating */}
+            <div className="mb-3">
               {editingId === review.id ? (
-                <div className={STYLES.editContainer}>
+                <StarEdit
+                  value={editRating}
+                  onChange={setEditRating}
+                  disabled={savingId === review.id}
+                />
+              ) : (
+                <div className="flex items-center text-yellow-400 gap-1">
+                  <FiStar className="fill-current w-4 h-4" />
+                  <span className="font-bold">
+                    {Number(review.rating) % 1 === 0
+                      ? Number(review.rating) / 2
+                      : (Number(review.rating) / 2).toFixed(1)}
+                  </span>
+                  <span className="text-xs text-gray-500">/ 5</span>
+                </div>
+              )}
+            </div>
+
+            {/* Review Text / Edit Form */}
+            <div className="flex-grow">
+              {editingId === review.id ? (
+                <div className="flex flex-col gap-2">
                   <textarea
-                    className={STYLES.textarea}
+                    className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-sm text-white resize-none focus:border-pixela-accent focus:outline-none"
                     rows={3}
                     value={editText}
-                    onChange={e => setEditText(e.target.value)}
+                    onChange={(e) => setEditText(e.target.value)}
                     disabled={savingId === review.id}
                     placeholder="Escribe tu reseña aquí..."
-                    aria-label="Editar reseña"
                   />
-                  <div className={STYLES.editActions}>
+                  <div className="flex justify-end gap-2">
                     <button
-                      className={STYLES.editButton}
-                      title="Guardar"
+                      className="px-3 py-1.5 bg-red-500/10 text-red-500 text-xs rounded hover:bg-red-500/20 transition-colors flex items-center gap-1"
+                      onClick={handleCancelEdit}
+                      disabled={savingId === review.id}
+                    >
+                      <FiX className="w-3 h-3" /> Cancelar
+                    </button>
+                    <button
+                      className="px-3 py-1.5 bg-green-500/10 text-green-500 text-xs rounded hover:bg-green-500/20 transition-colors flex items-center gap-1"
                       onClick={() => handleSaveEdit(review)}
                       disabled={savingId === review.id}
                     >
                       {savingId === review.id ? (
-                        <FiLoader className={STYLES.actionIcon} />
+                        <FiLoader className="w-3 h-3 animate-spin" />
                       ) : (
-                        <FiCheck className={STYLES.saveIcon} />
-                      )}
-                    </button>
-                    <button
-                      className={STYLES.editButton}
-                      title="Cancelar"
-                      onClick={handleCancelEdit}
-                      disabled={savingId === review.id}
-                    >
-                      <FiX className={STYLES.actionIcon} />
+                        <FiCheck className="w-3 h-3" />
+                      )}{" "}
+                      Guardar
                     </button>
                   </div>
                 </div>
               ) : (
-                <p className={STYLES.reviewText}>{review.review}</p>
+                <p className="text-gray-300 text-sm line-clamp-3 leading-relaxed">
+                  {review.review}
+                </p>
               )}
-              <span className={STYLES.date}>
-                {review.created_at ? new Date(review.created_at).toLocaleDateString() : ''}
-              </span>
-              <div className={STYLES.actionsContainer}>
-                {editingId !== review.id && (
-                  <button
-                    className={STYLES.actionButton}
-                    title="Editar reseña"
-                    onClick={() => handleEdit(review)}
-                  >
-                    <FiEdit className={STYLES.actionIcon} />
-                  </button>
-                )}
-                <button
-                  className={STYLES.actionButton}
-                  title="Eliminar reseña"
-                  disabled={deletingId === review.id}
-                  onClick={() => handleDelete(review.id)}
-                >
-                  {deletingId === review.id ? (
-                    <FiLoader className={STYLES.actionIcon} />
-                  ) : (
-                    <FaTrash className={STYLES.actionIcon} />
-                  )}
-                </button>
-              </div>
             </div>
           </div>
         </div>

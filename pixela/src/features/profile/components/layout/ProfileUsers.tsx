@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
-import type { User } from '@/api/users/types';
-import { usersAPI } from '@/api/users/users';
-import { FiLoader, FiAlertCircle, FiEdit, FiCheck, FiX } from 'react-icons/fi';
-import { FaTrash } from 'react-icons/fa';
-import { UserAvatar } from '@/features/profile/components/avatar/UserAvatar';
-import clsx from 'clsx';
-import { ProfileUsersProps } from '@/features/profile/types/layout';
+import { useEffect, useState } from "react";
+import type { User } from "@/api/users/types";
+import { usersAPI } from "@/api/users/users";
+import { FiLoader, FiAlertCircle, FiEdit, FiCheck, FiX } from "react-icons/fi";
+import { FaTrash } from "react-icons/fa";
+import { UserAvatar } from "@/features/profile/components/avatar/UserAvatar";
+import clsx from "clsx";
+import { ProfileUsersProps } from "@/features/profile/types/layout";
 
 /**
  * Mensajes de error constantes
  */
 const ERROR_MESSAGES = {
-  LOAD: 'No se pudieron cargar los usuarios.',
-  DELETE: 'No se pudo eliminar el usuario',
-  UPDATE: 'No se pudo actualizar el usuario'
+  LOAD: "No se pudieron cargar los usuarios.",
+  DELETE: "No se pudo eliminar el usuario",
+  UPDATE: "No se pudo actualizar el usuario",
 } as const;
 
 /**
@@ -21,68 +21,68 @@ const ERROR_MESSAGES = {
  */
 const STYLES = {
   // Layout base
-  container: 'space-y-1',
-  
+  container: "space-y-1",
+
   // Estados de carga y error
-  loadingContainer: 'flex items-center justify-center p-8',
-  loadingIcon: 'w-8 h-8 text-pixela-primary animate-spin',
-  errorContainer: 'flex items-center justify-center p-8 text-red-500',
-  errorIcon: 'w-6 h-6 mr-2',
-  
+  loadingContainer: "flex items-center justify-center p-8",
+  loadingIcon: "w-8 h-8 text-pixela-primary animate-spin",
+  errorContainer: "flex items-center justify-center p-8 text-red-500",
+  errorIcon: "w-6 h-6 mr-2",
+
   // Estado vacío
-  emptyContainer: 'flex flex-col items-center justify-center p-8 text-gray-400',
-  emptyIcon: 'w-12 h-12 mb-4',
-  emptyText: 'text-lg font-outfit',
-  
+  emptyContainer: "flex flex-col items-center justify-center p-8 text-gray-400",
+  emptyIcon: "w-12 h-12 mb-4",
+  emptyText: "text-lg font-outfit",
+
   // Item de usuario
-  userItem: 'flex items-center bg-pixela-dark-opacity/50 pt-2 px-4 rounded gap-4',
-  avatarContainer: 'min-w-[32px] max-w-[32px] flex justify-center',
-  contentContainer: 'flex flex-col justify-center flex-2 pl-5',
-  
+  userItem:
+    "flex items-center bg-pixela-dark-opacity/50 pt-2 px-4 rounded gap-4",
+  avatarContainer: "min-w-[32px] max-w-[32px] flex justify-center",
+  contentContainer: "flex flex-col justify-center flex-2 pl-5",
+
   // Formulario de edición
-  editForm: 'grid grid-cols-1 sm:grid-cols-3 gap-4 gap-y-2 w-full max-w-lg mx-auto mb-8',
-  formGroup: 'flex flex-col',
-  label: 'text-xs text-gray-400 mb-1 block',
-  
+  editForm:
+    "grid grid-cols-1 sm:grid-cols-3 gap-4 gap-y-2 w-full max-w-lg mx-auto mb-8",
+  formGroup: "flex flex-col",
+  label: "text-xs text-gray-400 mb-1 block",
+
   // Inputs y controles
   input: clsx(
-    'w-full bg-[#1a1a1a]/70 border border-transparent rounded-md',
-    'px-3 py-1.5 text-white text-sm',
-    'focus:outline-none focus:border-[#ec1b69]/40 focus:bg-[#1a1a1a]/80',
-    'transition-all duration-200 placeholder:text-gray-500/40'
+    "w-full bg-[#1a1a1a]/70 border border-transparent rounded-md",
+    "px-3 py-1.5 text-white text-sm",
+    "focus:outline-none focus:border-[#ec1b69]/40 focus:bg-[#1a1a1a]/80",
+    "transition-all duration-200 placeholder:text-gray-500/40",
   ),
   select: clsx(
-    'w-full bg-[#1a1a1a]/70 border border-transparent rounded-md',
-    'px-3 py-1.5 text-white text-sm',
-    'focus:outline-none focus:border-[#ec1b69]/40 focus:bg-[#1a1a1a]/80',
-    'transition-all duration-200 appearance-none cursor-pointer'
+    "w-full bg-[#1a1a1a]/70 border border-transparent rounded-md",
+    "px-3 py-1.5 text-white text-sm",
+    "focus:outline-none focus:border-[#ec1b69]/40 focus:bg-[#1a1a1a]/80",
+    "transition-all duration-200 appearance-none cursor-pointer",
   ),
   selectIcon: {
     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ec1b69' stroke-opacity='0.4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-    backgroundSize: '1rem',
-    backgroundPosition: 'right 0.75rem center',
-    backgroundRepeat: 'no-repeat'
+    backgroundSize: "1rem",
+    backgroundPosition: "right 0.75rem center",
+    backgroundRepeat: "no-repeat",
   },
-  
-  // Información del usuario
-  userName: 'font-semibold text-white',
-  userEmail: 'text-gray-400',
-  userRole: (isAdmin: boolean) => clsx(
-    'text-xs py-1 px-3 rounded-md w-fit font-medium mt-1',
-    isAdmin
-      ? 'bg-[#ec1b69]/10 text-[#ec1b69] border border-[#ec1b69]/20'
-      : 'bg-gray-800/60 text-gray-400 border border-gray-700/50'
-  ),
-  
-  // Acciones
-  actionsContainer: 'flex items-center gap-2 ml-auto',
-  actionButton: (color: string) => clsx(
-    'p-2 transition-colors duration-200',
-    color
-  ),
-  actionIcon: 'w-5 h-5'
-} as const;
 
+  // Información del usuario
+  userName: "font-semibold text-white",
+  userEmail: "text-gray-400",
+  userRole: (isAdmin: boolean) =>
+    clsx(
+      "text-xs py-1 px-3 rounded-md w-fit font-medium mt-1",
+      isAdmin
+        ? "bg-[#ec1b69]/10 text-[#ec1b69] border border-[#ec1b69]/20"
+        : "bg-gray-800/60 text-gray-400 border border-gray-700/50",
+    ),
+
+  // Acciones
+  actionsContainer: "flex items-center gap-2 ml-auto",
+  actionButton: (color: string) =>
+    clsx("p-2 transition-colors duration-200", color),
+  actionIcon: "w-5 h-5",
+} as const;
 
 /**
  * Componente que muestra la lista de usuarios
@@ -100,8 +100,9 @@ export const ProfileUsers = ({ refresh, onUserUpdated }: ProfileUsersProps) => {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    usersAPI.list()
-      .then(data => {
+    usersAPI
+      .list()
+      .then((data) => {
         setUsers(Array.isArray(data) ? data : []);
       })
       .catch(() => setError(ERROR_MESSAGES.LOAD))
@@ -151,14 +152,14 @@ export const ProfileUsers = ({ refresh, onUserUpdated }: ProfileUsersProps) => {
     try {
       const userToUpdate = { ...editingUser };
       delete userToUpdate.password;
-      
+
       await usersAPI.update(userToUpdate);
       const refreshedUsers = await usersAPI.list();
       setUsers(Array.isArray(refreshedUsers) ? refreshedUsers : []);
-      
+
       // Notificar al componente padre sobre la actualización
       onUserUpdated?.(editingUser);
-      
+
       setEditingId(null);
       setEditingUser(null);
     } catch {
@@ -173,7 +174,7 @@ export const ProfileUsers = ({ refresh, onUserUpdated }: ProfileUsersProps) => {
    */
   const handleEditChange = (field: keyof User, value: string | boolean) => {
     if (!editingUser) return;
-    setEditingUser(prev => prev ? { ...prev, [field]: value } : null);
+    setEditingUser((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 
   if (loading) {
@@ -203,99 +204,130 @@ export const ProfileUsers = ({ refresh, onUserUpdated }: ProfileUsersProps) => {
   }
 
   return (
-    <div className={STYLES.container}>
-      {users.map(user => (
-        <div key={user.user_id} className={STYLES.userItem}>
-          <div className={STYLES.avatarContainer}>
-            <UserAvatar profileImage={user.photo_url} name={user.name} size="sm" />
-          </div>
-          <div className={STYLES.contentContainer}>
-            {editingId === user.user_id ? (
-              <div className={STYLES.editForm}>
-                <div className={STYLES.formGroup}>
-                  <label className={STYLES.label}>Nombre</label>
-                  <input
-                    type="text"
-                    value={editingUser?.name || ''}
-                    onChange={(e) => handleEditChange('name', e.target.value)}
-                    className={STYLES.input}
-                    placeholder="Nombre de usuario"
-                  />
+    <div className="space-y-4">
+      {users.map((user) => (
+        <div
+          key={user.user_id}
+          className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/5 transition-all hover:bg-white/10 hover:border-white/10"
+        >
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            {/* Avatar - Siempre visible */}
+            <div className="flex-shrink-0">
+              <UserAvatar
+                profileImage={user.photo_url}
+                name={user.name}
+                size="md"
+                className="w-12 h-12 md:w-16 md:h-16 text-lg"
+              />
+            </div>
+
+            {/* Contenido Principal */}
+            <div className="flex-grow w-full md:w-auto">
+              {editingId === user.user_id ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 animate-fade-in">
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1 block">
+                      Nombre
+                    </label>
+                    <input
+                      type="text"
+                      value={editingUser?.name || ""}
+                      onChange={(e) => handleEditChange("name", e.target.value)}
+                      className="w-full bg-black/40 border border-white/10 rounded px-3 py-2 text-sm text-white focus:border-pixela-accent focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1 block">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={editingUser?.email || ""}
+                      onChange={(e) =>
+                        handleEditChange("email", e.target.value)
+                      }
+                      className="w-full bg-black/40 border border-white/10 rounded px-3 py-2 text-sm text-white focus:border-pixela-accent focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1 block">
+                      Rol
+                    </label>
+                    <select
+                      value={editingUser?.is_admin ? "true" : "false"}
+                      onChange={(e) =>
+                        handleEditChange("is_admin", e.target.value === "true")
+                      }
+                      className="w-full bg-black/40 border border-white/10 rounded px-3 py-2 text-sm text-white focus:border-pixela-accent focus:outline-none appearance-none"
+                    >
+                      <option value="true">Administrador</option>
+                      <option value="false">Usuario</option>
+                    </select>
+                  </div>
                 </div>
-                <div className={STYLES.formGroup}>
-                  <label className={STYLES.label}>Email</label>
-                  <input
-                    type="email"
-                    value={editingUser?.email || ''}
-                    onChange={(e) => handleEditChange('email', e.target.value)}
-                    className={STYLES.input}
-                    placeholder="Correo electrónico"
-                  />
+              ) : (
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 text-center md:text-left">
+                  <div className="flex flex-col">
+                    <span className="font-bold text-white text-lg">
+                      {user.name}
+                    </span>
+                    <span className="text-sm text-gray-400">{user.email}</span>
+                  </div>
+                  <div className="flex items-center justify-center md:justify-end gap-3">
+                    <span
+                      className={clsx(
+                        "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide border",
+                        user.is_admin
+                          ? "bg-pixela-accent/10 border-pixela-accent/30 text-pixela-accent"
+                          : "bg-white/5 border-white/10 text-gray-400",
+                      )}
+                    >
+                      {user.is_admin ? "Admin" : "Miembro"}
+                    </span>
+                  </div>
                 </div>
-                <div className={STYLES.formGroup}>
-                  <label className={STYLES.label}>Rol</label>
-                  <select
-                    value={editingUser?.is_admin ? 'true' : 'false'}
-                    onChange={(e) => handleEditChange('is_admin', e.target.value === 'true')}
-                    className={STYLES.select}
-                    aria-label="Seleccionar rol de usuario"
+              )}
+            </div>
+
+            {/* Acciones */}
+            <div className="flex items-center gap-2 pt-4 md:pt-0 border-t border-white/10 md:border-0 w-full md:w-auto justify-center md:justify-end">
+              {editingId === user.user_id ? (
+                <>
+                  <button
+                    onClick={() => handleSaveEdit()}
+                    className="p-2 bg-green-500/10 text-green-500 rounded hover:bg-green-500/20 transition-colors"
                   >
-                    <option value="true">Administrador</option>
-                    <option value="false">Usuario</option>
-                  </select>
-                </div>
-              </div>
-            ) : (
-              <>
-                <span className={STYLES.userName}>{user.name}</span>
-                <span className={STYLES.userEmail}>{user.email}</span>
-                <span className={STYLES.userRole(user.is_admin)}>
-                  {user.is_admin ? 'Administrador' : 'Usuario'}
-                </span>
-              </>
-            )}
-          </div>
-          <div className={STYLES.actionsContainer}>
-            {editingId === user.user_id ? (
-              <>
-                <button
-                  className={STYLES.actionButton('text-green-500 hover:text-green-400')}
-                  title="Guardar cambios"
-                  onClick={handleSaveEdit}
-                >
-                  <FiCheck className={STYLES.actionIcon} />
-                </button>
-                <button
-                  className={STYLES.actionButton('text-gray-400 hover:text-white')}
-                  title="Cancelar edición"
-                  onClick={handleCancelEdit}
-                >
-                  <FiX className={STYLES.actionIcon} />
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  className={STYLES.actionButton('text-gray-400 hover:text-[#ec1b69]')}
-                  title="Editar usuario"
-                  onClick={() => handleStartEdit(user)}
-                >
-                  <FiEdit className={STYLES.actionIcon} />
-                </button>
-                <button
-                  className={STYLES.actionButton('text-gray-400 hover:text-[#ec1b69]')}
-                  title="Eliminar usuario"
-                  onClick={() => handleDelete(user.user_id)}
-                  disabled={deletingId === user.user_id}
-                >
-                  {deletingId === user.user_id ? (
-                    <FiLoader className={STYLES.actionIcon} />
-                  ) : (
-                    <FaTrash className={STYLES.actionIcon} />
-                  )}
-                </button>
-              </>
-            )}
+                    <FiCheck className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleCancelEdit()}
+                    className="p-2 bg-red-500/10 text-red-500 rounded hover:bg-red-500/20 transition-colors"
+                  >
+                    <FiX className="w-5 h-5" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => handleStartEdit(user)}
+                    className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded transition-colors group"
+                  >
+                    <FiEdit className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(user.user_id)}
+                    disabled={deletingId === user.user_id}
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors group"
+                  >
+                    {deletingId === user.user_id ? (
+                      <FiLoader className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <FaTrash className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    )}
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       ))}
