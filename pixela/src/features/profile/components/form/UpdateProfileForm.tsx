@@ -1,8 +1,7 @@
-import Image from "next/image";
-import { FiUser, FiMail, FiX, FiCamera, FiImage } from "react-icons/fi";
+import { FiUser, FiMail, FiX } from "react-icons/fi";
 import { IoKeyOutline } from "react-icons/io5";
 import { useForm } from "react-hook-form";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 
 import {
@@ -11,41 +10,14 @@ import {
 } from "@/features/profile/types/profileTypes";
 import { InputField } from "@/features/profile/components/form/InputField";
 import { BannerSelectorModal } from "../layout/BannerSelectorModal";
+import { resizeImage } from "@/lib/image";
+import { ProfilePreviewCard } from "./ProfilePreviewCard";
 
 /**
  * Estilos constantes para el componente UpdateProfileForm
  */
 const STYLES = {
   container: "flex flex-col lg:flex-row gap-8 lg:gap-12 w-full",
-
-  // Columna de avatar
-  // Columna de visuales (Mini Hero)
-  avatarColumn: "flex flex-col gap-4 w-full lg:w-[400px] flex-shrink-0",
-  previewCard:
-    "relative w-full h-[280px] rounded-2xl overflow-hidden bg-[#1A1A1A] group border border-white/5 shadow-2xl",
-
-  // Banner Area
-  bannerArea: "h-[160px] w-full relative cursor-pointer group/banner",
-  bannerImage:
-    "w-full h-full object-cover transition-transform duration-700 group-hover/banner:scale-105",
-  bannerOverlay:
-    "absolute inset-0 bg-black/20 transition-all duration-300 flex items-center justify-center backdrop-blur-[1px]",
-  coverButton:
-    "px-4 py-2 bg-black/60 text-white rounded-full text-sm font-medium border border-white/20 flex items-center gap-2 hover:bg-pixela-accent hover:border-pixela-accent transition-all shadow-lg",
-
-  // Avatar Area (Overlapping)
-  avatarArea: "absolute left-6 bottom-6 cursor-pointer group/avatar",
-  avatarWrapper:
-    "relative w-32 h-32 rounded-full border-4 border-[#1A1A1A] overflow-hidden bg-[#2A2A2A] shadow-xl",
-  avatarImage: "w-full h-full object-cover",
-  avatarOverlay:
-    "absolute inset-0 bg-black/30 transition-all duration-300 flex items-center justify-center backdrop-blur-[1px]",
-  cameraIcon: "text-white w-6 h-6",
-
-  // Inputs ocultos
-  fileInput: "hidden",
-  error:
-    "text-red-400 text-xs mt-2 text-center bg-red-500/10 py-2 px-3 rounded-lg border border-red-500/20",
 
   // Columna del formulario
   formColumn: "flex-1 min-w-0 bg-black/20 rounded-2xl p-6 shadow-md",
@@ -103,7 +75,6 @@ export const UpdateProfileForm = ({
   });
 
   const password = watch("password");
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [profileImage, setProfileImage] = useState<string | undefined>(
     initialData.photo_url,
   );
@@ -122,7 +93,7 @@ export const UpdateProfileForm = ({
    * Maneja el cambio de archivo de imagen
    * @param {React.ChangeEvent<HTMLInputElement>} e - Evento de cambio
    */
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -136,48 +107,14 @@ export const UpdateProfileForm = ({
       }
 
       setImageError(null);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          const img = new window.Image();
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const MAX_SIZE = 300;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height) {
-              if (width > MAX_SIZE) {
-                height = Math.round((height * MAX_SIZE) / width);
-                width = MAX_SIZE;
-              }
-            } else {
-              if (height > MAX_SIZE) {
-                width = Math.round((width * MAX_SIZE) / height);
-                height = MAX_SIZE;
-              }
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx?.drawImage(img, 0, 0, width, height);
-
-            const resizedImage = canvas.toDataURL("image/jpeg", 0.7);
-            setProfileImage(resizedImage);
-          };
-          img.src = e.target.result as string;
-        }
-      };
-      reader.readAsDataURL(file);
+      try {
+        const resizedImage = await resizeImage(file, 300);
+        setProfileImage(resizedImage);
+      } catch (error) {
+        console.error("Error resizing image:", error);
+        setImageError("Error al procesar la imagen");
+      }
     }
-  };
-
-  /**
-   * Maneja el clic en el avatar para abrir el selector de archivos
-   */
-  const handleAvatarClick = () => {
-    fileInputRef.current?.click();
   };
 
   /**
@@ -204,66 +141,15 @@ export const UpdateProfileForm = ({
   return (
     <div className={STYLES.container}>
       {/* Columna de visuales (Mini Hero) */}
-      <div className={STYLES.avatarColumn}>
-        <div className={STYLES.previewCard}>
-          {/* Banner Edit Area */}
-          <div
-            className={STYLES.bannerArea}
-            onClick={() => setShowBannerModal(true)}
-          >
-            <Image
-              src={
-                bannerImage ||
-                "https://images.unsplash.com/photo-1574267432553-4b4628081c31?q=80&w=2831&auto=format&fit=crop"
-              }
-              alt="Banner de portada"
-              fill
-              className={STYLES.bannerImage}
-            />
-            <div className={STYLES.bannerOverlay}>
-              <span className={STYLES.coverButton}>
-                <FiImage className="w-4 h-4" />
-                Cambiar Portada
-              </span>
-            </div>
-          </div>
-
-          {/* Avatar Edit Area */}
-          <div className={STYLES.avatarArea} onClick={handleAvatarClick}>
-            <div className={STYLES.avatarWrapper}>
-              {profileImage ? (
-                <Image
-                  src={profileImage}
-                  alt="Avatar"
-                  fill
-                  className={STYLES.avatarImage}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600 text-white text-3xl font-bold">
-                  {initialData.name?.charAt(0).toUpperCase() || "?"}
-                </div>
-              )}
-              <div className={STYLES.avatarOverlay}>
-                <FiCamera className={STYLES.cameraIcon} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Hidden inputs & Validations */}
-        <input
-          type="file"
-          accept="image/*"
-          className={STYLES.fileInput}
-          ref={fileInputRef}
-          onChange={handleFileChange}
-        />
-        {imageError && <p className={STYLES.error}>{imageError}</p>}
-
-        <p className="text-xs text-gray-500 text-center px-4 font-outfit">
-          Haz clic en la portada o en tu avatar para actualizarlos.
-        </p>
-      </div>
+      <ProfilePreviewCard
+        name={initialData.name || ""}
+        photoUrl={profileImage}
+        coverUrl={bannerImage}
+        onBannerClick={() => setShowBannerModal(true)}
+        onAvatarClick={() => {}} // Avatar click handled internally by ref inside PreviewCard
+        onFileChange={handleFileChange}
+        imageError={imageError}
+      />
 
       {/* Columna del formulario */}
       <div className={STYLES.formColumn}>
