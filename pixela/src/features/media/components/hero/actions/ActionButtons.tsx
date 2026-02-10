@@ -136,7 +136,6 @@ export const ActionButtons = ({
   return (
     <>
       <div className={STYLES.container}>
-        <LibraryButton tmdbId={tmdbId} itemType={itemType} title={title} />
         <button
           onClick={handleFavorite}
           disabled={isLoading}
@@ -156,6 +155,7 @@ export const ActionButtons = ({
           <FaPen className={STYLES.penIcon} />
           Hacer Reseña
         </button>
+        <LibraryButton tmdbId={tmdbId} itemType={itemType} title={title} />
       </div>
 
       <ReviewModal

@@ -45,14 +45,13 @@ const STYLES = {
   heroGradient:
     "absolute inset-0 bg-gradient-to-t from-[#0F0F0F] via-[#0F0F0F]/60 to-transparent z-10",
   heroImage: "w-full h-full object-cover opacity-50",
-  heroContent: "absolute -bottom-16 left-0 w-full z-20 px-4 md:px-8",
+  heroContent: "absolute -bottom-16 left-0 w-full z-20",
 
   // Header User Info (Overlapping Hero)
   userInfoContainer:
-    "max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8 pb-4",
+    "max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8 pb-4 px-4 md:px-8 w-full",
   avatarWrapper: "relative group",
-  avatarRing:
-    "absolute -inset-1 rounded-full bg-gradient-to-br from-pixela-accent to-purple-600 opacity-75 blur transition duration-500 group-hover:opacity-100",
+  avatarRing: "hidden",
   avatarContainer:
     "relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-[#0F0F0F] shadow-2xl overflow-hidden bg-[#1A1A1A]",
   userDetails: "flex-1 text-center md:text-left mb-2",
@@ -146,26 +145,23 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
 
   const handleSubmitProfile = async (data: ProfileFormData) => {
     try {
-      const userData: Partial<UserResponse> = {
-        user_id: user.user_id,
+      // Construct payload with ONLY updatable fields
+      const payload: Partial<UserResponse> = {
+        user_id: user.user_id, // Required for URL construction in API
         name: data.name,
         email: data.email,
-        is_admin: user.is_admin,
-        created_at: user.created_at,
-        updated_at: new Date().toISOString(),
+        photo_url:
+          data.photo_url !== undefined ? data.photo_url : user.photo_url,
+        cover_url:
+          data.cover_url !== undefined ? data.cover_url : user.cover_url,
       };
 
-      userData.photo_url =
-        data.photo_url !== undefined ? data.photo_url : user.photo_url;
-
-      userData.cover_url =
-        data.cover_url !== undefined ? data.cover_url : user.cover_url;
-
       if (data.password && data.password.trim()) {
-        userData.password = data.password;
+        payload.password = data.password;
       }
 
-      const updatedUser = await usersAPI.update(userData as UserResponse);
+      // Cast to UserResponse to satisfy TS, but runtime JSON will only have above fields
+      const updatedUser = await usersAPI.update(payload as UserResponse);
       const userToSet = "user" in updatedUser ? updatedUser.user : updatedUser;
 
       if (data.password && data.password.trim()) {
@@ -312,7 +308,10 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
                   {user.is_admin ? "Admin" : "Miembro"}
                 </span>
                 <span className={clsx(STYLES.badge, STYLES.badgeUser)}>
-                  Unido en {new Date(user.created_at).getFullYear()}
+                  Unido en{" "}
+                  {!isNaN(new Date(user.created_at).getTime())
+                    ? new Date(user.created_at).getFullYear()
+                    : new Date().getFullYear()}
                 </span>
               </div>
             </div>
@@ -382,7 +381,7 @@ const ProfileClient = ({ user: initialUser }: ProfileClientProps) => {
           )}
 
           {activeTab === "profile" && isEditing && (
-            <div className="max-w-2xl mx-auto animate-fade-in">
+            <div className="w-full animate-fade-in">
               <UpdateProfileForm
                 initialData={{
                   name: user.name,

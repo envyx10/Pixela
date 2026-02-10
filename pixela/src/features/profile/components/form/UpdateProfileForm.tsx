@@ -19,23 +19,33 @@ const STYLES = {
   container: "flex flex-col lg:flex-row gap-8 lg:gap-12 w-full",
 
   // Columna de avatar
-  avatarColumn:
-    "flex flex-col items-center bg-black/20 rounded-2xl p-6 shadow-md w-full lg:w-[300px] lg:flex-shrink-0 lg:sticky lg:top-8 lg:h-fit",
-  avatarSection: "flex flex-col items-center mb-6",
-  avatarContainer:
-    "relative cursor-pointer mb-4 transition-transform duration-200 hover:scale-[1.02] group",
-  avatarPreview:
-    "w-[120px] h-[120px] rounded-full overflow-hidden border-2 border-pixela-accent/40",
+  // Columna de visuales (Mini Hero)
+  avatarColumn: "flex flex-col gap-4 w-full lg:w-[400px] flex-shrink-0",
+  previewCard:
+    "relative w-full h-[280px] rounded-2xl overflow-hidden bg-[#1A1A1A] group border border-white/5 shadow-2xl",
+
+  // Banner Area
+  bannerArea: "h-[160px] w-full relative cursor-pointer group/banner",
+  bannerImage:
+    "w-full h-full object-cover transition-transform duration-700 group-hover/banner:scale-105",
+  bannerOverlay:
+    "absolute inset-0 bg-black/20 transition-all duration-300 flex items-center justify-center backdrop-blur-[1px]",
+  coverButton:
+    "px-4 py-2 bg-black/60 text-white rounded-full text-sm font-medium border border-white/20 flex items-center gap-2 hover:bg-pixela-accent hover:border-pixela-accent transition-all shadow-lg",
+
+  // Avatar Area (Overlapping)
+  avatarArea: "absolute left-6 bottom-6 cursor-pointer group/avatar",
+  avatarWrapper:
+    "relative w-32 h-32 rounded-full border-4 border-[#1A1A1A] overflow-hidden bg-[#2A2A2A] shadow-xl",
   avatarImage: "w-full h-full object-cover",
-  avatarPlaceholder:
-    "w-full h-full flex items-center justify-center bg-gradient-to-br from-pixela-accent/20 to-pixela-accent/10 text-white text-5xl font-bold",
   avatarOverlay:
-    "absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200",
-  cameraIcon: "text-white text-2xl",
+    "absolute inset-0 bg-black/30 transition-all duration-300 flex items-center justify-center backdrop-blur-[1px]",
+  cameraIcon: "text-white w-6 h-6",
+
+  // Inputs ocultos
   fileInput: "hidden",
-  uploadButton:
-    "px-6 py-2 bg-pixela-accent/10 text-pixela-accent border border-pixela-accent/30 rounded-full hover:bg-pixela-accent/20 transition-all duration-200 text-sm font-medium",
-  error: "text-pixela-accent text-xs mt-2 text-center",
+  error:
+    "text-red-400 text-xs mt-2 text-center bg-red-500/10 py-2 px-3 rounded-lg border border-red-500/20",
 
   // Columna del formulario
   formColumn: "flex-1 min-w-0 bg-black/20 rounded-2xl p-6 shadow-md",
@@ -193,62 +203,66 @@ export const UpdateProfileForm = ({
 
   return (
     <div className={STYLES.container}>
-      {/* Columna del avatar */}
+      {/* Columna de visuales (Mini Hero) */}
       <div className={STYLES.avatarColumn}>
-        <div className={STYLES.avatarSection}>
-          <div className={STYLES.avatarContainer} onClick={handleAvatarClick}>
-            <div className={STYLES.avatarPreview}>
+        <div className={STYLES.previewCard}>
+          {/* Banner Edit Area */}
+          <div
+            className={STYLES.bannerArea}
+            onClick={() => setShowBannerModal(true)}
+          >
+            <Image
+              src={
+                bannerImage ||
+                "https://images.unsplash.com/photo-1574267432553-4b4628081c31?q=80&w=2831&auto=format&fit=crop"
+              }
+              alt="Banner de portada"
+              fill
+              className={STYLES.bannerImage}
+            />
+            <div className={STYLES.bannerOverlay}>
+              <span className={STYLES.coverButton}>
+                <FiImage className="w-4 h-4" />
+                Cambiar Portada
+              </span>
+            </div>
+          </div>
+
+          {/* Avatar Edit Area */}
+          <div className={STYLES.avatarArea} onClick={handleAvatarClick}>
+            <div className={STYLES.avatarWrapper}>
               {profileImage ? (
                 <Image
                   src={profileImage}
-                  alt="Foto de perfil"
+                  alt="Avatar"
+                  fill
                   className={STYLES.avatarImage}
-                  width={120}
-                  height={120}
-                  priority
                 />
               ) : (
-                <div className={STYLES.avatarPlaceholder}>
-                  <span>
-                    {initialData.name
-                      ? initialData.name.charAt(0).toUpperCase()
-                      : "?"}
-                  </span>
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600 text-white text-3xl font-bold">
+                  {initialData.name?.charAt(0).toUpperCase() || "?"}
                 </div>
               )}
+              <div className={STYLES.avatarOverlay}>
+                <FiCamera className={STYLES.cameraIcon} />
+              </div>
             </div>
-            <div className={STYLES.avatarOverlay}>
-              <FiCamera className={STYLES.cameraIcon} />
-            </div>
-            <input
-              type="file"
-              accept="image/*"
-              className={STYLES.fileInput}
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              aria-label="Subir foto de perfil"
-            />
           </div>
-          <button
-            type="button"
-            onClick={handleAvatarClick}
-            className={STYLES.uploadButton}
-          >
-            {profileImage ? "Cambiar foto" : "Subir foto"}
-          </button>
-
-          {/* Banner Button */}
-          <button
-            type="button"
-            onClick={() => setShowBannerModal(true)}
-            className="mt-4 px-6 py-2 bg-transparent text-gray-400 border border-gray-600 rounded-full hover:border-pixela-accent hover:text-pixela-accent transition-all duration-200 text-sm font-medium flex items-center gap-2"
-          >
-            <FiImage />
-            {bannerImage ? "Cambiar Portada" : "Seleccionar Portada"}
-          </button>
-
-          {imageError && <p className={STYLES.error}>{imageError}</p>}
         </div>
+
+        {/* Hidden inputs & Validations */}
+        <input
+          type="file"
+          accept="image/*"
+          className={STYLES.fileInput}
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
+        {imageError && <p className={STYLES.error}>{imageError}</p>}
+
+        <p className="text-xs text-gray-500 text-center px-4 font-outfit">
+          Haz clic en la portada o en tu avatar para actualizarlos.
+        </p>
       </div>
 
       {/* Columna del formulario */}
@@ -267,7 +281,6 @@ export const UpdateProfileForm = ({
 
         <form onSubmit={handleSubmit(onFormSubmit)} className={STYLES.fields}>
           <div className={STYLES.fieldGroup}>
-            <label className={STYLES.inputLabel}>Username</label>
             <InputField
               type="text"
               name="name"
@@ -289,7 +302,6 @@ export const UpdateProfileForm = ({
           </div>
 
           <div className={STYLES.fieldGroup}>
-            <label className={STYLES.inputLabel}>Email</label>
             <InputField
               type="email"
               name="email"
@@ -307,7 +319,6 @@ export const UpdateProfileForm = ({
           </div>
 
           <div className={STYLES.fieldGroup}>
-            <label className={STYLES.inputLabel}>Contraseña</label>
             <InputField
               type="password"
               name="password"
@@ -330,7 +341,6 @@ export const UpdateProfileForm = ({
           </div>
 
           <div className={STYLES.fieldGroup}>
-            <label className={STYLES.inputLabel}>Confirmar Contraseña</label>
             <InputField
               type="password"
               name="password_confirmation"

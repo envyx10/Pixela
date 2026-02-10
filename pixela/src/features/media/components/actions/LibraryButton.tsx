@@ -96,10 +96,13 @@ export const LibraryButton = ({
         title={title}
         aria-label={`Añadir ${title} a la biblioteca`}
         className={clsx(
-          "flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 backdrop-blur-md",
+          "flex items-center gap-2 px-8 py-3 rounded-lg font-medium transition-all duration-300 border backdrop-blur-md whitespace-nowrap",
           status
-            ? "bg-pixela-accent/20 text-pixela-accent border border-pixela-accent/50 hover:bg-pixela-accent/30"
-            : "bg-white/10 text-white border border-white/10 hover:bg-white/20",
+            ? // Active: Dark background with colored text/border accent
+              "bg-[#1A1A1A] text-pixela-accent border-pixela-accent/50 hover:bg-[#252525]"
+            : // Inactive: Dark background with white text (matches Review button base)
+              "bg-[#1A1A1A] text-white border-white/10 hover:bg-[#252525]",
+          className,
         )}
       >
         <CurrentIcon className="w-5 h-5" />

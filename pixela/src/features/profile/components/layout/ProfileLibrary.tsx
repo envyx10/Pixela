@@ -68,7 +68,7 @@ export const ProfileLibrary =
     return (
       <div className="space-y-6">
         {/* Filters */}
-        <div className="flex flex-wrap gap-2 pb-4 border-b border-white/5">
+        <div className="flex flex-wrap gap-2 pb-4">
           {STATUS_FILTERS.map((filter) => {
             const Icon = filter.icon;
             const isActive = activeFilter === filter.id;
