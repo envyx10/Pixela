@@ -10,11 +10,9 @@ import { ProfileFavorites } from "./layout/ProfileFavorites";
 import { ProfileReviews } from "./layout/ProfileReviews";
 import { ProfileUsers } from "./layout/ProfileUsers";
 import { ProfileLibrary } from "./layout/ProfileLibrary";
-import {
-  ContentPanel,
-  ProfileInfo,
-  UpdateProfileForm,
-} from "@/features/profile/components";
+import { ContentPanel } from "@/features/profile/components/layout/ContentPanel";
+import { ProfileInfo } from "@/features/profile/components/layout/ProfileInfo";
+import { UpdateProfileForm } from "@/features/profile/components/form/UpdateProfileForm";
 import {
   FiLoader,
   FiSettings,
