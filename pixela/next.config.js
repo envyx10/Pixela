@@ -55,6 +55,7 @@ const nextConfig = {
     experimental: {
         // Reducir preloading agresivo
         optimisticClientCache: false,
+        optimizePackageImports: ['react-icons', 'lucide-react'],
     },
 };
 

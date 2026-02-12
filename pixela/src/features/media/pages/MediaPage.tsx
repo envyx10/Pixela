@@ -1,19 +1,17 @@
 "use client";
 
-import { Media } from '../types';
-import { useEffect, useCallback } from 'react';
-import { reviewsAPI } from '@/api/reviews/reviews';
-import { useMediaStore } from '@/features/media/store/mediaStore';
+import { Media } from "../types";
+import { useEffect, useCallback } from "react";
+import { reviewsAPI } from "@/api/reviews/reviews";
+import { useMediaStore } from "@/features/media/store/mediaStore";
 
-import {   
-  HeroSection, 
-  PosterModal, 
-  StreamingProviders, 
-  CastSection, 
-  TrailersSection, 
-  GallerySection,
-  ReviewSection,
-} from '@/features/media/components';
+import { HeroSection } from "@/features/media/components/hero/HeroSection";
+import { PosterModal } from "@/features/media/components/hero/PosterModal";
+import { StreamingProviders } from "@/features/media/components/platforms/StreamingProviders";
+import { CastSection } from "@/features/media/components/cast/CastSection";
+import { TrailersSection } from "@/features/media/components/trailer/TrailersSection";
+import { GallerySection } from "@/features/media/components/gallery/GallerySection";
+import { ReviewSection } from "@/features/media/components/review/ReviewSection";
 
 interface MediaPageProps {
   media: Media;
@@ -26,7 +24,7 @@ interface MediaPageProps {
  */
 export const MediaPage = ({ media }: MediaPageProps) => {
   const tmdbId = Number(media.id);
-  const itemType = media.tipo === 'pelicula' ? 'movie' : 'series';
+  const itemType = media.tipo === "pelicula" ? "movie" : "series";
 
   /**
    * Estado y acciones del store
@@ -46,7 +44,7 @@ export const MediaPage = ({ media }: MediaPageProps) => {
     errorReviews,
     setReviews,
     setLoadingReviews,
-    setErrorReviews
+    setErrorReviews,
   } = useMediaStore();
 
   /**
@@ -57,11 +55,12 @@ export const MediaPage = ({ media }: MediaPageProps) => {
   const refreshReviews = useCallback(() => {
     setLoadingReviews(true);
     setErrorReviews(null);
-    reviewsAPI.getByMedia(tmdbId, itemType)
-      .then(data => {
+    reviewsAPI
+      .getByMedia(tmdbId, itemType)
+      .then((data) => {
         setReviews(data);
       })
-      .catch(() => setErrorReviews('No se pudieron cargar las reseñas.'))
+      .catch(() => setErrorReviews("No se pudieron cargar las reseñas."))
       .finally(() => setLoadingReviews(false));
   }, [tmdbId, itemType, setReviews, setLoadingReviews, setErrorReviews]);
 
@@ -76,28 +75,26 @@ export const MediaPage = ({ media }: MediaPageProps) => {
   return (
     <div className="min-h-screen bg-[#0F0F0F]">
       {/* Hero Section */}
-      <HeroSection 
-        media={media} 
-        onPosterClick={() => setShowPosterModal(true)} 
+      <HeroSection
+        media={media}
+        onPosterClick={() => setShowPosterModal(true)}
         title={media.titulo}
         refreshReviews={refreshReviews}
       />
 
       {/* Poster Modal */}
-      <PosterModal 
-        isOpen={showPosterModal} 
-        onClose={() => setShowPosterModal(false)} 
-        posterUrl={media.poster} 
-        title={media.titulo} 
+      <PosterModal
+        isOpen={showPosterModal}
+        onClose={() => setShowPosterModal(false)}
+        posterUrl={media.poster}
+        title={media.titulo}
       />
 
       {/* Content Sections */}
       <div className="relative z-10 pb-40 -mt-20">
         <div className="container px-4 pt-8 mx-auto md:pt-0">
           {/* Proveedores de Streaming */}
-          <StreamingProviders 
-            providers={media.proveedores || []}
-          />
+          <StreamingProviders providers={media.proveedores || []} />
           {/* Reparto */}
           <CastSection actors={media.actores} />
           {/* Trailers */}
@@ -105,8 +102,8 @@ export const MediaPage = ({ media }: MediaPageProps) => {
           {/* Galería */}
           <GallerySection media={media} />
           {/* Reseñas */}
-          <ReviewSection 
-            tmdbId={tmdbId} 
+          <ReviewSection
+            tmdbId={tmdbId}
             itemType={itemType}
             reviews={reviews}
             loading={loadingReviews}
@@ -117,4 +114,4 @@ export const MediaPage = ({ media }: MediaPageProps) => {
       </div>
     </div>
   );
-}; 
+};

@@ -1,18 +1,61 @@
-"use client";
-
-import { usePathname } from "next/navigation";
+import { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Navbar } from "../shared/components/Navbar";
-import { ToastContainer } from "../shared/components/ToastContainer";
-import Footer from "../features/footer/Footer";
 import { outfit, roboto } from "./ui/fonts";
 import { Providers } from "./providers";
+import ClientLayout from "./ClientLayout";
+
+export const metadata: Metadata = {
+  title: "Pixela - Descubre y comparte apasionantes historias cinematográficas",
+  description:
+    "Pixela es una comunidad para los amantes del cine y las series. Descubre historias que te conectan con grandes producciones audiovisuales.",
+  keywords: [
+    "streaming",
+    "películas",
+    "series",
+    "cine",
+    "comunidad",
+    "TMDB",
+    "Pixela",
+  ],
+  authors: [{ name: "Pixela" }],
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/manifest.json",
+  openGraph: {
+    title: "Pixela - Pasión por el cine y las series",
+    description:
+      "Descubre, colecciona y comparte experiencias audiovisuales en una comunidad de apasionados del cine y las series.",
+    url: "https://pixela.io",
+    siteName: "Pixela",
+    images: [
+      {
+        url: "/images/pixela-og-image.jpg",
+      },
+    ],
+    locale: "es_ES",
+    type: "website",
+  },
+  other: {
+    "X-UA-Compatible": "IE=edge",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#000000",
+};
 
 const STYLES = {
   html: `${roboto.variable} ${outfit.variable}`,
   body: "antialiased bg-pixela-dark",
-  container: "min-h-screen flex flex-col",
-  main: "flex-grow",
 } as const;
 
 export default function RootLayout({
@@ -20,25 +63,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const isAuthPage =
-    pathname?.startsWith("/login") || pathname?.startsWith("/register");
-
   return (
     <html lang="es" className={STYLES.html}>
+      <head>
+        {/* Preconectar a dominios importantes - no soportado directamente en metadata o viewport */}
+        <link rel="preconnect" href="https://image.tmdb.org" />
+        <link rel="dns-prefetch" href="https://image.tmdb.org" />
+      </head>
       <body className={STYLES.body} suppressHydrationWarning={true}>
         <Providers>
-          <div className={STYLES.container}>
-            {/* Toast notifications - Global */}
-            <ToastContainer />
-
-            {/* Ocultar Navbar en páginas de auth */}
-            {!isAuthPage && <Navbar />}
-
-            <main className={STYLES.main}>{children}</main>
-
-            {!isAuthPage && <Footer />}
-          </div>
+          <ClientLayout>{children}</ClientLayout>
         </Providers>
       </body>
     </html>
