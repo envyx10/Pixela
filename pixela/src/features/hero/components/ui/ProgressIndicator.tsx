@@ -92,7 +92,7 @@ export const ProgressIndicator = ({ images }: { images: HeroImage[] }) => {
   const {
     setIsPlaying,
     handleSlideChange,
-    currentImageIndex,
+    activeSlideIndex,
     isPlaying,
     progress,
   } = useHeroStore();
@@ -117,14 +117,14 @@ export const ProgressIndicator = ({ images }: { images: HeroImage[] }) => {
               <SlideDot
                 key={index}
                 index={index}
-                isActive={index === currentImageIndex}
+                isActive={index === activeSlideIndex}
                 onClick={() => handleSlideChange(index)}
               />
             ))}
           </div>
 
           <div className={STYLES.progress.counter}>
-            {currentImageIndex + 1}/{images.length}
+            {activeSlideIndex + 1}/{images.length}
           </div>
         </div>
       </div>

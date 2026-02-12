@@ -17,6 +17,7 @@
  */
 export interface HeroState {
   currentImageIndex: number;
+  activeSlideIndex: number;
   fadeIn: boolean;
   isPlaying: boolean;
   progress: number;
@@ -30,4 +31,4 @@ export interface HeroState {
   nextImage: (imagesLength: number) => void;
   handleSlideChange: (index: number) => void;
   resetProgress: () => void;
-} 
+}

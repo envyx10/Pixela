@@ -14,8 +14,12 @@
  * @property {string} poster - URL de imagen para móvil (vertical)
  */
 export interface HeroImage {
+  id?: number | string;
   backdrop: string;
   poster: string;
+  title?: string;
+  description?: string;
+  type?: "movie" | "tv" | "serie"; // 'serie' kept for compatibility if needed
 }
 
 /**

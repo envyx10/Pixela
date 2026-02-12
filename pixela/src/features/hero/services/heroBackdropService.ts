@@ -1,89 +1,131 @@
-import { getPeliculaById } from "@/api/peliculas/peliculas";
-import { getSerieById } from "@/api/series/series";
-import {
-  MediaItem,
-  MediaResponse,
-  HeroImage,
-} from "@/features/hero/types/content";
+import { fetchFromTmdb } from "@/lib/tmdb";
+import { tmdbImageHelpers, TMDB_IMAGE_CONFIG } from "@/lib/constants/tmdb";
+import { HeroImage } from "@/features/hero/types/content";
+
+interface TmdbResult {
+  id: number;
+  backdrop_path: string | null;
+  poster_path: string | null;
+  title?: string;
+  name?: string;
+  overview?: string;
+  media_type?: "movie" | "tv";
+}
+
+interface TmdbResponse {
+  results: TmdbResult[];
+}
 
 /**
- * Lista de medios destacados cuyas imágenes se mostrarán en el Hero.
- * Cada medio debe tener un ID válido y un tipo específico.
+ * Función helper para obtener y mapear imágenes de una categoría
+ * Usa URLs de alta calidad para el backdrop (original) y poster (w780)
  */
-export const featuredMedia: MediaItem[] = [
-  { id: "1317288", type: "movie" },
-  { id: "66732", type: "serie" },
-  { id: "1233413", type: "movie" },
-  { id: "680", type: "movie" },
-  { id: "1311031", type: "movie" },
-  { id: "4607", type: "serie" },
-];
-
-// ✅ Cache simple en memoria para evitar llamadas duplicadas
-const mediaCache = new Map<string, MediaResponse | null>();
-
-/**
- * ✅ Función helper para obtener media con cache
- */
-async function getMediaWithCache(
-  item: MediaItem,
-): Promise<MediaResponse | null> {
-  const cacheKey = `${item.type}-${item.id}`;
-
-  // Verificar cache
-  if (mediaCache.has(cacheKey)) {
-    return mediaCache.get(cacheKey) || null;
-  }
-
+async function fetchAndMapImages(
+  endpoint: string,
+  limit: number,
+  fallbackType?: "movie" | "serie",
+): Promise<HeroImage[]> {
   try {
-    const media =
-      item.type === "movie"
-        ? await getPeliculaById(item.id)
-        : await getSerieById(item.id);
+    const data = await fetchFromTmdb<TmdbResponse>(endpoint);
 
-    const result = media as MediaResponse;
-    mediaCache.set(cacheKey, result);
-    return result;
+    return data.results
+      .filter((item) => item.backdrop_path && item.poster_path)
+      .filter((item) => {
+        const title = (item.title || item.name || "").toLowerCase();
+        const overview = item.overview || "";
+        // Filtro de calidad y contenido
+        // 1. Excluir títulos vacíos
+        if (!title) return false;
+        // 2. Excluir items sin descripción
+        if (!overview) return false;
+        // 3. Excluir títulos específicos no deseados (blacklist)
+        const bannedTerms = [
+          "primal",
+          "monster high",
+          "barbie",
+          "primate",
+          "apes",
+          "simios",
+          "law & order",
+          "ley y orden",
+          "hermandad",
+        ];
+        const isBanned = bannedTerms.some((term) => title.includes(term));
+
+        if (isBanned && process.env.NODE_ENV === "development") {
+          console.log(`[Hero Filter] Excluded: ${title}`);
+        }
+
+        return !isBanned;
+      })
+      .slice(0, limit)
+      .map((item) => ({
+        id: item.id,
+        backdrop: tmdbImageHelpers.backdrop(
+          item.backdrop_path,
+          TMDB_IMAGE_CONFIG.SIZES.BACKDROP.ORIGINAL,
+        ),
+        poster: tmdbImageHelpers.poster(
+          item.poster_path,
+          TMDB_IMAGE_CONFIG.SIZES.POSTER.W780,
+        ),
+        title: item.title || item.name,
+        description: item.overview,
+        type:
+          (item.media_type === "tv" ? "serie" : item.media_type) ||
+          fallbackType ||
+          "movie",
+      }));
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
-      console.warn(`Error al obtener ${item.type} ${item.id}:`, error);
+      console.warn(`Error fetching images from ${endpoint}:`, error);
     }
-    mediaCache.set(cacheKey, null);
-    return null;
+    return [];
   }
 }
 
 /**
- * ✅ Obtiene las imágenes destacadas (backdrop + poster) para el hero con optimizaciones
- * Prioriza velocidad de carga para mostrar las imágenes backdrop como primera impresión
+ * Obtiene las imágenes destacadas para el Hero section combinando:
+ * - Tendencias (Trending)
+ * - Más populares (Popular)
+ * - Mejor valoradas (Top Rated)
+ *
+ * Prioriza velocidad de carga y calidad de imagen.
  * @returns {Promise<HeroImage[]>} Array de objetos de imágenes
  */
 export async function getFeaturedImages(): Promise<HeroImage[]> {
   try {
-    // console.time('[HERO] Carga de imágenes hero');
+    // Paralelizar todas las peticiones para minimizar el tiempo de espera (Waterfall elimination)
+    const [trendingDay, trendingWeek, popularMovies, popularTv] =
+      await Promise.all([
+        fetchAndMapImages("trending/all/day", 3), // 3 Tendencias del DÍA
+        fetchAndMapImages("trending/all/week", 4), // 4 Tendencias SEMANALES
+        fetchAndMapImages("movie/popular", 2, "movie"), // 2 Películas populares globales
+        fetchAndMapImages("tv/popular", 2, "serie"), // 2 Series populares globales
+      ]);
 
-    // ✅ Procesar todos en paralelo para máxima velocidad
-    const allPromises = featuredMedia.map(getMediaWithCache);
-    const allResults = await Promise.all(allPromises);
+    // Combinar resultados:
+    // 1. El TOP del día va PRIMERO (Hot right now)
+    // 2. Luego lo mejor de la semana
+    // 3. Finalmente los clásicos populares
+    const images = [
+      ...trendingDay,
+      ...trendingWeek,
+      ...popularMovies,
+      ...popularTv,
+    ].filter((img): img is HeroImage => img !== null); // Filtrar nulls
 
-    // ✅ Filtrar y procesar resultados
-    const images: HeroImage[] = allResults
-      .filter(
-        (media): media is MediaResponse =>
-          media !== null && !!media.backdrop && !!media.poster,
-      )
-      .map((media) => ({
-        backdrop: media.backdrop!,
-        poster: media.poster!,
-      }))
-      .slice(0, 6); // Máximo 6 imágenes
+    // Deduplicar por si acaso el mismo item aparece en varias categorías (usando backdrop como clave única)
+    const uniqueImages = Array.from(
+      new Map(images.map((img) => [img.backdrop, img])).values(),
+    );
 
-    return images;
+    // Si por alguna razón fallan todas, devolver array vacío para que la UI lo maneje
+    return uniqueImages;
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
-      console.error("Error al obtener imágenes del hero:", error);
+      console.error("Error crítico al obtener imágenes del hero:", error);
     }
-    // ✅ Fallback: devolver array vacío
     return [];
   }
 }
