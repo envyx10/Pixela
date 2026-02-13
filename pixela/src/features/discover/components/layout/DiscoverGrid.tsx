@@ -10,13 +10,20 @@ import { DiscoverGridProps } from "@/features/discover/types/components";
 const DISCOVER_LIMIT = 7;
 
 const STYLES = {
-  container: "flex flex-col items-center gap-4",
-  row: "flex gap-4",
-  mobileGridContainer: "grid grid-cols-2 gap-2 px-1 sm:gap-3 sm:px-2 w-full",
-  cardContainer: "flex flex-col items-center gap-4 relative pt-6",
-  firstRow: "[&>*]:animate-float",
-  secondRow: "[&>*]:animate-float [&>*:nth-child(2)]:animation-delay-200",
-  thirdRow: "[&>*]:animate-float [&>*:nth-child(2)]:animation-delay-200",
+  // Mobile Grid
+  mobileGridContainer: "grid grid-cols-2 gap-3 px-2 w-full",
+
+  // Desktop Bento Grid
+  desktopContainer:
+    "grid grid-cols-4 grid-rows-2 gap-4 h-[600px] w-full max-w-[1200px]",
+
+  // Grid Item Styles
+  gridItem:
+    "relative overflow-hidden group rounded-xl transition-all duration-500 hover:z-10",
+  itemLarge: "col-span-2 row-span-2", // 2x2 Big Card
+  itemTall: "col-span-1 row-span-2", // 1x2 Tall Card
+  itemWide: "col-span-2 row-span-1", // 2x1 Wide Card
+  itemNormal: "col-span-1 row-span-1", // 1x1 Normal Card
 } as const;
 
 /**
@@ -57,56 +64,32 @@ export const DiscoverGrid = ({ type }: DiscoverGridProps) => {
     );
   }
 
+  // Desktop Bento Layout
+  // Pattern:
+  // [ Large (0) ] [ Tall (1) ] [ Normal (2) ]
+  // [ Large (0) ] [ Tall (1) ] [ Normal (3) ]
   return (
-    <div className={STYLES.cardContainer}>
-      <div className={clsx(STYLES.row, STYLES.firstRow)}>
-        <DiscoverCard
-          media={limitedContent[0]}
-          type={type}
-          index={0}
-          isMobile={false}
-        />
-        <DiscoverCard
-          media={limitedContent[1]}
-          type={type}
-          index={1}
-          isMobile={false}
-        />
-      </div>
-      <div className={clsx(STYLES.row, STYLES.secondRow)}>
-        <DiscoverCard
-          media={limitedContent[2]}
-          type={type}
-          index={2}
-          isMobile={false}
-        />
-        <DiscoverCard
-          media={limitedContent[3]}
-          type={type}
-          index={3}
-          isMobile={false}
-        />
-        <DiscoverCard
-          media={limitedContent[4]}
-          type={type}
-          index={4}
-          isMobile={false}
-        />
-      </div>
-      <div className={clsx(STYLES.row, STYLES.thirdRow)}>
-        <DiscoverCard
-          media={limitedContent[5]}
-          type={type}
-          index={5}
-          isMobile={false}
-        />
-        <DiscoverCard
-          media={limitedContent[6]}
-          type={type}
-          index={6}
-          isMobile={false}
-        />
-      </div>
+    <div className={STYLES.desktopContainer}>
+      {limitedContent.map((media, index) => (
+        <div
+          key={media.id}
+          className={clsx(STYLES.gridItem, getGridAreaClass(index))}
+        >
+          <DiscoverCard
+            media={media}
+            type={type}
+            index={index}
+            isMobile={false}
+          />
+        </div>
+      ))}
     </div>
   );
 };
+
+// Helper puro para determinar la clase del area del grid
+function getGridAreaClass(index: number): string {
+  if (index === 0) return STYLES.itemLarge; // Primer elemento grande (2x2)
+  if (index === 1) return STYLES.itemTall; // Segundo elemento alto (1x2)
+  return STYLES.itemNormal; // El resto son 1x1
+}

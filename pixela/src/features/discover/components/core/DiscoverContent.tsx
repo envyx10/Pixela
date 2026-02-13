@@ -4,12 +4,10 @@ import { useState, useRef, useEffect } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useCategoriesStore } from "@/features/categories/store/categoriesStore";
 import { useDiscoverAnimation } from "@/features/discover/hooks/useDiscoverAnimation";
-import { DiscoverSelector } from "@/features/discover/components/ui/DiscoverSelector";
 import { IoIosArrowForward } from "react-icons/io";
 import Link from "next/link";
-import { DiscoverGrid } from "@/features/discover/components/layout/DiscoverGrid";
 import { headings } from "@/features/discover/content/headings";
-import { DiscoverMediaType } from "@/features/discover/types/media";
+import { DiscoverBackground } from "@/features/discover/components/layout/DiscoverBackground";
 
 const STYLES = {
   // --- Contenedor y Degradados ---
@@ -22,13 +20,14 @@ const STYLES = {
     "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] lg:w-[60vw] lg:h-[60vw] lg:left-[75%] 2k:w-[45vw] 2k:h-[45vw] 2k:left-[65%] rounded-full",
 
   // --- Layout de Escritorio ---
-  desktopContainer: "min-h-screen 2k:min-h-[80vh] mt-8 2k:mt-4",
+  desktopContainer:
+    "min-h-[85vh] relative mt-16 flex items-center justify-center overflow-hidden",
   desktopContent:
-    "w-[90%] xl:w-[85%] 2k:w-[70%] mx-auto flex flex-row items-center gap-16 2k:gap-12",
-  desktopLeftSection: "w-5/12 text-left",
-  desktopRightSection: "w-7/12",
+    "relative z-20 w-[90%] xl:w-[85%] 2k:w-[70%] mx-auto flex flex-col items-start justify-center text-left pointer-events-none", // pointer-events-none para que el fondo no interfiera, pero habilitaremos el boton
+  desktopLeftSection: "w-full max-w-3xl",
+  desktopRightSection: "hidden", // Ocultamos la sección derecha (Grid)
   desktopActions:
-    "flex flex-row items-center justify-start gap-8 2k:gap-6 mt-10 2k:mt-6",
+    "flex flex-row items-center justify-start gap-8 2k:gap-6 mt-10 2k:mt-6 pointer-events-auto", // Reactivamos puntero para botones
 
   // --- Layout Móvil ---
   mobileContainer: "flex-col items-stretch gap-8 px-4 py-12",
@@ -37,7 +36,8 @@ const STYLES = {
   discoverLabel:
     "text-lg font-semibold text-pixela-accent uppercase tracking-widest mb-4",
   mainHeadingDesktop:
-    "text-6xl 2k:text-5xl font-black text-white leading-tight mb-8 2k:mb-6",
+    "text-6xl 2k:text-7xl font-black text-white leading-[0.9] mb-8 2k:mb-6 flex flex-col gap-0",
+  // hollowText removed
   mainHeadingMobile:
     "text-6xl font-black text-pixela-accent font-outfit tracking-tighter uppercase leading-none text-left",
   description: "text-pixela-light/80 text-base 2k:text-lg max-w-full text-left",
@@ -70,7 +70,7 @@ const STYLES = {
  */
 export const DiscoverContent = () => {
   const isMobile = useMediaQuery("(max-width: 1023px)");
-  const [activeType, setActiveType] = useState<DiscoverMediaType>("serie");
+  // const [activeType, setActiveType] = useState<DiscoverMediaType>("serie"); // Removed unused state
   const [heading, setHeading] = useState(headings[0]);
 
   useEffect(() => {
@@ -92,11 +92,8 @@ export const DiscoverContent = () => {
   });
 
   const handleExploreClick = () => {
-    if (activeType === "serie") {
-      setSelectedMediaType("series");
-    } else {
-      setSelectedMediaType("movies");
-    }
+    // Default to series or modify if needed, since activeType selector is removed
+    setSelectedMediaType("series");
   };
 
   /**
@@ -131,29 +128,10 @@ export const DiscoverContent = () => {
     <div
       className={`${STYLES.container} ${isMobile ? STYLES.mobileContainer : STYLES.desktopContainer}`}
     >
-      {/* --- Degradado de Fondo para ESCRITORIO --- */}
+      {/* --- Fondo para ESCRITORIO --- */}
       {!isMobile && (
-        <div
-          className={STYLES.gradientContainer}
-          style={{
-            maskImage:
-              "linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)",
-          }}
-        >
-          <div
-            className={STYLES.mainGradient}
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, rgba(236, 27, 105, 0.15) 0%, transparent 80%)",
-            }}
-          />
-          <div
-            className={STYLES.secondaryGradient}
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, rgba(236, 27, 105, 0.20) 0%, transparent 75%)",
-            }}
-          />
+        <div className={STYLES.gradientContainer}>
+          <DiscoverBackground />
         </div>
       )}
 
@@ -166,11 +144,7 @@ export const DiscoverContent = () => {
             CUBRE
           </h2>
           {descriptionContent}
-          <DiscoverSelector
-            activeType={activeType}
-            onTypeChange={setActiveType}
-          />
-          <DiscoverGrid type={activeType} />
+          {/* Eliminados Selector y Grid en Móvil también para consistencia con la petición */}
           <Link
             href="/categories"
             className={`${STYLES.exploreButton} w-full`}
@@ -198,10 +172,7 @@ export const DiscoverContent = () => {
             </h2>
             {descriptionContent}
             <div className={STYLES.desktopActions}>
-              <DiscoverSelector
-                activeType={activeType}
-                onTypeChange={setActiveType}
-              />
+              {/* Eliminado DiscoverSelector */}
               <Link
                 href="/categories"
                 className={`${STYLES.exploreButton} w-auto`}
@@ -218,9 +189,7 @@ export const DiscoverContent = () => {
             </div>
           </div>
 
-          <div ref={gridRef} className={STYLES.desktopRightSection}>
-            <DiscoverGrid type={activeType} />
-          </div>
+          {/* Eliminado Grid derecho */}
         </div>
       )}
     </div>
