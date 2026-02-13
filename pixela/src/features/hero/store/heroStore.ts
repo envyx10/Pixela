@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import { HeroState } from "@/features/hero/types/state";
 
-const FADE_ANIMATION_DURATION = 300;
-
 /**
  * Store de Zustand para el componente Hero.
  *
@@ -16,44 +14,10 @@ const FADE_ANIMATION_DURATION = 300;
  * que dura 300ms y reinicia el progreso de la animación.
  */
 export const useHeroStore = create<HeroState>((set) => {
-  let transitionTimeout: NodeJS.Timeout | null = null;
-
-  /**
-   * Función auxiliar que encapsula la lógica común de transición entre imágenes.
-   * Maneja el estado de fade y la actualización del índice de la imagen actual.
-   *
-   * @param calculateNewIndex - Función que calcula el nuevo índice de la imagen
-   */
-  const transitionToImage = (
-    calculateNewIndex: (currentIndex: number) => number,
-  ) => {
-    set((state) => {
-      const nextIndex = calculateNewIndex(state.activeSlideIndex);
-
-      if (transitionTimeout) {
-        clearTimeout(transitionTimeout);
-      }
-
-      transitionTimeout = setTimeout(() => {
-        set({
-          currentImageIndex: nextIndex,
-          fadeIn: true,
-          progress: 0,
-        });
-        transitionTimeout = null;
-      }, FADE_ANIMATION_DURATION);
-
-      return {
-        activeSlideIndex: nextIndex,
-        fadeIn: false,
-      };
-    });
-  };
-
   return {
     currentImageIndex: 0,
-    activeSlideIndex: 0,
-    fadeIn: true,
+    activeSlideIndex: 0, // Kept for compatibility, though redundant with currentImageIndex in this simplified version
+    fadeIn: true, // Kept for compatibility with other components if they read it, but we won't toggle it
     isPlaying: true,
     progress: 0,
 
@@ -62,11 +26,11 @@ export const useHeroStore = create<HeroState>((set) => {
      * @param index - Nuevo índice de la imagen
      */
     setCurrentImageIndex: (index: number) =>
-      set({ currentImageIndex: index, activeSlideIndex: index }),
+      set({ currentImageIndex: index, activeSlideIndex: index, progress: 0 }),
 
     /**
      * Actualiza el estado de la animación de fade
-     * @param newFadeIn - Nuevo estado del fade
+     * @param newFadeIn - Nuevo estado del fade (No-op in this simplified version)
      */
     setFadeIn: (newFadeIn: boolean) => set({ fadeIn: newFadeIn }),
 
@@ -95,9 +59,14 @@ export const useHeroStore = create<HeroState>((set) => {
      * @param imagesLength - Número total de imágenes disponibles
      */
     prevImage: (imagesLength: number) => {
-      transitionToImage(
-        (currentIndex) => (currentIndex - 1 + imagesLength) % imagesLength,
-      );
+      set((state) => {
+        const nextIndex = (state.currentImageIndex - 1 + imagesLength) % imagesLength;
+        return {
+            currentImageIndex: nextIndex,
+            activeSlideIndex: nextIndex,
+            progress: 0
+        };
+      });
     },
 
     /**
@@ -105,7 +74,14 @@ export const useHeroStore = create<HeroState>((set) => {
      * @param imagesLength - Número total de imágenes disponibles
      */
     nextImage: (imagesLength: number) => {
-      transitionToImage((currentIndex) => (currentIndex + 1) % imagesLength);
+      set((state) => {
+        const nextIndex = (state.currentImageIndex + 1) % imagesLength;
+        return {
+            currentImageIndex: nextIndex,
+            activeSlideIndex: nextIndex,
+            progress: 0
+        };
+      });
     },
 
     /**
@@ -113,7 +89,7 @@ export const useHeroStore = create<HeroState>((set) => {
      * @param index - Índice de la imagen a la que se desea navegar
      */
     handleSlideChange: (index: number) => {
-      transitionToImage(() => index);
+      set({ currentImageIndex: index, activeSlideIndex: index, progress: 0 });
     },
   };
 });

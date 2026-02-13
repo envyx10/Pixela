@@ -115,10 +115,10 @@ const OptimizedHeroImage = ({
  * y optimizaciones de rendimiento para el hero de la página
  */
 export const ImageCarousel = ({ images }: ImageCarouselProps) => {
-  const { currentImageIndex, fadeIn } = useHeroStore();
+  const { currentImageIndex } = useHeroStore();
 
   // En caso de que no haya imágenes, mostrar fondo mínimo
-  if (!images || images.length === 0 || !images[currentImageIndex]) {
+  if (!images || images.length === 0) {
     return (
       <div className={STYLES.carousel.base}>
         <div
@@ -134,25 +134,29 @@ export const ImageCarousel = ({ images }: ImageCarouselProps) => {
     );
   }
 
-  // Preparar URLs de imágenes
-  const currentImage = images[currentImageIndex];
-  // Las URLs ya vienen completas del servicio, pasamos directamente
-  const optimizedImage: HeroImage = currentImage;
-
   return (
     <div className={STYLES.carousel.base}>
-      <div
-        className={clsx(
-          STYLES.carousel.imageContainer.base,
-          fadeIn
-            ? STYLES.carousel.imageContainer.fadeIn
-            : STYLES.carousel.imageContainer.fadeOut,
-        )}
-        aria-hidden="true"
-        role="presentation"
-      >
-        <OptimizedHeroImage image={optimizedImage} index={currentImageIndex} />
-      </div>
+      {images.map((image, index) => (
+        <div
+          key={image.id || index}
+          className={clsx(
+            STYLES.carousel.imageContainer.base,
+            index === currentImageIndex
+              ? STYLES.carousel.imageContainer.fadeIn
+              : STYLES.carousel.imageContainer.fadeOut,
+          )}
+          aria-hidden={index !== currentImageIndex}
+          role="tabpanel"
+        >
+          {/* 
+             Renderizar solo si es la imagen actual O la anterior/siguiente (optimización),
+             o renderizar todas si son pocas (mejor para transiciones suaves).
+             PixelA tiene pocas imágenes en el hero, renderizamos todas pero con lazy loading
+             excepto la prioritaria.
+          */}
+          <OptimizedHeroImage image={image} index={index} />
+        </div>
+      ))}
       <VisualOverlays />
     </div>
   );
