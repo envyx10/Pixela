@@ -4,26 +4,29 @@ import { useDiscoverStore } from "@/features/discover/store/discoverStore";
 import { DiscoverCard } from "@/features/discover/components/ui/DiscoverCard";
 import { DiscoverGridSkeleton } from "@/app/components/skeletons";
 import clsx from "clsx";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+// import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { DiscoverGridProps } from "@/features/discover/types/components";
 
 const DISCOVER_LIMIT = 7;
 
 const STYLES = {
   // Mobile Grid
-  mobileGridContainer: "grid grid-cols-2 gap-3 px-2 w-full",
+  // mobileGridContainer: "grid grid-cols-2 gap-3 px-2 w-full", // Legacy
 
-  // Desktop Bento Grid
-  desktopContainer:
-    "grid grid-cols-4 grid-rows-2 gap-4 h-[600px] w-full max-w-[1200px]",
+  // Unified Responsive Grid
+  // Mobile: grid-cols-2
+  // Desktop (md+): grid-cols-4, grid-rows-2, height fixed, max-width
+  responsiveContainer:
+    "grid grid-cols-2 gap-3 px-2 w-full " +
+    "md:grid-cols-4 md:grid-rows-2 md:gap-4 md:h-[600px] md:max-w-[1200px] md:px-0",
 
   // Grid Item Styles
   gridItem:
     "relative overflow-hidden group rounded-xl transition-all duration-500 hover:z-10",
-  itemLarge: "col-span-2 row-span-2", // 2x2 Big Card
-  itemTall: "col-span-1 row-span-2", // 1x2 Tall Card
-  itemWide: "col-span-2 row-span-1", // 2x1 Wide Card
-  itemNormal: "col-span-1 row-span-1", // 1x1 Normal Card
+  // itemLarge: "col-span-2 row-span-2", // Legacy - moved to helper
+  // itemTall: "col-span-1 row-span-2", // Legacy
+  // itemWide: "col-span-2 row-span-1", // Legacy
+  // itemNormal: "col-span-1 row-span-1", // Legacy
 } as const;
 
 /**
@@ -35,41 +38,22 @@ const STYLES = {
 export const DiscoverGrid = ({ type }: DiscoverGridProps) => {
   const { series, movies } = useDiscoverStore();
   const contentToDisplay = type === "serie" ? series : movies;
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  // const isMobile = useMediaQuery("(max-width: 768px)"); // Removed
 
-  const limit = isMobile
-    ? DISCOVER_LIMIT % 2 !== 0
-      ? DISCOVER_LIMIT - 1
-      : DISCOVER_LIMIT
-    : DISCOVER_LIMIT;
-  const limitedContent = contentToDisplay.slice(0, limit);
+  // Pattern logic:
+  // Mobile: Just show first item or simple grid? Original code showed simpler grid.
+  // We can unify this. Let's make the container responsive.
+
+  // Limiting content. Desktop shows 7 items (index 0-6).
+  // Mobile originally showed 7 or 6. We'll stick to 7 limit and handle layout via CSS.
+  const limitedContent = contentToDisplay.slice(0, DISCOVER_LIMIT);
 
   if (!limitedContent?.length) {
     return <DiscoverGridSkeleton />;
   }
 
-  if (isMobile) {
-    return (
-      <div className={STYLES.mobileGridContainer}>
-        {limitedContent.map((media, index) => (
-          <DiscoverCard
-            key={media.id}
-            media={media}
-            type={type}
-            index={index}
-            isMobile={true}
-          />
-        ))}
-      </div>
-    );
-  }
-
-  // Desktop Bento Layout
-  // Pattern:
-  // [ Large (0) ] [ Tall (1) ] [ Normal (2) ]
-  // [ Large (0) ] [ Tall (1) ] [ Normal (3) ]
   return (
-    <div className={STYLES.desktopContainer}>
+    <div className={STYLES.responsiveContainer}>
       {limitedContent.map((media, index) => (
         <div
           key={media.id}
@@ -79,7 +63,7 @@ export const DiscoverGrid = ({ type }: DiscoverGridProps) => {
             media={media}
             type={type}
             index={index}
-            isMobile={false}
+            isMobile={false} // Card can adapt via CSS if needed, or we can pass a prop but usually Card is responsive internally
           />
         </div>
       ))}
@@ -88,8 +72,19 @@ export const DiscoverGrid = ({ type }: DiscoverGridProps) => {
 };
 
 // Helper puro para determinar la clase del area del grid
+// Responsive: Mobile (default) vs Desktop (md/lg)
 function getGridAreaClass(index: number): string {
-  if (index === 0) return STYLES.itemLarge; // Primer elemento grande (2x2)
-  if (index === 1) return STYLES.itemTall; // Segundo elemento alto (1x2)
-  return STYLES.itemNormal; // El resto son 1x1
+  // Mobile: Todos son 1x1 default (definido en grid-cols-2)
+  // Desktop (md+): Aplicamos el patrón bento
+
+  // Clases base para todos (mobile first)
+  const base = "col-span-1 row-span-1";
+
+  // Clases desktop (md:)
+  let desktop = "md:col-span-1 md:row-span-1";
+
+  if (index === 0) desktop = "md:col-span-2 md:row-span-2"; // Large
+  if (index === 1) desktop = "md:col-span-1 md:row-span-2"; // Tall
+
+  return `${base} ${desktop}`;
 }

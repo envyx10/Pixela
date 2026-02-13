@@ -35,12 +35,18 @@ export const DiscoverBackground = () => {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden select-none pointer-events-none">
       {/* 
-         Contenedor transformado para cubrir toda la pantalla sin bordes negros.
-         - Scale: se aumenta para compensar la rotación
-         - w/h: se aumentan masivamente
-         - translate: se centra el contenido
+         Contenedor transformado para cubrir toda la pantalla.
+         - Añadimos mask-image para desvanecer los bordes y evitar cortes duros.
       */}
-      <div className="flex flex-col gap-6 transform -rotate-3 scale-[1.3] -translate-y-32 -translate-x-20 w-[150%] h-[150%] origin-center">
+      <div
+        className="flex flex-col gap-6 transform -rotate-3 scale-[1.3] -translate-y-32 -translate-x-20 w-[150%] h-[150%] origin-center"
+        style={{
+          maskImage:
+            "linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
+          maskComposite: "intersect",
+          WebkitMaskComposite: "source-in", // Para compatibilidad
+        }}
+      >
         {/* Fila 1 */}
         <MarqueeRow images={rows[0]} direction="normal" speed="slow" />
 
@@ -55,8 +61,8 @@ export const DiscoverBackground = () => {
       </div>
 
       {/* Overlay Gradiente para integración y legibilidad */}
-      <div className="absolute inset-0 bg-gradient-to-b from-pixela-dark/95 via-transparent to-pixela-dark/95 z-10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-pixela-dark/95 via-transparent to-pixela-dark/95 z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-pixela-dark via-transparent to-pixela-dark z-10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-pixela-dark/90 via-transparent to-pixela-dark/90 z-10" />
     </div>
   );
 };
@@ -75,7 +81,7 @@ const MarqueeRow = memo(
       direction === "normal" ? "animate-marquee" : "animate-marquee-reverse";
 
     const durationStyle = {
-      animationDuration: speed === "slow" ? "80s" : "60s",
+      animationDuration: speed === "slow" ? "150s" : "120s",
     };
 
     return (

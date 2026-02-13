@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+// import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useCategoriesStore } from "@/features/categories/store/categoriesStore";
 import { useDiscoverAnimation } from "@/features/discover/hooks/useDiscoverAnimation";
 import { IoIosArrowForward } from "react-icons/io";
@@ -34,25 +34,27 @@ const STYLES = {
 
   // --- Tipografía y Contenido ---
   discoverLabel:
-    "text-lg font-semibold text-pixela-accent uppercase tracking-widest mb-4",
+    "text-sm font-bold text-pixela-accent uppercase tracking-[0.2em] mb-4 bg-pixela-accent/10 px-3 py-1 rounded w-fit backdrop-blur-sm border border-pixela-accent/20",
   mainHeadingDesktop:
-    "text-6xl 2k:text-7xl font-black text-white leading-[0.9] mb-8 2k:mb-6 flex flex-col gap-0",
+    "text-7xl 2k:text-8xl font-black text-white leading-[0.85] mb-8 2k:mb-6 flex flex-col gap-0 drop-shadow-2xl tracking-tighter",
   // hollowText removed
   mainHeadingMobile:
-    "text-6xl font-black text-pixela-accent font-outfit tracking-tighter uppercase leading-none text-left",
-  description: "text-pixela-light/80 text-base 2k:text-lg max-w-full text-left",
-  descriptionDesktop: "mb-8 2k:mb-6 mx-0 lg:max-w-xl",
+    "text-6xl font-black text-pixela-accent font-outfit tracking-tighter uppercase leading-none text-left drop-shadow-lg",
+  description:
+    "text-gray-300 text-lg 2k:text-xl max-w-full text-left font-light leading-relaxed",
+  descriptionDesktop: "mb-10 2k:mb-8 mx-0 lg:max-w-xl",
   descriptionMobile: "py-8",
-  accentText: "text-pixela-light font-semibold",
+  accentText: "text-white font-medium italic relative",
 
   // --- Botones y Acciones ---
   exploreButton:
-    "group bg-gradient-to-r from-pixela-accent to-pixela-accent/80 text-pixela-dark px-8 py-3 rounded-full font-bold text-base transition-all duration-300 hover:shadow-xl hover:shadow-pixela-accent/30 relative overflow-hidden transform hover:-translate-y-px hover:scale-[1.02]",
-  buttonContent: "relative z-10 flex items-center justify-center",
-  buttonIcon: "w-4 h-4 ml-2 transition-transform duration-300",
-  buttonIconHover: "group-hover:translate-x-1",
+    "group relative px-8 py-4 rounded-full font-bold text-base transition-all duration-500 overflow-hidden bg-white/5 backdrop-blur-md border border-white/10 hover:border-pixela-accent/50 hover:bg-pixela-accent/10 hover:shadow-[0_0_30px_rgba(236,27,105,0.3)]",
+  buttonContent:
+    "relative z-10 flex items-center justify-center text-white group-hover:text-pixela-accent transition-colors duration-300",
+  buttonIcon: "w-5 h-5 ml-2 transition-transform duration-500",
+  buttonIconHover: "group-hover:translate-x-1.5",
   buttonHoverEffect:
-    "absolute inset-0 bg-white/20 w-0 group-hover:w-full transition-all duration-300",
+    "absolute inset-0 bg-gradient-to-r from-pixela-accent/20 to-transparent w-0 group-hover:w-full transition-all duration-500 ease-out",
 } as const;
 
 /**
@@ -69,7 +71,8 @@ const STYLES = {
  * @param {React.RefObject<HTMLDivElement>} gridRef - Referencia al grid de tarjetas
  */
 export const DiscoverContent = () => {
-  const isMobile = useMediaQuery("(max-width: 1023px)");
+  // Removed useMediaQuery to avoid hydration mismatches
+  // const isMobile = useMediaQuery("(max-width: 1023px)");
   // const [activeType, setActiveType] = useState<DiscoverMediaType>("serie"); // Removed unused state
   const [heading, setHeading] = useState(headings[0]);
 
@@ -98,18 +101,12 @@ export const DiscoverContent = () => {
 
   /**
    * Contenido de la descripción de la sección de descubrimiento
-   * @returns {JSX.Element} - Elemento JSX que representa el contenido de la descripción
-   * @param {boolean} isMobile - Indica si la vista es móvil
-   * @param {string} STYLES.description - Estilos de la descripción
-   * @param {string} STYLES.descriptionMobile - Estilos de la descripción para móvil
-   * @param {string} STYLES.descriptionDesktop - Estilos de la descripción para escritorio
-   * @param {string} STYLES.accentText - Estilos del texto de acento
-   * @param {string} STYLES.exploreButton - Estilos del botón de explorar catálogo
-   * @param {string} STYLES.buttonContent - Estilos del contenido del botón
+   * Renderizamos una sola versión y controlamos estilos via CSS si es necesario,
+   * o duplicamos si la estructura cambia drásticamente, controlando visibilidad con clases.
    */
   const descriptionContent = (
     <div
-      className={`${STYLES.description} ${isMobile ? STYLES.descriptionMobile : STYLES.descriptionDesktop}`}
+      className={`${STYLES.description} mb-8 2k:mb-6 mx-0 lg:max-w-xl py-8 lg:py-0`}
     >
       <p>
         Explora un catálogo seleccionado para{" "}
@@ -126,72 +123,70 @@ export const DiscoverContent = () => {
 
   return (
     <div
-      className={`${STYLES.container} ${isMobile ? STYLES.mobileContainer : STYLES.desktopContainer}`}
+      className={`${STYLES.container} flex-col items-stretch gap-8 px-4 py-12 lg:min-h-[85vh] lg:mt-16 lg:flex-row lg:items-center lg:justify-center lg:px-0 lg:py-0`}
     >
-      {/* --- Fondo para ESCRITORIO --- */}
-      {!isMobile && (
-        <div className={STYLES.gradientContainer}>
-          <DiscoverBackground />
-        </div>
-      )}
+      {/* --- Fondo para ESCRITORIO y MÓVIL (Visible Always) --- */}
+      <div className={`${STYLES.gradientContainer}`}>
+        <DiscoverBackground />
+      </div>
 
-      {/* --- Contenido para MÓVIL --- */}
-      {isMobile && (
-        <>
-          <h2 className={STYLES.mainHeadingMobile}>
-            DES-
-            <br />
-            CUBRE
+      {/* --- Contenido para MÓVIL (Visible only on lg and below) --- */}
+      <div className="flex flex-col lg:hidden w-full relative z-10">
+        <h2 className={STYLES.mainHeadingMobile}>
+          DES-
+          <br />
+          CUBRE
+        </h2>
+        {descriptionContent}
+        <Link
+          href="/categories"
+          className={`${STYLES.exploreButton} w-full`}
+          onClick={handleExploreClick}
+        >
+          <span className={STYLES.buttonContent}>
+            Explorar catálogo
+            <IoIosArrowForward className={STYLES.buttonIcon} />
+          </span>
+        </Link>
+      </div>
+
+      {/* --- Contenido para ESCRITORIO (Hidden on Mobile) --- */}
+      <div
+        ref={containerRef}
+        className={`${STYLES.desktopContent} hidden lg:flex`}
+      >
+        <div ref={leftSectionRef} className={STYLES.desktopLeftSection}>
+          <p className={STYLES.discoverLabel}>DESCUBRE</p>
+          <h2 className={STYLES.mainHeadingDesktop}>
+            {heading.map((line, index) => (
+              <span
+                key={index}
+                className={`block ${
+                  index === heading.length - 1 ? "text-pixela-accent" : ""
+                }`}
+              >
+                {line}
+              </span>
+            ))}
           </h2>
           {descriptionContent}
-          {/* Eliminados Selector y Grid en Móvil también para consistencia con la petición */}
-          <Link
-            href="/categories"
-            className={`${STYLES.exploreButton} w-full`}
-            onClick={handleExploreClick}
-          >
-            <span className={STYLES.buttonContent}>
-              Explorar catálogo
-              <IoIosArrowForward className={STYLES.buttonIcon} />
-            </span>
-          </Link>
-        </>
-      )}
-
-      {/* --- Contenido para ESCRITORIO --- */}
-      {!isMobile && (
-        <div ref={containerRef} className={STYLES.desktopContent}>
-          <div ref={leftSectionRef} className={STYLES.desktopLeftSection}>
-            <p className={STYLES.discoverLabel}>DESCUBRE</p>
-            <h2 className={STYLES.mainHeadingDesktop}>
-              {heading.map((line, index) => (
-                <span key={index} className="block">
-                  {line}
-                </span>
-              ))}
-            </h2>
-            {descriptionContent}
-            <div className={STYLES.desktopActions}>
-              {/* Eliminado DiscoverSelector */}
-              <Link
-                href="/categories"
-                className={`${STYLES.exploreButton} w-auto`}
-                onClick={handleExploreClick}
-              >
-                <span className={STYLES.buttonContent}>
-                  Explorar catálogo
-                  <IoIosArrowForward
-                    className={`${STYLES.buttonIcon} ${STYLES.buttonIconHover}`}
-                  />
-                </span>
-                <span className={STYLES.buttonHoverEffect} />
-              </Link>
-            </div>
+          <div className={STYLES.desktopActions}>
+            <Link
+              href="/categories"
+              className={`${STYLES.exploreButton} w-auto`}
+              onClick={handleExploreClick}
+            >
+              <span className={STYLES.buttonContent}>
+                Explorar catálogo
+                <IoIosArrowForward
+                  className={`${STYLES.buttonIcon} ${STYLES.buttonIconHover}`}
+                />
+              </span>
+              <span className={STYLES.buttonHoverEffect} />
+            </Link>
           </div>
-
-          {/* Eliminado Grid derecho */}
         </div>
-      )}
+      </div>
     </div>
   );
 };
