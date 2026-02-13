@@ -7,25 +7,18 @@ import { TrendingMediaCard } from "@/features/trending/components/content/Trendi
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { TrendingButton } from "@/features/trending/components/ui/TrendingButton";
 import QuoteSection from "@/features/quotes/components/QuoteSection";
+import {
+  HEADER_LAYOUT_STYLES,
+  HEADER_TYPOGRAPHY_STYLES,
+} from "@/shared/styles/headerStyles";
 
 // Estilos similares a TheatricalHeader pero alineados a la izquierda
 const STYLES = {
-  title:
-    "font-black font-outfit tracking-wider uppercase leading-none w-full md:w-auto text-left break-words text-pixela-accent",
-  titleMobile: "block sm:hidden text-[64px] leading-[0.95] text-left pl-4",
-  titleDesktop:
-    "hidden sm:block text-[64px] md:text-[96px] lg:text-[128px] 2k:text-[100px] text-left sm:pl-0",
-  container:
-    "relative w-full bg-pixela-dark flex flex-col pt-8 md:pt-20 2k:pt-12 min-h-[50vh]",
-  content:
-    "flex-grow flex flex-col justify-center md:justify-start relative z-10 pb-16 md:pb-0 2k:pb-8",
-  headerWrapper:
-    "relative w-full bg-pixela-dark flex flex-col justify-center overflow-hidden items-stretch gap-8 px-4 py-12 lg:w-[85%] xl:w-[80%] 2k:w-[70%] lg:mx-auto lg:flex-row lg:items-end lg:justify-between lg:gap-0 lg:px-0 lg:py-0 2k:py-6 lg:overflow-visible lg:bg-transparent lg:relative",
+  ...HEADER_LAYOUT_STYLES,
+  title: `${HEADER_TYPOGRAPHY_STYLES.titleBase} text-left`,
+  titleMobile: `${HEADER_TYPOGRAPHY_STYLES.titleMobileBase} text-left pl-4`,
+  titleDesktop: `${HEADER_TYPOGRAPHY_STYLES.titleDesktopBase} text-left sm:pl-0`,
   headerLeft: "flex flex-col items-start gap-2",
-  carouselWrapper: "w-full",
-  slides: "flex gap-0",
-  slide:
-    "relative w-[280px] min-w-[280px] max-w-[280px] md:w-[375px] md:min-w-[375px] md:max-w-[375px] flex-none",
   toggleContainer: "mb-12 md:mb-10 px-4 md:px-0",
   toggleWrapper:
     "flex bg-white/5 backdrop-blur-sm rounded-full p-1 border border-white/10 relative shadow-lg shadow-black/20 w-full sm:w-auto ipad:w-full",
@@ -117,7 +110,7 @@ export const WeekendHeader = ({
             {activeContent.map((item, index) => (
               <div key={item.id} className={STYLES.slide}>
                 <TrendingMediaCard
-                  media={item as any}
+                  media={item}
                   type={activeButton}
                   index={index}
                 />

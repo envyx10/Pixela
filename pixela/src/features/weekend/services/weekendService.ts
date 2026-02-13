@@ -26,8 +26,11 @@ interface TmdbResponse {
  */
 export async function getWeekendMovies(limit: number): Promise<WeekendMovie[]> {
   try {
-    const data = await fetchFromTmdb<TmdbResponse>("movie/popular", {
-      region: "ES",
+    // Usamos discover para filtrar por disponibilidad en streaming (ES)
+    const data = await fetchFromTmdb<TmdbResponse>("discover/movie", {
+      sort_by: "popularity.desc",
+      watch_region: "ES",
+      with_watch_monetization_types: "flatrate|rent|buy",
     });
 
     return data.results
@@ -59,8 +62,11 @@ export async function getWeekendMovies(limit: number): Promise<WeekendMovie[]> {
  */
 export async function getWeekendSeries(limit: number): Promise<WeekendSerie[]> {
   try {
-    const data = await fetchFromTmdb<TmdbResponse>("tv/popular", {
-      // Opcional: watch_region=ES, sort_by=popularity.desc
+    // Usamos discover para filtrar por disponibilidad en streaming (ES)
+    const data = await fetchFromTmdb<TmdbResponse>("discover/tv", {
+      sort_by: "popularity.desc",
+      watch_region: "ES",
+      with_watch_monetization_types: "flatrate",
     });
 
     return data.results
