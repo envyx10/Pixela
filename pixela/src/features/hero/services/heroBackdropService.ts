@@ -96,19 +96,48 @@ async function fetchAndMapImages(
 export async function getFeaturedImages(): Promise<HeroImage[]> {
   try {
     // Paralelizar todas las peticiones para minimizar el tiempo de espera (Waterfall elimination)
-    const [trendingDay, trendingWeek, popularMovies, popularTv] =
-      await Promise.all([
-        fetchAndMapImages("trending/all/day", 3), // 3 Tendencias del DÍA
-        fetchAndMapImages("trending/all/week", 4), // 4 Tendencias SEMANALES
-        fetchAndMapImages("movie/popular", 2, "movie"), // 2 Películas populares globales
-        fetchAndMapImages("tv/popular", 2, "serie"), // 2 Series populares globales
-      ]);
+    const [
+      martySupremeData,
+      trendingDay,
+      trendingWeek,
+      popularMovies,
+      popularTv,
+    ] = await Promise.all([
+      fetchFromTmdb<TmdbResult>("movie/1317288").catch(() => null), // Marty Supreme (Prioridad 1)
+      fetchAndMapImages("trending/all/day", 3), // 3 Tendencias del DÍA
+      fetchAndMapImages("trending/all/week", 4), // 4 Tendencias SEMANALES
+      fetchAndMapImages("movie/popular", 2, "movie"), // 2 Películas populares globales
+      fetchAndMapImages("tv/popular", 2, "serie"), // 2 Series populares globales
+    ]);
+
+    // Mapear Marty Supreme si existe
+    const martySupreme: HeroImage | null =
+      martySupremeData &&
+      martySupremeData.backdrop_path &&
+      martySupremeData.poster_path
+        ? {
+            id: martySupremeData.id,
+            backdrop: tmdbImageHelpers.backdrop(
+              martySupremeData.backdrop_path,
+              TMDB_IMAGE_CONFIG.SIZES.BACKDROP.ORIGINAL,
+            ),
+            poster: tmdbImageHelpers.poster(
+              martySupremeData.poster_path,
+              TMDB_IMAGE_CONFIG.SIZES.POSTER.W780,
+            ),
+            title: martySupremeData.title || martySupremeData.name,
+            description: martySupremeData.overview,
+            type: "movie",
+          }
+        : null;
 
     // Combinar resultados:
-    // 1. El TOP del día va PRIMERO (Hot right now)
-    // 2. Luego lo mejor de la semana
-    // 3. Finalmente los clásicos populares
+    // 1. Marty Supreme SIEMPRE PRIMERO
+    // 2. El TOP del día va segundo
+    // 3. Luego lo mejor de la semana
+    // 4. Finalmente los clásicos populares
     const images = [
+      martySupreme,
       ...trendingDay,
       ...trendingWeek,
       ...popularMovies,

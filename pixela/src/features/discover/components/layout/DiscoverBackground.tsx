@@ -42,7 +42,7 @@ export const DiscoverBackground = () => {
         className="flex flex-col gap-6 transform -rotate-3 scale-[1.3] -translate-y-32 -translate-x-20 w-[150%] h-[150%] origin-center"
         style={{
           maskImage:
-            "linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
+            "linear-gradient(to right, transparent, black 10%, black 90%, transparent), linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
           maskComposite: "intersect",
           WebkitMaskComposite: "source-in", // Para compatibilidad
         }}
@@ -60,9 +60,18 @@ export const DiscoverBackground = () => {
         <MarqueeRow images={rows[3]} direction="reverse" speed="normal" />
       </div>
 
-      {/* Overlay Gradiente para integración y legibilidad */}
-      <div className="absolute inset-0 bg-gradient-to-b from-pixela-dark via-transparent to-pixela-dark z-10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-pixela-dark/90 via-transparent to-pixela-dark/90 z-10" />
+      {/* Overlay Radial (Vignette) para centrar la atención y mejorar legibilidad en bordes */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at center, transparent 30%, #000000 100%)",
+        }}
+      />
+
+      {/* Overlays Lineales para asegurar la transición suave en los bordes extremos */}
+      <div className="absolute inset-0 bg-gradient-to-b from-pixela-dark via-transparent to-pixela-dark pointer-events-none z-10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-pixela-dark/80 via-transparent to-pixela-dark/80 pointer-events-none z-10" />
     </div>
   );
 };
@@ -132,7 +141,7 @@ const MarqueeContent = memo(
       {images.map((src, idx) => (
         <div
           key={`${src}-${idx}`}
-          className="relative w-[200px] h-[300px] flex-shrink-0 rounded-lg overflow-hidden shadow-2xl brightness-75 transition-all duration-500"
+          className="relative w-[200px] h-[300px] flex-shrink-0 rounded-lg overflow-hidden shadow-2xl transition-all duration-500"
         >
           <Image
             src={tmdbImageHelpers.poster(src) || TMDB_PLACEHOLDER.POSTER}
