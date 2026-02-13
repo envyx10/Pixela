@@ -1,43 +1,58 @@
-import { create } from 'zustand';
-import { HeroState } from '@/features/hero/types/state';
+import { create } from "zustand";
+import { HeroState } from "@/features/hero/types/state";
 
 const FADE_ANIMATION_DURATION = 300;
 
 /**
  * Store de Zustand para el componente Hero.
- * 
+ *
  * Este store maneja:
  * - Navegación entre imágenes (anterior, siguiente, específica)
  * - Estados de animación (fade in/out)
  * - Control de reproducción
  * - Progreso de la animación
- * 
+ *
  * La transición entre imágenes incluye una animación de fade
  * que dura 300ms y reinicia el progreso de la animación.
  */
 export const useHeroStore = create<HeroState>((set) => {
+  let transitionTimeout: NodeJS.Timeout | null = null;
 
   /**
    * Función auxiliar que encapsula la lógica común de transición entre imágenes.
    * Maneja el estado de fade y la actualización del índice de la imagen actual.
-   * 
+   *
    * @param calculateNewIndex - Función que calcula el nuevo índice de la imagen
    */
   const transitionToImage = (
-    calculateNewIndex: (currentImageIndex: number) => number
+    calculateNewIndex: (currentIndex: number) => number,
   ) => {
-    set({ fadeIn: false });
-    setTimeout(() => {
-      set((state) => ({
-        currentImageIndex: calculateNewIndex(state.currentImageIndex),
-        fadeIn: true,
-        progress: 0,
-      }));
-    }, FADE_ANIMATION_DURATION);
+    set((state) => {
+      const nextIndex = calculateNewIndex(state.activeSlideIndex);
+
+      if (transitionTimeout) {
+        clearTimeout(transitionTimeout);
+      }
+
+      transitionTimeout = setTimeout(() => {
+        set({
+          currentImageIndex: nextIndex,
+          fadeIn: true,
+          progress: 0,
+        });
+        transitionTimeout = null;
+      }, FADE_ANIMATION_DURATION);
+
+      return {
+        activeSlideIndex: nextIndex,
+        fadeIn: false,
+      };
+    });
   };
 
   return {
     currentImageIndex: 0,
+    activeSlideIndex: 0,
     fadeIn: true,
     isPlaying: true,
     progress: 0,
@@ -46,7 +61,8 @@ export const useHeroStore = create<HeroState>((set) => {
      * Actualiza el índice de la imagen actual
      * @param index - Nuevo índice de la imagen
      */
-    setCurrentImageIndex: (index: number) => set({ currentImageIndex: index }),
+    setCurrentImageIndex: (index: number) =>
+      set({ currentImageIndex: index, activeSlideIndex: index }),
 
     /**
      * Actualiza el estado de la animación de fade
@@ -66,10 +82,7 @@ export const useHeroStore = create<HeroState>((set) => {
      */
     setProgress: (value: number | ((prevProgress: number) => number)) =>
       set((state) => ({
-        progress:
-          typeof value === 'function'
-            ? value(state.progress)
-            : value,
+        progress: typeof value === "function" ? value(state.progress) : value,
       })),
 
     /**
@@ -83,7 +96,7 @@ export const useHeroStore = create<HeroState>((set) => {
      */
     prevImage: (imagesLength: number) => {
       transitionToImage(
-        (currentImageIndex) => (currentImageIndex - 1 + imagesLength) % imagesLength
+        (currentIndex) => (currentIndex - 1 + imagesLength) % imagesLength,
       );
     },
 
@@ -92,9 +105,7 @@ export const useHeroStore = create<HeroState>((set) => {
      * @param imagesLength - Número total de imágenes disponibles
      */
     nextImage: (imagesLength: number) => {
-      transitionToImage(
-        (currentImageIndex) => (currentImageIndex + 1) % imagesLength
-      );
+      transitionToImage((currentIndex) => (currentIndex + 1) % imagesLength);
     },
 
     /**
@@ -105,4 +116,4 @@ export const useHeroStore = create<HeroState>((set) => {
       transitionToImage(() => index);
     },
   };
-}); 
+});

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FiChevronDown } from "react-icons/fi";
+import { FiChevronRight } from "react-icons/fi";
 import {
   HeroContent,
   HeroTitleProps,
@@ -26,8 +26,8 @@ const STYLES = {
   // Botón secundario con animación
   secondaryButton: {
     base: "group flex items-center transition-all duration-300",
-    text: "font-medium text-pixela-light group-hover:text-white group-hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.7)] transition-all duration-300 mr-2 text-sm sm:text-base lg:text-base",
-    icon: "h-5 w-5 sm:h-5 sm:w-5 lg:h-6 lg:w-6 animate-bounce text-pixela-light group-hover:text-pixela-accent opacity-80 group-hover:opacity-100",
+    text: "font-medium text-pixela-light group-hover:text-white transition-all duration-300 mr-2 text-sm sm:text-base lg:text-base",
+    icon: "h-5 w-5 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-pixela-light group-hover:text-pixela-accent opacity-80 group-hover:opacity-100 transition-colors duration-300",
   },
 
   // Sección de contenido principal
@@ -58,11 +58,19 @@ const AccentLine = ({ className }: AccentLineProps) => (
  * @param {HeroTitleProps} props - Propiedades del título
  * @returns {JSX.Element} Componente de título
  */
-const HeroTitle = ({ title, accentTitle }: HeroTitleProps) => (
-  <h1 className={STYLES.heroTitle.base}>
+const HeroTitle = ({
+  title,
+  accentTitle,
+  inline = false,
+}: HeroTitleProps & { inline?: boolean }) => (
+  <h1 className={clsx(STYLES.heroTitle.base, "line-clamp-3 text-ellipsis")}>
     {title}
-    <br />
-    <span className={STYLES.heroTitle.accent}>{accentTitle}</span>
+    {accentTitle && (
+      <>
+        {inline ? " " : <br />}
+        <span className={STYLES.heroTitle.accent}>{accentTitle}</span>
+      </>
+    )}
   </h1>
 );
 
@@ -74,10 +82,14 @@ const HeroTitle = ({ title, accentTitle }: HeroTitleProps) => (
 const SecondaryButton = ({ text, href }: SecondaryButtonProps) => (
   <Link href={href} className={STYLES.secondaryButton.base}>
     <span className={STYLES.secondaryButton.text}>{text}</span>
-    <FiChevronDown className={STYLES.secondaryButton.icon} />
+    <FiChevronRight className={STYLES.secondaryButton.icon} />
   </Link>
 );
 
+/**
+ * Componente que muestra la sección de contenido del hero
+ * Incluye título, descripción y botones de acción
+ */
 /**
  * Componente que muestra la sección de contenido del hero
  * Incluye título, descripción y botones de acción
@@ -88,22 +100,79 @@ export const ContentSection = ({
   description,
   secondaryButtonText,
   images,
+  currentImageIndex = 0,
 }: HeroContent & { images: HeroImage[] }) => {
+  const currentImage = images[currentImageIndex];
+
+  // Lógica para separar el título en dos partes para el acento
+  const splitTitle = (
+    fullTitle: string | undefined,
+  ): { main: string; accent: string } => {
+    if (!fullTitle) return { main: "", accent: "" };
+
+    const words = fullTitle.split(" ");
+    if (words.length <= 1) return { main: fullTitle, accent: "" };
+
+    // Punto de corte: aproximadamente a la mitad, favoreciendo la segunda parte para el acento
+    const splitIndex = Math.ceil(words.length / 2);
+
+    const main = words.slice(0, splitIndex).join(" ");
+    const accent = words.slice(splitIndex).join(" ");
+
+    return { main, accent };
+  };
+
+  const { main: dynamicMainTitle, accent: dynamicAccentTitle } = splitTitle(
+    currentImage?.title,
+  );
+
+  // Lógica para mostrar contenido dinámico o estático
+  // Si tenemos título dinámico, usamos la versión partida. Si no, usamos el prop 'title' completo
+  const displayTitle = currentImage?.title ? dynamicMainTitle : title;
+
+  // Si hay título dinámico, el acccent viene de la función split.
+  // Si es estático, usamos el prop 'accentTitle'
+  const displayAccentTitle = currentImage?.title
+    ? dynamicAccentTitle
+    : accentTitle;
+
+  const displayDescription = currentImage?.description
+    ? currentImage.description.length > 200
+      ? `${currentImage.description.substring(0, 200)}...`
+      : currentImage.description
+    : description;
+
+  // URL del botón: si es contenido dinámico, ir a los detalles (placeholder por ahora)
+  // Si es estático, ir a tendencias
+  const buttonHref = currentImage?.id
+    ? `/${currentImage.type === "serie" ? "series" : "movies"}/${currentImage.id}`
+    : "#tendencias";
+
+  const buttonText = currentImage?.id ? "Ver detalles" : secondaryButtonText;
+
   return (
     <div className={STYLES.contentSection.base}>
       <div className={STYLES.contentSection.container}>
-        <AccentLine className={STYLES.accentLine.withMargin} />
+        <div key={currentImageIndex} className="animate-fade-in">
+          <AccentLine className={STYLES.accentLine.withMargin} />
 
-        <HeroTitle title={title} accentTitle={accentTitle} />
+          <HeroTitle
+            title={displayTitle}
+            accentTitle={displayAccentTitle}
+            inline={!!currentImage?.title}
+          />
 
-        <p className={STYLES.contentSection.description}>{description}</p>
+          <p className={STYLES.contentSection.description}>
+            {displayDescription}
+          </p>
 
-        <div className={STYLES.contentSection.buttonsContainer}>
-          <div className={STYLES.contentSection.buttonWrapper}>
-            <SecondaryButton text={secondaryButtonText} href="#tendencias" />
-          </div>
-          <div className={STYLES.contentSection.progressWrapper}>
-            <ProgressIndicator images={images} />
+          <div className={STYLES.contentSection.buttonsContainer}>
+            <div className={STYLES.contentSection.buttonWrapper}>
+              <SecondaryButton text={buttonText} href={buttonHref} />
+            </div>
+            <div className={STYLES.contentSection.progressWrapper}>
+              <ProgressIndicator images={images} />
+            </div>
           </div>
         </div>
       </div>

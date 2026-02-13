@@ -10,6 +10,11 @@ import {
   getDiscoveredSeries,
   getDiscoveredMovies,
 } from "@/features/discover/service/discover";
+import { getTheatricalMovies } from "@/features/theatrical/services/theatricalService";
+import {
+  getWeekendMovies,
+  getWeekendSeries,
+} from "@/features/weekend/services/weekendService";
 import { getRandomQuote } from "@/features/quotes/service";
 import { ConditionalSuspenseWrapper } from "@/app/components/ConditionalSuspenseWrapper";
 
@@ -17,6 +22,16 @@ import { ConditionalSuspenseWrapper } from "@/app/components/ConditionalSuspense
 const TrendingSection = nextDynamic(() =>
   import("@/features/trending/components/core/TrendingSection").then(
     (mod) => mod.TrendingSection,
+  ),
+);
+const TheatricalSection = nextDynamic(() =>
+  import("@/features/theatrical/components/TheatricalSection").then(
+    (mod) => mod.TheatricalSection,
+  ),
+);
+const WeekendSection = nextDynamic(() =>
+  import("@/features/weekend/components/WeekendSection").then(
+    (mod) => mod.WeekendSection,
   ),
 );
 const DiscoverSection = nextDynamic(() =>
@@ -34,6 +49,8 @@ export const dynamic = "force-dynamic";
 // Constantes de configuración centralizadas
 const CONFIG = {
   TRENDING_ITEMS_COUNT: 15,
+  THEATRICAL_ITEMS_COUNT: 15,
+  WEEKEND_ITEMS_COUNT: 15,
   STYLES: {
     main: "flex-grow 2k:max-w-[100vw] 2k:mx-auto",
     section: "scroll-mt-24 2k:scroll-mt-16",
@@ -54,17 +71,28 @@ async function HeroLoader() {
  * Se renderizará cuando sus datos estén listos, sin bloquear el Hero.
  */
 async function RestOfPageLoader() {
-  const [trendingData, discoveredData] = await Promise.all([
-    Promise.all([
-      getTrendingSeries(CONFIG.TRENDING_ITEMS_COUNT),
-      getTrendingMovies(CONFIG.TRENDING_ITEMS_COUNT),
-    ]),
-    Promise.all([getDiscoveredSeries(), getDiscoveredMovies()]),
-  ]);
+  const [trendingData, theatricalMovies, weekendData, discoveredData] =
+    await Promise.all([
+      Promise.all([
+        getTrendingSeries(CONFIG.TRENDING_ITEMS_COUNT),
+        getTrendingMovies(CONFIG.TRENDING_ITEMS_COUNT),
+      ]),
+      getTheatricalMovies(CONFIG.THEATRICAL_ITEMS_COUNT),
+      Promise.all([
+        getWeekendSeries(CONFIG.WEEKEND_ITEMS_COUNT),
+        getWeekendMovies(CONFIG.WEEKEND_ITEMS_COUNT),
+      ]),
+      Promise.all([getDiscoveredSeries(), getDiscoveredMovies()]),
+    ]);
 
   const [trendingSeries, trendingMovies] = trendingData;
+  const [weekendSeries, weekendMovies] = weekendData;
   const [discoveredSeries, discoveredMovies] = discoveredData;
-  const randomQuote = getRandomQuote();
+
+  // Generamos múltiples citas aleatorias para cada sección
+  const trendingQuote = getRandomQuote();
+  const theatricalQuote = getRandomQuote();
+  const weekendQuote = getRandomQuote();
 
   return (
     <>
@@ -72,7 +100,19 @@ async function RestOfPageLoader() {
         <TrendingSection
           series={trendingSeries}
           movies={trendingMovies}
-          quote={randomQuote}
+          quote={trendingQuote}
+        />
+      </div>
+
+      <div id="cartelera" className={CONFIG.STYLES.section}>
+        <TheatricalSection movies={theatricalMovies} quote={theatricalQuote} />
+      </div>
+
+      <div id="finde" className={CONFIG.STYLES.section}>
+        <WeekendSection
+          movies={weekendMovies}
+          series={weekendSeries}
+          quote={weekendQuote}
         />
       </div>
 

@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import {
   ImageCarousel,
   NavigationControls,
@@ -10,7 +10,6 @@ import { useHeroStore } from "@/features/hero/store/heroStore";
 import { HeroSectionProps } from "@/features/hero/types/content";
 import { useCarouselAutoPlay } from "@/features/hero/hooks/useCarouselAutoPlay";
 import { useProgressBar } from "@/features/hero/hooks/useProgressBar";
-import { preload } from "react-dom";
 
 const STYLES = {
   hero: {
@@ -37,17 +36,6 @@ export const HeroSection = ({
 
   useCarouselAutoPlay(imagesLength);
   useProgressBar();
-
-  /**
-   * Preload de la primera imagen para garantizar carga inmediata
-   */
-  useEffect(() => {
-    if (!images.length || !images[0]) return;
-
-    // Preload both variants for optimal performance
-    preload(images[0].backdrop, { as: "image" });
-    preload(images[0].poster, { as: "image" });
-  }, [images]);
 
   return (
     <div className={`${STYLES.hero.base} ${STYLES.hero.ipadFix}`}>

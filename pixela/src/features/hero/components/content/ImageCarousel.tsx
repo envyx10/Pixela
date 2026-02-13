@@ -117,13 +117,6 @@ const OptimizedHeroImage = ({
 export const ImageCarousel = ({ images }: ImageCarouselProps) => {
   const { currentImageIndex, fadeIn } = useHeroStore();
 
-  const ensureUrl = (path: string) => {
-    if (path && path.startsWith("/")) {
-      return `https://image.tmdb.org/t/p/original${path}`;
-    }
-    return path;
-  };
-
   // En caso de que no haya imágenes, mostrar fondo mínimo
   if (!images || images.length === 0 || !images[currentImageIndex]) {
     return (
@@ -143,10 +136,8 @@ export const ImageCarousel = ({ images }: ImageCarouselProps) => {
 
   // Preparar URLs de imágenes
   const currentImage = images[currentImageIndex];
-  const optimizedImage: HeroImage = {
-    backdrop: ensureUrl(currentImage.backdrop),
-    poster: ensureUrl(currentImage.poster),
-  };
+  // Las URLs ya vienen completas del servicio, pasamos directamente
+  const optimizedImage: HeroImage = currentImage;
 
   return (
     <div className={STYLES.carousel.base}>
